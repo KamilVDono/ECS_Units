@@ -17,4 +17,10 @@ namespace PathFinding.Components
 			this.End = end;
 		}
 	}
+
+	public struct PathRequestBuilder : IComponentData
+	{
+		public int2 Start;
+		public Boolean Started;
+	}
 }

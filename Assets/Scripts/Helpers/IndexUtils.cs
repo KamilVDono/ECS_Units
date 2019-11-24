@@ -25,12 +25,13 @@ namespace Helpers
 			return new int2( index % EdgeSize( fullSize ), index / EdgeSize( fullSize ) );
 		}
 
-		public static int WorldIndex1D( float2 position, int fullSize )
+		public static int2 WorldIndex2D( float2 position )
 		{
 			position = position + 0.5f;
-			int2 index2 = (int2)math.floor(position);
-			return Index1D( index2, fullSize );
+			return (int2)math.floor( position );
 		}
+
+		public static int WorldIndex1D( float2 position, int fullSize ) => Index1D( WorldIndex2D( position ), fullSize );
 
 		[System.Diagnostics.Conditional( "DEBUG" )]
 		private static void CheckEdgeSize( int edge, int fullSize )

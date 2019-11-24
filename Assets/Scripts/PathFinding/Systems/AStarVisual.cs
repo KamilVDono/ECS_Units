@@ -18,6 +18,7 @@ namespace PathFinding.Systems
 		private static readonly int BASE_COLOR = Shader.PropertyToID("_BaseColor");
 		private Material _material;
 		private Mesh _mesh;
+		private Shader _shader;
 		private EntityArchetype _pathTileArchetype;
 		private Unity.Mathematics.Random _random;
 
@@ -26,17 +27,26 @@ namespace PathFinding.Systems
 			_mesh = new Mesh
 			{
 				vertices = new Vector3[] {
-				new Vector3(-EXTEND, -EXTEND),
-				new Vector3( EXTEND, -EXTEND),
-				new Vector3(-EXTEND,  EXTEND),
-				new Vector3( EXTEND,  EXTEND),
-			},
+					new Vector3(-EXTEND, -EXTEND),
+					new Vector3( EXTEND, -EXTEND),
+					new Vector3(-EXTEND,  EXTEND),
+					new Vector3( EXTEND,  EXTEND),
+				},
 				triangles = new int[]
-			{
-				0, 1, 2,
-				1, 3, 2,
-			}
+				{
+					0, 1, 2,
+					1, 3, 2,
+				},
+				uv = new Vector2[]
+				{
+					new Vector2(0, 0),
+					new Vector2(1, 0),
+					new Vector2(0, 1),
+					new Vector2(1, 1),
+				}
 			};
+
+			_shader = Shader.Find( "Tile/AStarVisual" );
 
 			_pathTileArchetype = EntityManager.CreateArchetype(
 				typeof( RenderMesh ),
@@ -54,8 +64,9 @@ namespace PathFinding.Systems
 			if ( p.Done )
 			{
 				Profiler.BeginSample( "Spawning-Path_Visual" );
-				_material = new Material( Shader.Find( "Universal Render Pipeline/Simple Lit" ) );
-				_material.SetColor( BASE_COLOR, new Color( _random.NextFloat(), _random.NextFloat(), _random.NextFloat(), 1 ) );
+				_material = new Material( _shader );
+				var materialColor = new Color( _random.NextFloat(), _random.NextFloat(), _random.NextFloat(), 1 );
+				_material.SetColor( BASE_COLOR, materialColor );
 
 				var buffer = EntityManager.GetBuffer<Waypoint>( e );
 
@@ -68,7 +79,7 @@ namespace PathFinding.Systems
 					var tileEntity = PostUpdateCommands.CreateEntity( _pathTileArchetype );
 					var waypoint = EntityManager.GetBuffer<Waypoint>( e )[x];
 					PostUpdateCommands.SetSharedComponent( tileEntity, new RenderMesh { mesh = _mesh, material = _material } );
-					PostUpdateCommands.SetComponent( tileEntity, new Translation { Value = new float3( waypoint.Position.x, Time.frameCount / 20f, waypoint.Position.y ) } );
+					PostUpdateCommands.SetComponent( tileEntity, new Translation { Value = new float3( waypoint.Position.x, 1, waypoint.Position.y ) } );
 					PostUpdateCommands.SetComponent( tileEntity, new Rotation { Value = rotation } );
 				}
 
