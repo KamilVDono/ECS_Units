@@ -12,6 +12,8 @@ namespace Maps.Authoring
 		public Color32 Color;
 		public float Cost;
 		public Mesh Mesh;
+		[Range(0f, 1f)]
+		public float Range;
 		[SF] private Material _baseMaterial;
 		private Material _material;
 

@@ -67,15 +67,19 @@ namespace Maps.Systems
 
 		private TileType FindTileType( float2 position, MapRequest mapRequest )
 		{
+			var tileTypes = mapRequest.TileTypes;
+
 			float perlin = math.remap(-1, 1, 0, 1, noise.snoise(position * mapRequest.Frequency));
-			float tick = 1f / mapRequest.TileTypes.Length;
-			int index = -1;
-			while ( perlin > 0 )
+
+			int index = 0;
+
+			while ( index < tileTypes.Length && perlin - tileTypes[index].TileTypeSO.Range > 0 )
 			{
-				perlin -= tick;
+				perlin -= tileTypes[index].TileTypeSO.Range;
 				index++;
 			}
-			index = math.clamp( index, 0, mapRequest.TileTypes.Length - 1 );
+
+			index = math.clamp( index, 0, tileTypes.Length - 1 );
 			return mapRequest.TileTypes[index];
 		}
 

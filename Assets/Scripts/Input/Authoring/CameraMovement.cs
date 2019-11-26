@@ -70,7 +70,7 @@ namespace Input.Authoring
 
 		private void UpdateZoom()
 		{
-			var zoom = _input.Camera.Zoom.ReadValue<float>() / 100f;
+			var zoom = -_input.Camera.Zoom.ReadValue<float>() / 100f;
 			if ( Mathf.Abs( zoom ) > 0.1f )
 			{
 				_camera.orthographicSize = Mathf.Clamp( _camera.orthographicSize + zoom, _zoomBounds.x, _zoomBounds.y );
