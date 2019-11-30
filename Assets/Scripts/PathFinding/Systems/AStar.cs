@@ -10,8 +10,7 @@ using System.Runtime.CompilerServices;
 using Unity.Collections;
 using Unity.Entities;
 using Unity.Mathematics;
-
-using UnityEngine.Profiling;
+using Unity.Profiling;
 
 using static Helpers.IndexUtils;
 
@@ -19,11 +18,22 @@ namespace PathFinding.Systems
 {
 	public class AStar : ComponentSystem
 	{
+		#region ProfilerMarkers
+		private static ProfilerMarker _markerAStar        = new ProfilerMarker("AStar.System");
+		private static ProfilerMarker _markerSetup        = new ProfilerMarker("AStar.Setup");
+		private static ProfilerMarker _markerSetupData    = new ProfilerMarker("AStar.Setup_data");
+		private static ProfilerMarker _markerSearch       = new ProfilerMarker("AStar.Search");
+		private static ProfilerMarker _markerReconstruct  = new ProfilerMarker("AStar.Reconstruct");
+		private static ProfilerMarker _markerCleanup      = new ProfilerMarker("AStar.Cleanup");
+		private static ProfilerMarker _markerFindCurrent  = new ProfilerMarker("AStar.Find_current");
+		private static ProfilerMarker _markerMovementData = new ProfilerMarker("AStar.Movement_data");
+		#endregion ProfilerMarkers
+
 		private EndSimulationEntityCommandBufferSystem _eseCommandBufferSystem;
 
 		#region Lifetime
 
-		protected override void OnCreate() => _eseCommandBufferSystem = World.GetExistingSystem<EndSimulationEntityCommandBufferSystem>();
+		protected override void OnCreate() => _eseCommandBufferSystem = World.GetOrCreateSystem<EndSimulationEntityCommandBufferSystem>();
 
 		protected override void OnDestroy() => Entities.ForEach( ( ref MapSettingsNeighborsState neighboursState ) =>
 											{
@@ -32,8 +42,6 @@ namespace PathFinding.Systems
 
 		protected override void OnUpdate()
 		{
-			CheckNeighborsState();
-
 			BlitableArray<Entity> tiles = new BlitableArray<Entity>();
 			BlitableArray<Neighbor> neighbors = new BlitableArray<Neighbor>();
 
@@ -52,158 +60,141 @@ namespace PathFinding.Systems
 			var commandBuffer = _eseCommandBufferSystem.CreateCommandBuffer();
 			var movementData = movementComponents;
 
-			Entities.WithNone<Waypoint>().ForEach( ( Entity e, ref PathRequest pathRequest ) =>
+			Entities.WithNone<Waypoint>().ForEach( ( Entity requestEntity, ref PathRequest pathRequest ) =>
 			{
+				// Request already completed
+				// TODO: Split request from waypoints
 				if ( pathRequest.Done )
 				{
 					return;
 				}
 
-				Profiler.BeginSample( "AStar" );
+				_markerAStar.Begin();
 
 				#region Setup
 
-				Profiler.BeginSample( "AStar_Setup" );
+				_markerSetup.Begin();
 				NativeArray<float2> costs = new NativeArray<float2>( tilesSize, Allocator.Temp );
 				NativeArray<Boolean> closeSet = new NativeArray<Boolean>( tilesSize, Allocator.Temp );
 				NativeArray<int> camesFrom = new NativeArray<int>( tilesSize, Allocator.Temp );
+				NativeMinHeap minSet = new NativeMinHeap(tilesSize, Allocator.Temp);
 
+				_markerSetupData.Begin();
+				// Setup initial data
 				for ( int i = 0; i < tilesSize; i++ )
 				{
 					costs[i] = new float2 { x = 0, y = float.MaxValue };
 					camesFrom[i] = -1;
 				}
+				_markerSetupData.End();
 
+				// Shortcuts
 				int startTile = Index1D( pathRequest.Start, tilesSize );
 				int endTile = Index1D( pathRequest.End, tilesSize );
 
 				costs[startTile] = 0;
-				Profiler.EndSample();
+				_markerSetup.End();
 
 				#endregion Setup
 
 				#region Search
 
-				Profiler.BeginSample( "AStar_Search" );
-				int lastTile;
-				while ( true )
+				_markerSearch.Begin();
+				int lastTile = startTile;
+				// While not in destination and not at dead end
+				while ( lastTile != endTile && lastTile != -1 )
 				{
-					var current = FindCurrent(costs, closeSet, tilesSize);
-					//There is no way, all tiles visited
-					if ( current == tilesSize || current == endTile )
-					{
-						lastTile = current;
-						break;
-					}
+					// Mark current tile as visited
+					closeSet[lastTile] = true;
 
-					closeSet[current] = true;
-					var currentCost = movementData[tiles[current]];
+					_markerMovementData.Begin();
+					var currentCost = movementData[tiles[lastTile]];
+					_markerMovementData.End();
 
 					for ( int i = 0; i < neighbors.Length; ++i )
 					{
 						var neighbor = neighbors[i];
-						var neighborIndex = neighbor.Of( current, tilesSize );
-						if ( neighborIndex == -1 )
+						// Find linear neighbor index
+						var neighborIndex = neighbor.Of( lastTile, tilesSize );
+						// Check if neighbor exists
+						if ( neighborIndex != -1 )
 						{
-							continue;
-						}
+							// Previous + current cost
+							var costG = costs[lastTile].x + neighbor.Distance * currentCost.Cost;
+							var costF = costG + Heuristic( pathRequest, neighborIndex, tilesSize );
 
-						// Previous + current cost
-						var costG = costs[current].x + neighbor.Distance * currentCost.Cost;
-						var costF = costG + Heuristic( pathRequest, neighborIndex, tilesSize );
+							if ( costs[neighborIndex].y > costF )
+							{
+								// Update cost and path
+								costs[neighborIndex] = new float2( costG, costF );
+								camesFrom[neighborIndex] = lastTile;
 
-						if ( costs[neighborIndex].y > costF )
-						{
-							costs[neighborIndex] = new float2( costG, costF );
-							camesFrom[neighborIndex] = current;
+								// Update min set
+								if ( closeSet[neighborIndex] == false )
+								{
+									minSet.Push( new MinHeapNode( neighborIndex, costF ) );
+								}
+							}
 						}
 					}
+
+					lastTile = FindCurrent( minSet, closeSet );
 				}
-				Profiler.EndSample();
+				_markerSearch.End();
 
 				#endregion Search
 
 				#region ReconstructPath
 
-				Profiler.BeginSample( "AStar_ReconstructPath" );
-				var waypoints = commandBuffer.AddBuffer<Waypoint>( e );
+				_markerReconstruct.Begin();
+				var waypoints = commandBuffer.AddBuffer<Waypoint>( requestEntity );
+				// Travel back through path
 				while ( lastTile != -1 )
 				{
 					waypoints.Add( new Waypoint() { Position = Index2D( lastTile, tilesSize ) } );
 					lastTile = camesFrom[lastTile];
 				}
-				Profiler.EndSample();
+				_markerReconstruct.End();
 
 				#endregion ReconstructPath
 
 				#region Cleanup
 
-				Profiler.BeginSample( "AStar_Cleanup" );
+				_markerCleanup.Begin();
+				// Dispose all temporary data
 				costs.Dispose();
 				closeSet.Dispose();
 				camesFrom.Dispose();
+				minSet.Dispose();
+				// Mark request as completed
 				pathRequest.Done = true;
-				Profiler.EndSample();
+				_markerCleanup.End();
 
 				#endregion Cleanup
 
-				Profiler.EndSample();
+				_markerAStar.End();
 			} );
 		}
 
 		#endregion Lifetime
 
 		[MethodImpl( MethodImplOptions.AggressiveInlining )]
-		private static int FindCurrent( NativeArray<float2> costs, NativeArray<Boolean> closeSet, int tileSize )
+		private static int FindCurrent( NativeMinHeap minSet, NativeArray<Boolean> closeSet )
 		{
-			Profiler.BeginSample( "AStar_FindCurrent" );
-			int current = 0;
-
-			while ( current < tileSize && closeSet[current] )
+			_markerFindCurrent.Begin();
+			while ( minSet.HasNext() )
 			{
-				current++;
-			}
-
-			for ( int i = current; i < tileSize; i++ )
-			{
-				if ( closeSet[i] == false && costs[i].y < costs[current].y )
+				var next = minSet.Pop();
+				// Check if this is not visited tile
+				if ( closeSet[next.Position] == false )
 				{
-					current = i;
+					_markerFindCurrent.End();
+					return next.Position;
 				}
 			}
-			Profiler.EndSample();
-			return current;
+			_markerFindCurrent.End();
+			return -1;
 		}
-
-		private void CheckNeighborsState() => Entities.WithNone<MapSettingsNeighborsState>().ForEach( ( Entity e, ref MapSettings mapSettings ) =>
-						{
-							MapSettingsNeighborsState neighboursState = new MapSettingsNeighborsState();
-							if ( mapSettings.CanMoveDiagonally )
-							{
-								neighboursState.Neighbours = new BlitableArray<Neighbor>( 8, Allocator.Persistent )
-								{
-									[0] = Neighbor.UPPER_LEFT,
-									[1] = Neighbor.UPPER,
-									[2] = Neighbor.UPPER_RIGHT,
-									[3] = Neighbor.LEFT,
-									[4] = Neighbor.RIGHT,
-									[5] = Neighbor.BOTTOM_LEFT,
-									[6] = Neighbor.BOTTOM,
-									[7] = Neighbor.BOTTOM_RIGHT,
-								};
-							}
-							else
-							{
-								neighboursState.Neighbours = new BlitableArray<Neighbor>( 4, Allocator.Persistent )
-								{
-									[0] = Neighbor.UPPER,
-									[1] = Neighbor.LEFT,
-									[2] = Neighbor.RIGHT,
-									[3] = Neighbor.BOTTOM,
-								};
-							}
-							PostUpdateCommands.AddComponent( e, neighboursState );
-						} );
 
 		[MethodImpl( MethodImplOptions.AggressiveInlining )]
 		private float Heuristic( PathRequest pathRequest, int neighborIndex, int TilesSize )

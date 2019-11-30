@@ -2,7 +2,6 @@
 
 using Unity.Collections;
 using Unity.Collections.LowLevel.Unsafe;
-using Unity.Mathematics;
 
 namespace PathFinding.Helpers
 {
@@ -15,7 +14,11 @@ namespace PathFinding.Helpers
 		[NativeDisableUnsafePtrRestriction]
 		private void* _buffer;
 
-		private int capacity;
+		private int _capacity;
+
+		private int _head;
+
+		private int _length;
 
 #if ENABLE_UNITY_COLLECTIONS_CHECKS
 		private AtomicSafetyHandle m_Safety;
@@ -24,10 +27,6 @@ namespace PathFinding.Helpers
 		private DisposeSentinel m_DisposeSentinel;
 
 #endif
-
-		private int _head;
-
-		private int _length;
 
 		/// <summary>
 		/// Initializes a new instance of the <see cref="NativeMinHeap"/> struct.
@@ -58,7 +57,7 @@ namespace PathFinding.Helpers
 			}
 
 			this._buffer = UnsafeUtility.Malloc( size, UnsafeUtility.AlignOf<MinHeapNode>(), allocator );
-			this.capacity = capacity;
+			this._capacity = capacity;
 			this._allocator = allocator;
 			this._head = -1;
 			this._length = 0;
@@ -88,7 +87,7 @@ namespace PathFinding.Helpers
 		public void Push( MinHeapNode node )
 		{
 #if ENABLE_UNITY_COLLECTIONS_CHECKS
-			if ( this._length == this.capacity )
+			if ( this._length == this._capacity )
 			{
 				throw new IndexOutOfRangeException( "Capacity Reached" );
 			}
@@ -164,7 +163,7 @@ namespace PathFinding.Helpers
 #endif
 			UnsafeUtility.Free( this._buffer, this._allocator );
 			this._buffer = null;
-			this.capacity = 0;
+			this._capacity = 0;
 		}
 
 		public NativeMinHeap Slice( int start, int length )
@@ -174,7 +173,7 @@ namespace PathFinding.Helpers
 			return new NativeMinHeap()
 			{
 				_buffer = (byte*)( (IntPtr)this._buffer + stride * start ),
-				capacity = length,
+				_capacity = length,
 				_length = 0,
 				_head = -1,
 #if ENABLE_UNITY_COLLECTIONS_CHECKS
@@ -199,7 +198,7 @@ namespace PathFinding.Helpers
 
 #if ENABLE_UNITY_COLLECTIONS_CHECKS
 
-		private void FailOutOfRangeError( int index ) => throw new IndexOutOfRangeException( $"Index {index} is out of range of '{this.capacity}' Length." );
+		private void FailOutOfRangeError( int index ) => throw new IndexOutOfRangeException( $"Index {index} is out of range of '{this._capacity}' Length." );
 
 #endif
 	}
@@ -215,28 +214,22 @@ namespace PathFinding.Helpers
 		/// <param name="position">The position.</param>
 		/// <param name="expectedCost">The expected cost.</param>
 		/// <param name="distanceToGoal">Remaining distance to the goal</param>
-		public MinHeapNode( int2 position, float expectedCost, float distanceToGoal )
+		public MinHeapNode( int position, float expectedCost )
 		{
 			this.Position = position;
 			this.ExpectedCost = expectedCost;
-			this.DistanceToGoal = distanceToGoal;
 			this.Next = -1;
 		}
 
 		/// <summary>
 		/// Gets the position.
 		/// </summary>
-		public int2 Position { get; }
+		public int Position { get; }
 
 		/// <summary>
 		/// Gets the expected cost.
 		/// </summary>
 		public float ExpectedCost { get; }
-
-		/// <summary>
-		/// Gets the expected cost.
-		/// </summary>
-		public float DistanceToGoal { get; }
 
 		/// <summary>
 		/// Gets or sets the next node in the heap.
