@@ -16,6 +16,7 @@ namespace Maps.Authoring
 	{
 		[SF] private bool _canMoveDiagonal = true;
 		[SF] private float2 _frequency;
+		[SF] private float2 _offset;
 		[SF] private int _mapSize;
 		[SF] private TileTypeSO[] _tileTypes;
 
@@ -30,7 +31,7 @@ namespace Maps.Authoring
 
 			Entity e = entityManager.CreateEntity( tileArchetype );
 
-			var request = new MapRequest(){ Frequency = _frequency, TileTypes = new BlitableArray<TileType>(_tileTypes.Length, Allocator.TempJob) };
+			var request = new MapRequest(){ Frequency = _frequency, Offset = _offset, TileTypes = new BlitableArray<TileType>(_tileTypes.Length, Allocator.TempJob) };
 			for ( int i = 0; i < _tileTypes.Length; i++ )
 			{
 				TileTypeSO tileType = _tileTypes[i];

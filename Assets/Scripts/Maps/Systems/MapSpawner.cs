@@ -69,7 +69,7 @@ namespace Maps.Systems
 		{
 			var tileTypes = mapRequest.TileTypes;
 
-			float perlin = math.remap(-1, 1, 0, 1, noise.snoise(position * mapRequest.Frequency));
+			float perlin = math.remap(-1, 1, 0, 1, noise.snoise((position * mapRequest.Frequency) + mapRequest.Offset));
 
 			int index = 0;
 
