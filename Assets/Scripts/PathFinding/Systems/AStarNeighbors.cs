@@ -11,8 +11,9 @@ using Unity.Entities;
 namespace PathFinding.Systems
 {
 	[UpdateBefore( typeof( AStar ) )]
-	public class AStarNeighbours : ComponentSystem
+	public class AStarNeighbors : ComponentSystem
 	{
+
 		protected override void OnUpdate() =>
 			Entities.WithNone<MapSettingsNeighborsState>().ForEach(
 				( Entity e, ref MapSettings mapSettings ) =>
@@ -44,5 +45,11 @@ namespace PathFinding.Systems
 							}
 							PostUpdateCommands.AddComponent( e, neighboursState );
 						} );
+
+		protected override void OnDestroy() =>
+			Entities.ForEach( ( ref MapSettingsNeighborsState neighboursState ) =>
+			{
+				neighboursState.Neighbours.Dispose();
+			} );
 	}
 }

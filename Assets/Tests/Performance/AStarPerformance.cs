@@ -78,7 +78,7 @@ namespace Performance
 			var mapSpawnerSystem = _currentWorld.GetOrCreateSystem<MapSpawner>();
 			mapSpawnerSystem.Update();
 
-			var aStarNeighbours = _currentWorld.GetOrCreateSystem<AStarNeighbours>();
+			var aStarNeighbours = _currentWorld.GetOrCreateSystem<AStarNeighbors>();
 			aStarNeighbours.Update();
 		}
 	}

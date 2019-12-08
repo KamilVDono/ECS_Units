@@ -16,6 +16,17 @@ using static Helpers.IndexUtils;
 
 namespace PathFinding.Systems
 {
+	/// <summary>
+	/// A* system
+	/// Uses:
+	/// <list type="bullet">
+	/// <item><see cref="MapSettings"/> for map tiles </item>
+	/// <item><see cref="MapSettingsNeighborsState"/> for neighbors setting </item>
+	/// <item><see cref="MovementCost"/> for cost calculation </item>
+	/// <item><see cref="PathRequest"/> for request data </item>
+	/// <item><see cref="Waypoint"/> for store response path </item>
+	/// </list>
+	/// </summary>
 	public class AStar : ComponentSystem
 	{
 		#region ProfilerMarkers
@@ -33,15 +44,13 @@ namespace PathFinding.Systems
 
 		#region Lifetime
 
-		protected override void OnCreate() => _eseCommandBufferSystem = World.GetOrCreateSystem<EndSimulationEntityCommandBufferSystem>();
-
-		protected override void OnDestroy() => Entities.ForEach( ( ref MapSettingsNeighborsState neighboursState ) =>
-											{
-												neighboursState.Neighbours.Dispose();
-											} );
+		// Obtain buffer
+		protected override void OnCreate() =>
+			_eseCommandBufferSystem = World.GetOrCreateSystem<EndSimulationEntityCommandBufferSystem>();
 
 		protected override void OnUpdate()
 		{
+			// Get tile entities and neighbors data
 			BlitableArray<Entity> tiles = new BlitableArray<Entity>();
 			BlitableArray<Neighbor> neighbors = new BlitableArray<Neighbor>();
 
@@ -50,11 +59,14 @@ namespace PathFinding.Systems
 				neighbors = neighboursState.Neighbours;
 				tiles = mapSettings.Tiles;
 			} );
+
+			// The data is in not valid state
 			if ( tiles.Length < 1 || neighbors.Length < 1 )
 			{
 				return;
 			}
 
+			// Other data
 			var movementComponents = GetComponentDataFromEntity<MovementCost>( true );
 			var tilesSize = tiles.Length;
 			var commandBuffer = _eseCommandBufferSystem.CreateCommandBuffer();
