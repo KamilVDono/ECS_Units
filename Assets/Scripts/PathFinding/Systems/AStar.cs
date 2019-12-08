@@ -185,7 +185,6 @@ namespace Pathfinding.Systems
 				closeSet.Dispose();
 				camesFrom.Dispose();
 				minSet.Dispose();
-				movementData.Dispose();
 				// Mark request as completed
 				pathRequest.Done = true;
 				_markerCleanup.End();
@@ -194,6 +193,8 @@ namespace Pathfinding.Systems
 
 				_markerAStar.End();
 			} );
+
+			movementData.Dispose();
 		}
 
 		#endregion Lifetime
