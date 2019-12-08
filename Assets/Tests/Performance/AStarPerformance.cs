@@ -7,8 +7,8 @@ using Maps.Systems;
 
 using NUnit.Framework;
 
-using PathFinding.Components;
-using PathFinding.Systems;
+using Pathfinding.Components;
+using Pathfinding.Systems;
 using Tests;
 using Unity.Collections;
 using Unity.Mathematics;

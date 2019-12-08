@@ -1,10 +1,10 @@
 ﻿using Unity.Entities;
 using Unity.Mathematics;
 
-namespace PathFinding.Components
+namespace Pathfinding.Components
 {
 	public struct Waypoint : IBufferElementData
 	{
-		public float2 Position;
+		public int2 Position;
 	}
 }

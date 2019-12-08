@@ -2,13 +2,13 @@
 
 using Maps.Components;
 
-using PathFinding.Components;
-using PathFinding.Helpers;
+using Pathfinding.Components;
+using Pathfinding.Helpers;
 
 using Unity.Collections;
 using Unity.Entities;
 
-namespace PathFinding.Systems
+namespace Pathfinding.Systems
 {
 	[UpdateBefore( typeof( AStar ) )]
 	public class AStarNeighbors : ComponentSystem

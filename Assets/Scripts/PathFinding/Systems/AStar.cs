@@ -2,8 +2,8 @@
 
 using Maps.Components;
 
-using PathFinding.Components;
-using PathFinding.Helpers;
+using Pathfinding.Components;
+using Pathfinding.Helpers;
 
 using System.Runtime.CompilerServices;
 
@@ -14,7 +14,7 @@ using Unity.Profiling;
 
 using static Helpers.IndexUtils;
 
-namespace PathFinding.Systems
+namespace Pathfinding.Systems
 {
 	/// <summary>
 	/// A* system
@@ -70,7 +70,7 @@ namespace PathFinding.Systems
 			var movementComponents = GetComponentDataFromEntity<MovementCost>( true );
 			var tilesSize = tiles.Length;
 			var commandBuffer = _eseCommandBufferSystem.CreateCommandBuffer();
-			var movementData = movementComponents;
+			var movementData = new NativeArray<MovementCost>( tiles.Length, Allocator.Temp );
 
 			Entities.WithNone<Waypoint>().ForEach( ( Entity requestEntity, ref PathRequest pathRequest ) =>
 			{
@@ -97,6 +97,7 @@ namespace PathFinding.Systems
 				{
 					costs[i] = new float2 { x = 0, y = float.MaxValue };
 					camesFrom[i] = -1;
+					movementData[i] = EntityManager.GetComponentData<MovementCost>( tiles[i] );
 				}
 				_markerSetupData.End();
 
@@ -119,10 +120,6 @@ namespace PathFinding.Systems
 					// Mark current tile as visited
 					closeSet[lastTile] = true;
 
-					_markerMovementData.Begin();
-					var currentCost = movementData[tiles[lastTile]];
-					_markerMovementData.End();
-
 					for ( int i = 0; i < neighbors.Length; ++i )
 					{
 						var neighbor = neighbors[i];
@@ -132,6 +129,16 @@ namespace PathFinding.Systems
 						if ( neighborIndex != -1 )
 						{
 							// Previous + current cost
+							_markerMovementData.Begin();
+							var currentCost = movementData[neighborIndex];
+							_markerMovementData.End();
+
+							if ( currentCost.Cost == MovementCost.IMPOSSIBLE )
+							{
+								closeSet[neighborIndex] = true;
+								continue;
+							}
+
 							var costG = costs[lastTile].x + neighbor.Distance * currentCost.Cost;
 							var costF = costG + Heuristic( pathRequest, neighborIndex, tilesSize );
 
@@ -178,6 +185,7 @@ namespace PathFinding.Systems
 				closeSet.Dispose();
 				camesFrom.Dispose();
 				minSet.Dispose();
+				movementData.Dispose();
 				// Mark request as completed
 				pathRequest.Done = true;
 				_markerCleanup.End();

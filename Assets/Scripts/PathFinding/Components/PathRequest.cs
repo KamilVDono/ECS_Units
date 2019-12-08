@@ -3,7 +3,7 @@
 using Unity.Entities;
 using Unity.Mathematics;
 
-namespace PathFinding.Components
+namespace Pathfinding.Components
 {
 	public struct PathRequest : IComponentData
 	{

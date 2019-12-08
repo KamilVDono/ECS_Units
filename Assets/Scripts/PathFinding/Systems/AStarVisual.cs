@@ -1,4 +1,4 @@
-﻿using PathFinding.Components;
+﻿using Pathfinding.Components;
 
 using Unity.Entities;
 using Unity.Mathematics;
@@ -8,7 +8,7 @@ using Unity.Transforms;
 using UnityEngine;
 using UnityEngine.Profiling;
 
-namespace PathFinding.Systems
+namespace Pathfinding.Systems
 {
 	[UpdateBefore( typeof( AStar ) )]
 	public class AStarVisual : ComponentSystem
@@ -68,16 +68,15 @@ namespace PathFinding.Systems
 				var materialColor = new Color( _random.NextFloat(), _random.NextFloat(), _random.NextFloat(), 1 );
 				_material.SetColor( BASE_COLOR, materialColor );
 
-				var buffer = EntityManager.GetBuffer<Waypoint>( e );
-
-				var length = buffer.Length;
-
 				var rotation = quaternion.Euler( new float3( math.radians(-90), 0, 0 ) );
+
+				var buffer = EntityManager.GetBuffer<Waypoint>( e );
+				var length = buffer.Length;
 
 				for ( int x = 0; x < length; x++ )
 				{
 					var tileEntity = PostUpdateCommands.CreateEntity( _pathTileArchetype );
-					var waypoint = EntityManager.GetBuffer<Waypoint>( e )[x];
+					var waypoint = buffer[x];
 					PostUpdateCommands.SetSharedComponent( tileEntity, new RenderMesh { mesh = _mesh, material = _material } );
 					PostUpdateCommands.SetComponent( tileEntity, new Translation { Value = new float3( waypoint.Position.x, 1, waypoint.Position.y ) } );
 					PostUpdateCommands.SetComponent( tileEntity, new Rotation { Value = rotation } );

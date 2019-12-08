@@ -1,12 +1,12 @@
 ﻿using Helpers;
 
-using PathFinding.Helpers;
+using Pathfinding.Helpers;
 
 using Unity.Entities;
 
-namespace PathFinding.Components
+namespace Pathfinding.Components
 {
-	internal struct MapSettingsNeighborsState : ISystemStateComponentData
+	public struct MapSettingsNeighborsState : IComponentData
 	{
 		public BlitableArray<Neighbor> Neighbours;
 	}

@@ -1,12 +1,12 @@
 ﻿using Input.Components;
 
-using PathFinding.Components;
+using Pathfinding.Components;
 
 using Unity.Entities;
 
 using static Helpers.IndexUtils;
 
-namespace PathFinding.Systems
+namespace Pathfinding.Systems
 {
 	public class AStarMouseInput : ComponentSystem
 	{

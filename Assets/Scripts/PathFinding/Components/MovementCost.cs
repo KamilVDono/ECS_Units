@@ -1,11 +1,11 @@
 ﻿using Unity.Entities;
 
-namespace PathFinding.Components
+namespace Pathfinding.Components
 {
 	public struct MovementCost : IComponentData
 	{
 		public const float FREE = 0;
-		public const float IMPOSIBLE = float.MaxValue;
+		public const float IMPOSSIBLE = float.MaxValue;
 
 		public float Cost;
 	}

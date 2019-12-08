@@ -2,7 +2,7 @@
 
 using Maps.Components;
 
-using PathFinding.Components;
+using Pathfinding.Components;
 
 using Unity.Collections;
 using Unity.Entities;
@@ -14,13 +14,12 @@ namespace Maps.Systems
 {
 	public class MapSpawner : ComponentSystem
 	{
-		#region Private Fields
 		private EntityArchetype _tileArchetype;
-		#endregion Private Fields
 
-		#region Protected Methods
+		#region Methods
 
-		protected override void OnCreate() => _tileArchetype = EntityManager.CreateArchetype(
+		protected override void OnCreate() =>
+			_tileArchetype = EntityManager.CreateArchetype(
 				typeof( RenderMesh ),
 				typeof( TileType ),
 				typeof( LocalToWorld ),
@@ -29,9 +28,8 @@ namespace Maps.Systems
 				typeof( MovementCost )
 			);
 
-		protected override void OnDestroy() => Entities.ForEach( ( ref MapSettings mapSetting ) => mapSetting.Tiles.Dispose() );
-
-		protected override void OnUpdate() => Entities.ForEach( ( Entity e, MapRequest mapRequest, ref MapSettings settings ) =>
+		protected override void OnUpdate() =>
+			Entities.ForEach( ( Entity e, MapRequest mapRequest, ref MapSettings settings ) =>
 		{
 			var mapSize = settings.MapSize;
 			NativeArray<Entity> tileEntities =  new NativeArray<Entity>(mapSize * mapSize, Allocator.Temp);
@@ -61,9 +59,8 @@ namespace Maps.Systems
 			tileEntities.Dispose();
 		} );
 
-		#endregion Protected Methods
-
-		#region Private Methods
+		protected override void OnDestroy() =>
+			Entities.ForEach( ( ref MapSettings mapSetting ) => mapSetting.Tiles.Dispose() );
 
 		private TileType FindTileType( float2 position, MapRequest mapRequest )
 		{
@@ -83,6 +80,6 @@ namespace Maps.Systems
 			return mapRequest.TileTypes[index];
 		}
 
-		#endregion Private Methods
+		#endregion Methods
 	}
 }

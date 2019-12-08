@@ -4,7 +4,7 @@ using Unity.Mathematics;
 
 using static Helpers.IndexUtils;
 
-namespace PathFinding.Helpers
+namespace Pathfinding.Helpers
 {
 	public readonly struct Neighbor
 	{

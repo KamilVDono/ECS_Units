@@ -1,6 +1,6 @@
 ﻿using NUnit.Framework;
 
-using PathFinding.Helpers;
+using Pathfinding.Helpers;
 
 using System.Linq;
 
@@ -8,7 +8,7 @@ using Unity.Mathematics;
 
 using static Helpers.IndexUtils;
 using static NUnit.Framework.Assert;
-using static PathFinding.Helpers.Neighbor;
+using static Pathfinding.Helpers.Neighbor;
 
 namespace Tests.Helpers
 {
