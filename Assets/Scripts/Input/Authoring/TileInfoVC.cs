@@ -1,6 +1,5 @@
 ﻿using Input.Components;
 
-using Maps.Authoring;
 using Maps.Components;
 
 using TMPro;
@@ -19,8 +18,8 @@ namespace Input.Authoring
 		private EntityQuery _tileUnderMouseQuery;
 		private Entity _lastTile;
 
-		private static TileTypeSO ExtractTileSO( TileUnderMouse tileUnderMouse ) =>
-			World.Active.EntityManager.GetSharedComponentData<TileType>( tileUnderMouse.Tile ).TileTypeSO;
+		private static string ExtractDescription( TileUnderMouse tileUnderMouse ) =>
+			World.Active.EntityManager.GetSharedComponentData<TileType>( tileUnderMouse.Tile ).TileTypeBlob.Value.Description.ToString();
 
 		private void Awake() => _tileUnderMouseQuery = World.Active.EntityManager.CreateEntityQuery( ComponentType.ReadOnly<TileUnderMouse>() );
 
@@ -32,7 +31,7 @@ namespace Input.Authoring
 			{
 				if ( _lastTile != infoComponents[0].Tile )
 				{
-					_tileInfoText.text = ExtractTileSO( infoComponents[0] ).ToString();
+					_tileInfoText.text = ExtractDescription( infoComponents[0] );
 					_lastTile = infoComponents[0].Tile;
 				}
 			}

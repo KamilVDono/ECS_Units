@@ -17,14 +17,13 @@ using static Helpers.IndexUtils;
 namespace Pathfinding.Systems
 {
 	/// <summary>
-	/// A* system
-	/// Uses:
+	/// A* system Uses:
 	/// <list type="bullet">
-	/// <item><see cref="MapSettings"/> for map tiles </item>
-	/// <item><see cref="MapSettingsNeighborsState"/> for neighbors setting </item>
-	/// <item><see cref="MovementCost"/> for cost calculation </item>
-	/// <item><see cref="PathRequest"/> for request data </item>
-	/// <item><see cref="Waypoint"/> for store response path </item>
+	/// <item><see cref="MapSettings"/> for map tiles</item>
+	/// <item><see cref="MapSettingsNeighborsState"/> for neighbors setting</item>
+	/// <item><see cref="MovementCost"/> for cost calculation</item>
+	/// <item><see cref="PathRequest"/> for request data</item>
+	/// <item><see cref="Waypoint"/> for store response path</item>
 	/// </list>
 	/// </summary>
 	public class AStar : ComponentSystem
@@ -41,27 +40,29 @@ namespace Pathfinding.Systems
 		#endregion ProfilerMarkers
 
 		private EndSimulationEntityCommandBufferSystem _eseCommandBufferSystem;
+		private NativeArray<Neighbor> _neighbors;
 
 		#region Lifetime
 
 		// Obtain buffer
-		protected override void OnCreate() =>
+		protected override void OnCreate()
+		{
 			_eseCommandBufferSystem = World.GetOrCreateSystem<EndSimulationEntityCommandBufferSystem>();
+			_neighbors = Neighbor.FullNeighborhood( Allocator.Persistent );
+		}
 
 		protected override void OnUpdate()
 		{
 			// Get tile entities and neighbors data
 			BlitableArray<Entity> tiles = new BlitableArray<Entity>();
-			BlitableArray<Neighbor> neighbors = new BlitableArray<Neighbor>();
 
-			Entities.ForEach( ( Entity e, ref MapSettings mapSettings, ref MapSettingsNeighborsState neighboursState ) =>
+			Entities.ForEach( ( Entity e, ref MapSettings mapSettings ) =>
 			{
-				neighbors = neighboursState.Neighbours;
 				tiles = mapSettings.Tiles;
 			} );
 
 			// The data is in not valid state
-			if ( tiles.Length < 1 || neighbors.Length < 1 )
+			if ( tiles.Length < 1 )
 			{
 				return;
 			}
@@ -120,9 +121,9 @@ namespace Pathfinding.Systems
 					// Mark current tile as visited
 					closeSet[lastTile] = true;
 
-					for ( int i = 0; i < neighbors.Length; ++i )
+					for ( int i = 0; i < _neighbors.Length; ++i )
 					{
-						var neighbor = neighbors[i];
+						var neighbor = _neighbors[i];
 						// Find linear neighbor index
 						var neighborIndex = neighbor.Of( lastTile, tilesSize );
 						// Check if neighbor exists
@@ -196,6 +197,8 @@ namespace Pathfinding.Systems
 
 			movementData.Dispose();
 		}
+
+		protected override void OnDestroy() => _neighbors.Dispose();
 
 		#endregion Lifetime
 

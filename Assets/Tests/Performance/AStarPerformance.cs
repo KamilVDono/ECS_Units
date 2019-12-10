@@ -9,7 +9,9 @@ using NUnit.Framework;
 
 using Pathfinding.Components;
 using Pathfinding.Systems;
+
 using Tests;
+
 using Unity.Collections;
 using Unity.Mathematics;
 using Unity.PerformanceTesting;
@@ -69,17 +71,14 @@ namespace Performance
 
 			for ( int i = 0; i < AllTileSO.Length; i++ )
 			{
-				tileTypes[i] = new TileType() { TileTypeSO = AllTileSO[i] };
+				tileTypes[i] = new TileType( AllTileSO[i] );
 			}
 
 			_entityManager.SetSharedComponentData( requestEntity, new MapRequest() { Frequency = new float2( 0.1f, 0.1f ), TileTypes = tileTypes } );
-			_entityManager.SetComponentData( requestEntity, new MapSettings() { CanMoveDiagonally = true, MapSize = mapSize } );
+			_entityManager.SetComponentData( requestEntity, new MapSettings() { MapEdgeSize = mapSize } );
 
 			var mapSpawnerSystem = _currentWorld.GetOrCreateSystem<MapSpawner>();
 			mapSpawnerSystem.Update();
-
-			var aStarNeighbours = _currentWorld.GetOrCreateSystem<AStarNeighbors>();
-			aStarNeighbours.Update();
 		}
 	}
 }

@@ -22,6 +22,7 @@ namespace Input.Authoring
 		private ScreenEdgeInput _screenInput;
 		private Vector2Int _screenSize;
 		private int _mapSize;
+		private bool _mapInited = false;
 
 		private float _AspectRatio => _screenSize.x / (float)_screenSize.y;
 
@@ -33,10 +34,22 @@ namespace Input.Authoring
 			_screenSize = new Vector2Int( Screen.width, Screen.height );
 		}
 
-		private void Start()
+		private void Update()
 		{
+			if ( _mapInited )
+			{
+				return;
+			}
+
 			var mapSettings = World.Active.EntityManager.CreateEntityQuery( ComponentType.ReadOnly<MapSettings>() ).ToEntityArray(Unity.Collections.Allocator.TempJob);
-			_mapSize = World.Active.EntityManager.GetComponentData<MapSettings>( mapSettings[0] ).MapSize;
+			if ( mapSettings.Length < 1 )
+			{
+				mapSettings.Dispose();
+				return;
+			}
+
+			_mapSize = World.Active.EntityManager.GetComponentData<MapSettings>( mapSettings[0] ).MapEdgeSize;
+			_mapInited = true;
 			mapSettings.Dispose();
 
 			_mapBounds = CalculateBounds( _mapSize, _camera.orthographicSize, transform.position.y, _AspectRatio );
@@ -52,8 +65,11 @@ namespace Input.Authoring
 
 		private void LateUpdate()
 		{
-			UpdateZoom();
-			UpdatePosition();
+			if ( _mapInited )
+			{
+				UpdateZoom();
+				UpdatePosition();
+			}
 		}
 
 		#region CameraInput lifetime

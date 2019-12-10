@@ -14,7 +14,6 @@ namespace Maps.Authoring
 {
 	public class TileSpawner : MonoBehaviour
 	{
-		[SF] private bool _canMoveDiagonal = true;
 		[SF] private float2 _frequency;
 		[SF] private float2 _offset;
 		[SF] private int _mapSize;
@@ -24,24 +23,16 @@ namespace Maps.Authoring
 		{
 			var entityManager = World.Active.EntityManager;
 
-			var tileArchetype = entityManager.CreateArchetype(
-				typeof(MapSettings),
-				typeof(MapRequest)
-			);
+			Entity e = entityManager.CreateEntity( typeof(MapRequest) );
 
-			Entity e = entityManager.CreateEntity( tileArchetype );
-
-			var request = new MapRequest(){ Frequency = _frequency, Offset = _offset, TileTypes = new BlitableArray<TileType>(_tileTypes.Length, Allocator.TempJob) };
+			var request = new MapRequest(){ Frequency = _frequency, Offset = _offset, TileTypes = new BlitableArray<TileType>(_tileTypes.Length, Allocator.TempJob), MapEdgeSize = _mapSize };
 			for ( int i = 0; i < _tileTypes.Length; i++ )
 			{
 				TileTypeSO tileType = _tileTypes[i];
-				request.TileTypes[i] = new TileType() { TileTypeSO = tileType };
+				request.TileTypes[i] = new TileType( tileType );
 			}
 
-			var settings = new MapSettings(){ MapSize = _mapSize, CanMoveDiagonally = _canMoveDiagonal};
-
 			entityManager.SetSharedComponentData( e, request );
-			entityManager.SetComponentData( e, settings );
 		}
 	}
 }

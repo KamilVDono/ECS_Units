@@ -70,7 +70,7 @@ namespace Tests.Input
 			Update();
 
 			var tileUnderMouse = _entityManager.GetComponentData<TileUnderMouse>( entity );
-			AreEqual( SandTileSO, _entityManager.GetSharedComponentData<TileType>( tileUnderMouse.Tile ).TileTypeSO );
+			AreEqual( SandTileSO.name, _entityManager.GetSharedComponentData<TileType>( tileUnderMouse.Tile ).TileTypeBlob.Value.Name.ToString() );
 		}
 
 		[Test]
@@ -96,7 +96,7 @@ namespace Tests.Input
 			Update();
 
 			var tileUnderMouse = _entityManager.GetComponentData<TileUnderMouse>( entity );
-			AreEqual( SandTileSO, _entityManager.GetSharedComponentData<TileType>( tileUnderMouse.Tile ).TileTypeSO );
+			AreEqual( SandTileSO.name, _entityManager.GetSharedComponentData<TileType>( tileUnderMouse.Tile ).TileTypeBlob.Value.Name.ToString() );
 		}
 
 		protected Entity SetMouseInput( float2 position )
@@ -129,13 +129,13 @@ namespace Tests.Input
 		{
 			var mapSize = edgeSize * edgeSize;
 			var tile = _entityManager.CreateEntity( typeof(TileType) );
-			_entityManager.SetSharedComponentData( tile, new TileType() { TileTypeSO = SandTileSO } );
+			_entityManager.SetSharedComponentData( tile, new TileType( SandTileSO ) );
 			var tiles = new BlitableArray<Entity>(mapSize, Unity.Collections.Allocator.Temp);
 			for ( int i = 0; i < mapSize; i++ )
 			{
 				tiles[i] = tile;
 			}
-			_entityManager.SetComponentData( _entityManager.CreateEntity( typeof( MapSettings ) ), new MapSettings() { Tiles = tiles, MapSize = 1, CanMoveDiagonally = true } );
+			_entityManager.SetComponentData( _entityManager.CreateEntity( typeof( MapSettings ) ), new MapSettings() { Tiles = tiles, MapEdgeSize = 1 } );
 		}
 	}
 }

@@ -42,28 +42,25 @@ namespace Tests.Map
 		public void Spawn_OneSand()
 		{
 			// Create request
-			var requestEntity = _entityManager.CreateEntity(typeof(MapRequest), typeof(MapSettings));
+			var requestEntity = _entityManager.CreateEntity(typeof(MapRequest));
 			var tileTypes = new BlitableArray<TileType>( 1, Allocator.TempJob );
-			tileTypes[0] = new TileType() { TileTypeSO = SandTileSO };
-			_entityManager.SetSharedComponentData( requestEntity, new MapRequest() { Frequency = new float2( 0.1f, 0.1f ), TileTypes = tileTypes } );
-			_entityManager.SetComponentData( requestEntity, new MapSettings() { CanMoveDiagonally = true, MapSize = 1 } );
+			tileTypes[0] = new TileType( SandTileSO );
+			_entityManager.SetSharedComponentData( requestEntity, new MapRequest() { Frequency = new float2( 0.1f, 0.1f ), TileTypes = tileTypes, MapEdgeSize = 1 } );
 
 			// Update
 			Update();
 
 			// Gather data
-			var created = _entityManager.GetComponentData<MapSettings>( requestEntity ).Tiles;
+			var mapSettingEntities = _entityManager.CreateEntityQuery( typeof( MapSettings ) ).ToEntityArray(Allocator.TempJob);
+			AreEqual( 1, mapSettingEntities.Length );
+
+			var mapSetting = _entityManager.GetComponentData<MapSettings>(mapSettingEntities[0]);
+			var created = mapSetting.Tiles;
 			var tileType = _entityManager.GetSharedComponentData<TileType>( created[0] );
 
 			AreEqual( 1, created.Length );
-			AreEqual( tileType.TileTypeSO, SandTileSO );
-		}
-
-		[Test]
-		public void Spawn_TwoTimes()
-		{
-			Spawn_OneSand();
-			Spawn_OneSand();
+			AreEqual( tileType.TileTypeBlob.Value.Name.ToString(), SandTileSO.name );
+			mapSettingEntities.Dispose();
 		}
 
 		[Test]
@@ -73,24 +70,26 @@ namespace Tests.Map
 			var mapSize = 50;
 
 			// Create request
-			var requestEntity = _entityManager.CreateEntity(typeof(MapRequest), typeof(MapSettings));
+			var requestEntity = _entityManager.CreateEntity(typeof(MapRequest));
 			var tileTypes = new BlitableArray<TileType>( AllTileSO.Length, Allocator.TempJob );
 
 			for ( int i = 0; i < AllTileSO.Length; i++ )
 			{
-				tileTypes[i] = new TileType() { TileTypeSO = AllTileSO[i] };
+				tileTypes[i] = new TileType( AllTileSO[i] );
 			}
 
-			_entityManager.SetSharedComponentData( requestEntity, new MapRequest() { Frequency = new float2( 0.1f, 0.1f ), TileTypes = tileTypes } );
-			_entityManager.SetComponentData( requestEntity, new MapSettings() { CanMoveDiagonally = true, MapSize = mapSize } );
+			_entityManager.SetSharedComponentData( requestEntity, new MapRequest() { Frequency = new float2( 0.1f, 0.1f ), TileTypes = tileTypes, MapEdgeSize = mapSize } );
 
 			// Update
 			Update();
 
 			// Gather data
-			var created = _entityManager.GetComponentData<MapSettings>( requestEntity ).Tiles;
+			var mapSettingEntities = _entityManager.CreateEntityQuery( typeof( MapSettings ) ).ToEntityArray(Allocator.TempJob);
+			AreEqual( 1, mapSettingEntities.Length );
+			var created = _entityManager.GetComponentData<MapSettings>( mapSettingEntities[0] ).Tiles;
 
 			AreEqual( mapSize * mapSize, created.Length );
+			mapSettingEntities.Dispose();
 		}
 	}
 }

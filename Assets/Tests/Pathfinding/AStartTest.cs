@@ -128,26 +128,6 @@ namespace Tests.Pathfinding
 		}
 
 		[Test]
-		public void OneCost_NoDiagonal()
-		{
-			CreateMap( new float[] {
-				MovementCost.FREE, MovementCost.FREE, MovementCost.FREE,
-				MovementCost.FREE, MovementCost.FREE, MovementCost.FREE,
-				MovementCost.FREE, MovementCost.FREE, MovementCost.FREE,
-			}, false );
-
-			var request = _entityManager.CreateEntity(typeof(PathRequest));
-			_entityManager.SetComponentData( request, new PathRequest { Start = new int2( 0, 0 ), End = new int2( 2, 2 ) } );
-
-			Update();
-
-			var way = _entityManager.GetBuffer<Waypoint>( request );
-			PrintWay( way );
-			Assert.True( _entityManager.GetComponentData<PathRequest>( request ).Done );
-			Assert.NotZero( way.Length );
-		}
-
-		[Test]
 		public void Avoid()
 		{
 			CreateMap( new float[] {
@@ -215,7 +195,7 @@ namespace Tests.Pathfinding
 			Debug.Log( sb.ToString() );
 		}
 
-		private void CreateMap( float[] map, bool diagonal = true )
+		private void CreateMap( float[] map )
 		{
 			var mapSize = map.Length;
 
@@ -234,13 +214,10 @@ namespace Tests.Pathfinding
 			var blitableTiles = new BlitableArray<Entity>();
 			blitableTiles.Allocate( tiles, Allocator.Temp );
 
-			_entityManager.SetComponentData( mapEntity, new MapSettings { MapSize = EdgeSize( mapSize ), CanMoveDiagonally = diagonal, Tiles = blitableTiles } );
+			_entityManager.SetComponentData( mapEntity, new MapSettings { MapEdgeSize = EdgeSize( mapSize ), Tiles = blitableTiles } );
 
 			var mapSpawnerSystem = _currentWorld.GetOrCreateSystem<MapSpawner>();
 			mapSpawnerSystem.Update();
-
-			var aStarNeighbours = _currentWorld.GetOrCreateSystem<AStarNeighbors>();
-			aStarNeighbours.Update();
 		}
 
 		#endregion Helpers

@@ -1,5 +1,7 @@
 ﻿using Input.Components;
 
+using Maps.Systems;
+
 using Unity.Entities;
 using Unity.Mathematics;
 
@@ -9,6 +11,7 @@ using UnityEngine.InputSystem;
 namespace Input.Systems
 {
 	[UpdateInGroup( typeof( InitializationSystemGroup ) )]
+	[UpdateAfter( typeof( MapSpawner ) )]
 	public class MouseInputFeeder : ComponentSystem
 	{
 		private float2 _screenSize;

@@ -10,5 +10,6 @@ namespace Maps.Components
 		public float2 Frequency;
 		public float2 Offset;
 		public BlitableArray<TileType> TileTypes;
+		public int MapEdgeSize;
 	}
 }

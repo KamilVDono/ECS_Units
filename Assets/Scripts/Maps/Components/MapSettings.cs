@@ -6,8 +6,7 @@ namespace Maps.Components
 {
 	public struct MapSettings : IComponentData
 	{
-		public Boolean CanMoveDiagonally;
-		public int MapSize;
+		public int MapEdgeSize;
 		public BlitableArray<Entity> Tiles;
 	}
 }
