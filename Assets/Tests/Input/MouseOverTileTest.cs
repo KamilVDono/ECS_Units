@@ -1,13 +1,12 @@
 ﻿using Helpers;
 
 using Input.Components;
+using Input.Systems;
 
 using Maps.Authoring;
 using Maps.Components;
 
 using NUnit.Framework;
-
-using Scripts.Assets.Scripts.Input.Systems;
 
 using Unity.Entities;
 using Unity.Mathematics;
