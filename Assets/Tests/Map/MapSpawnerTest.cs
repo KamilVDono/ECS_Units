@@ -1,5 +1,4 @@
 ﻿using Helpers;
-using Helpers.Assets.Scripts.Helpers;
 
 using Maps.Authoring;
 using Maps.Components;
@@ -11,6 +10,8 @@ using System.Linq;
 
 using Unity.Collections;
 using Unity.Mathematics;
+
+using UnityEngine;
 
 using static NUnit.Framework.Assert;
 
@@ -25,8 +26,18 @@ namespace Tests.Map
 		public override void SetUp()
 		{
 			base.SetUp();
-			AllTileSO = ResourcePath.TILES_SO.All<TileTypeSO>();
-			SandTileSO = AllTileSO.First( tile => tile.name == "Sand" );
+			AllTileSO = new TileTypeSO[10];
+			for ( int i = 0; i < AllTileSO.Length; i++ )
+			{
+				AllTileSO[i] = ScriptableObject.CreateInstance<TileTypeSO>();
+				AllTileSO[i].name = i.ToString();
+				AllTileSO[i].Cost = i * i;
+				AllTileSO[i].Color = new Color32( (byte)i, (byte)i, (byte)i, 1 );
+				AllTileSO[i].Range = 1f / AllTileSO.Length;
+				AllTileSO[i].hideFlags = HideFlags.HideAndDontSave;
+				AllTileSO[i].SetupToString();
+			}
+			SandTileSO = AllTileSO.First();
 		}
 
 		[TearDown]

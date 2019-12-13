@@ -1,5 +1,4 @@
 ﻿using Helpers;
-using Helpers.Assets.Scripts.Helpers;
 
 using Input.Components;
 
@@ -13,6 +12,8 @@ using Scripts.Assets.Scripts.Input.Systems;
 using Unity.Entities;
 using Unity.Mathematics;
 
+using UnityEngine;
+
 using static NUnit.Framework.Assert;
 
 namespace Tests.Input
@@ -25,7 +26,13 @@ namespace Tests.Input
 		public override void SetUp()
 		{
 			base.SetUp();
-			SandTileSO = ResourcePath.TILES_SO.Load<TileTypeSO>( "Sand" );
+			SandTileSO = ScriptableObject.CreateInstance<TileTypeSO>();
+			SandTileSO.name = "sand";
+			SandTileSO.Cost = 1f;
+			SandTileSO.Color = Color.red;
+			SandTileSO.Range = 1f;
+			SandTileSO.hideFlags = HideFlags.HideAndDontSave;
+			SandTileSO.SetupToString();
 		}
 
 		[TearDown]

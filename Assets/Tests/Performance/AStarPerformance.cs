@@ -1,5 +1,4 @@
 ﻿using Helpers;
-using Helpers.Assets.Scripts.Helpers;
 
 using Maps.Authoring;
 using Maps.Components;
@@ -15,6 +14,8 @@ using Tests;
 using Unity.Collections;
 using Unity.Mathematics;
 using Unity.PerformanceTesting;
+
+using UnityEngine;
 
 namespace Performance
 {
@@ -63,7 +64,15 @@ namespace Performance
 
 		private void CreateMap( int mapSize )
 		{
-			var AllTileSO = ResourcePath.TILES_SO.All<TileTypeSO>();
+			var AllTileSO = new TileTypeSO[10];
+			for ( int i = 0; i < AllTileSO.Length; i++ )
+			{
+				AllTileSO[i] = ScriptableObject.CreateInstance<TileTypeSO>();
+				AllTileSO[i].name = i.ToString();
+				AllTileSO[i].Cost = i * i;
+				AllTileSO[i].Color = new Color32( (byte)i, (byte)i, (byte)i, 1 );
+				AllTileSO[i].Range = 1f / AllTileSO.Length;
+			}
 
 			// Create request
 			var requestEntity = _entityManager.CreateEntity(typeof(MapRequest), typeof(MapSettings));

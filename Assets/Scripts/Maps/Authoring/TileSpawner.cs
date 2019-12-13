@@ -21,6 +21,11 @@ namespace Maps.Authoring
 
 		private void Awake()
 		{
+			foreach ( var tile in _tileTypes )
+			{
+				tile.SetupToString();
+			}
+
 			var entityManager = World.Active.EntityManager;
 
 			Entity e = entityManager.CreateEntity( typeof(MapRequest) );

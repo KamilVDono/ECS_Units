@@ -2,8 +2,6 @@
 
 using UnityEngine;
 
-using SF = UnityEngine.SerializeField;
-
 namespace Maps.Authoring
 {
 	[CreateAssetMenu( menuName = "ScriptbleObjects/Map/TileType" )]
@@ -14,7 +12,6 @@ namespace Maps.Authoring
 		public Mesh Mesh;
 		[Range(0f, 1f)]
 		public float Range;
-		[SF] private Material _baseMaterial;
 		private Material _material;
 
 		private string _toString = null;
@@ -25,13 +22,13 @@ namespace Maps.Authoring
 
 		public override string ToString() => _toString;
 
-		private void OnEnable() =>
-			_toString = $"Tile with cost: {Cost}, color: {Color}, mesh: {Mesh.name} and material {_baseMaterial.name} ({_baseMaterial.shader.name})";
+		public void SetupToString() =>
+			_toString = $"Tile with cost: {Cost}, color: {Color}, mesh: {Mesh?.name}";
 
 		private Material CreateMaterial()
 		{
-			_material = new Material( _baseMaterial );
-			_material.SetColor( "_BaseColor", Color );
+			_material = new Material( Shader.Find( "Map/Tile" ) );
+			_material.SetColor( "_MainColor", Color );
 			return _material;
 		}
 	}

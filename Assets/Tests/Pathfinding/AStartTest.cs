@@ -185,8 +185,8 @@ namespace Tests.Pathfinding
 
 		private void PrintWay( DynamicBuffer<Waypoint> dynamicBuffer )
 		{
-			Debug.Log( "Map:" );
-			StringBuilder sb = new StringBuilder();
+
+			StringBuilder sb = new StringBuilder("Map:");
 			for ( int i = 0; i < dynamicBuffer.Length; i++ )
 			{
 				sb.Append( dynamicBuffer[i].Position );

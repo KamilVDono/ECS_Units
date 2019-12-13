@@ -28,7 +28,8 @@ namespace Maps.Systems
 				typeof( LocalToWorld ),
 				typeof( Translation ),
 				typeof( Rotation ),
-				typeof( MovementCost )
+				typeof( MovementCost ),
+				typeof( MapLayer )
 			);
 			_mapSettingsArchetype = EntityManager.CreateArchetype( typeof( MapSettings ) );
 		}
@@ -41,6 +42,8 @@ namespace Maps.Systems
 			EntityManager.CreateEntity( _tileArchetype, tileEntities );
 			var rotation = quaternion.Euler( new float3( math.radians(90), 0, 0 ) );
 
+			MapLayer layer = new MapLayer{Layer = MapLayerType.Tile};
+
 			for ( int y = 0; y < mapEdgeSize; y++ )
 			{
 				for ( int x = 0; x < mapEdgeSize; x++ )
@@ -49,6 +52,7 @@ namespace Maps.Systems
 					var tileType = FindTileType( new float2( x, y ), mapRequest );
 					PostUpdateCommands.SetSharedComponent( tileEntity, new RenderMesh { mesh = tileType.TileTypeBlob.Value.Mesh, material = tileType.TileTypeBlob.Value.Material } );
 					PostUpdateCommands.SetSharedComponent( tileEntity, tileType );
+					PostUpdateCommands.SetSharedComponent( tileEntity, layer );
 					PostUpdateCommands.SetComponent( tileEntity, new Translation { Value = new float3( x, 0, y ) } );
 					PostUpdateCommands.SetComponent( tileEntity, new Rotation { Value = rotation } );
 					PostUpdateCommands.SetComponent( tileEntity, new MovementCost { Cost = tileType.TileTypeBlob.Value.MoveCost } );

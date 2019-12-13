@@ -6,7 +6,7 @@ using Maps.Components;
 
 using Unity.Entities;
 
-namespace Scripts.Assets.Scripts.Input.Systems
+namespace Input.Systems
 {
 	public class MouseOverTileSystem : ComponentSystem
 	{

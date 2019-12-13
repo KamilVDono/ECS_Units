@@ -1,4 +1,5 @@
 ﻿using NUnit.Framework;
+
 using Unity.Entities;
 
 namespace Tests
@@ -48,13 +49,5 @@ namespace Tests
 				throw new NUnit.Framework.InconclusiveException( "Can not localize system in world" );
 			}
 		}
-
-		[Test]
-		[Order( -2 )]
-		public virtual void InitedWorld() => Assert.NotNull( _currentWorld );
-
-		[Test]
-		[Order( -1 )]
-		public virtual void InitedSystem() => Assert.NotNull( TargetSystem );
 	}
 }

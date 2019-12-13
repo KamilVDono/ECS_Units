@@ -6,7 +6,7 @@ using UnityEngine;
 
 using SF = UnityEngine.SerializeField;
 
-namespace Scripts.Assets.Scripts.Input.Authoring
+namespace Input.Authoring
 {
 	public class CameraDataAuthoring : MonoBehaviour
 	{
