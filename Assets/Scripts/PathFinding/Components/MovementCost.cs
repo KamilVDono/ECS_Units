@@ -8,5 +8,7 @@ namespace Pathfinding.Components
 		public const float IMPOSSIBLE = float.MaxValue;
 
 		public float Cost;
+
+
 	}
 }

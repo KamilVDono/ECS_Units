@@ -14,10 +14,17 @@ namespace Maps.Authoring
 {
 	public class TileSpawner : MonoBehaviour
 	{
+		#region Private fields
 		[SF] private float2 _frequency;
 		[SF] private float2 _offset;
-		[SF] private int _mapSize;
+		[SF] private int _mapEdgeSize;
 		[SF] private TileTypeSO[] _tileTypes;
+		#endregion Private fields
+
+		#region Properties
+		public int MapEdgeSize => _mapEdgeSize;
+		#endregion Properties
+
 
 		private void Awake()
 		{
@@ -30,11 +37,11 @@ namespace Maps.Authoring
 
 			Entity e = entityManager.CreateEntity( typeof(MapRequest) );
 
-			var request = new MapRequest(){ Frequency = _frequency, Offset = _offset, TileTypes = new BlitableArray<TileType>(_tileTypes.Length, Allocator.TempJob), MapEdgeSize = _mapSize };
+			var request = new MapRequest(){ Frequency = _frequency, Offset = _offset, TileTypes = new BlitableArray<GroundType>(_tileTypes.Length, Allocator.TempJob), MapEdgeSize = _mapEdgeSize };
 			for ( int i = 0; i < _tileTypes.Length; i++ )
 			{
 				TileTypeSO tileType = _tileTypes[i];
-				request.TileTypes[i] = new TileType( tileType );
+				request.TileTypes[i] = new GroundType( tileType );
 			}
 
 			entityManager.SetSharedComponentData( e, request );

@@ -76,11 +76,11 @@ namespace Performance
 
 			// Create request
 			var requestEntity = _entityManager.CreateEntity(typeof(MapRequest), typeof(MapSettings));
-			var tileTypes = new BlitableArray<TileType>( AllTileSO.Length, Allocator.TempJob );
+			var tileTypes = new BlitableArray<GroundType>( AllTileSO.Length, Allocator.TempJob );
 
 			for ( int i = 0; i < AllTileSO.Length; i++ )
 			{
-				tileTypes[i] = new TileType( AllTileSO[i] );
+				tileTypes[i] = new GroundType( AllTileSO[i] );
 			}
 
 			_entityManager.SetSharedComponentData( requestEntity, new MapRequest() { Frequency = new float2( 0.1f, 0.1f ), TileTypes = tileTypes } );

@@ -623,6 +623,7 @@ MonoBehaviour:
   _speed: {x: 5, y: 5}
   _screenInputOffset: 0.05
   _zoomBounds: {x: 2, y: 150}
+  _tileSpawner: {fileID: 2038225692}
 --- !u!20 &1687258584
 Camera:
   m_ObjectHideFlags: 0
@@ -753,14 +754,13 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 1729ce6556aee0e43bd367b1e8ae3d55, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  _canMoveDiagonal: 1
   _frequency:
     x: 0.05
     y: 0.05
   _offset:
     x: 2
     y: 2
-  _mapSize: 50
+  _mapEdgeSize: 400
   _tileTypes:
   - {fileID: 11400000, guid: 7942b79c142471449a501c187b483121, type: 2}
   - {fileID: 11400000, guid: 199ea09744cdf4045ba8af9a543c66f9, type: 2}

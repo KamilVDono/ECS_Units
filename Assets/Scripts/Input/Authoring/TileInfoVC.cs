@@ -19,7 +19,7 @@ namespace Input.Authoring
 		private Entity _lastTile;
 
 		private static string ExtractDescription( TileUnderMouse tileUnderMouse ) =>
-			World.Active.EntityManager.GetSharedComponentData<TileType>( tileUnderMouse.Tile ).TileTypeBlob.Value.Description.ToString();
+			World.Active.EntityManager.GetSharedComponentData<GroundType>( tileUnderMouse.Tile ).TileTypeBlob.Value.Description.ToString();
 
 		private void Awake() => _tileUnderMouseQuery = World.Active.EntityManager.CreateEntityQuery( ComponentType.ReadOnly<TileUnderMouse>() );
 

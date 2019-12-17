@@ -7,8 +7,6 @@ using Pathfinding.Components;
 using Unity.Collections;
 using Unity.Entities;
 using Unity.Mathematics;
-using Unity.Rendering;
-using Unity.Transforms;
 
 namespace Maps.Systems
 {
@@ -23,13 +21,11 @@ namespace Maps.Systems
 		protected override void OnCreate()
 		{
 			_tileArchetype = EntityManager.CreateArchetype(
-				typeof( RenderMesh ),
-				typeof( TileType ),
-				typeof( LocalToWorld ),
-				typeof( Translation ),
-				typeof( Rotation ),
-				typeof( MovementCost ),
-				typeof( MapLayer )
+				// Map data
+				typeof( GroundType ),
+				typeof( MapIndex ),
+				// A* data
+				typeof( MovementCost )
 			);
 			_mapSettingsArchetype = EntityManager.CreateArchetype( typeof( MapSettings ) );
 		}
@@ -40,22 +36,19 @@ namespace Maps.Systems
 			int mapEdgeSize = mapRequest.MapEdgeSize;
 			NativeArray<Entity> tileEntities = new NativeArray<Entity>(mapEdgeSize * mapEdgeSize, Allocator.Temp, NativeArrayOptions.UninitializedMemory);
 			EntityManager.CreateEntity( _tileArchetype, tileEntities );
-			var rotation = quaternion.Euler( new float3( math.radians(90), 0, 0 ) );
 
-			MapLayer layer = new MapLayer{Layer = MapLayerType.Tile};
 
+			int index1D = 0;
 			for ( int y = 0; y < mapEdgeSize; y++ )
 			{
 				for ( int x = 0; x < mapEdgeSize; x++ )
 				{
 					var tileEntity = tileEntities[y * mapEdgeSize + x];
 					var tileType = FindTileType( new float2( x, y ), mapRequest );
-					PostUpdateCommands.SetSharedComponent( tileEntity, new RenderMesh { mesh = tileType.TileTypeBlob.Value.Mesh, material = tileType.TileTypeBlob.Value.Material } );
 					PostUpdateCommands.SetSharedComponent( tileEntity, tileType );
-					PostUpdateCommands.SetSharedComponent( tileEntity, layer );
-					PostUpdateCommands.SetComponent( tileEntity, new Translation { Value = new float3( x, 0, y ) } );
-					PostUpdateCommands.SetComponent( tileEntity, new Rotation { Value = rotation } );
-					PostUpdateCommands.SetComponent( tileEntity, new MovementCost { Cost = tileType.TileTypeBlob.Value.MoveCost } );
+					PostUpdateCommands.SetComponent( tileEntity, new MapIndex( index1D, new int2( x, y ) ) );
+
+					++index1D;
 				}
 			}
 
@@ -75,7 +68,7 @@ namespace Maps.Systems
 		protected override void OnDestroy() =>
 			Entities.ForEach( ( ref MapSettings mapSetting ) => mapSetting.Tiles.Dispose() );
 
-		private TileType FindTileType( float2 position, MapRequest mapRequest )
+		private GroundType FindTileType( float2 position, MapRequest mapRequest )
 		{
 			var tileTypes = mapRequest.TileTypes;
 

@@ -1,6 +1,4 @@
-﻿using Maps.Components;
-
-using Unity.Entities;
+﻿using Maps.Authoring;
 
 using UnityEngine;
 using UnityEngine.InputSystem;
@@ -17,12 +15,13 @@ namespace Input.Authoring
 		[SF] private Vector2 _speed;
 		[SF] private float _screenInputOffset;
 		[SF] private Vector2 _zoomBounds;
+		[SF] private TileSpawner _tileSpawner;
+
 		private CameraInput _input;
 		private Bounds _mapBounds;
 		private ScreenEdgeInput _screenInput;
 		private Vector2Int _screenSize;
 		private int _mapSize;
-		private bool _mapInited = false;
 
 		private float _AspectRatio => _screenSize.x / (float)_screenSize.y;
 
@@ -30,27 +29,20 @@ namespace Input.Authoring
 
 		private void Awake()
 		{
+			SetupInitialState();
+			CalculateCameraBounds();
+		}
+
+
+		private void SetupInitialState()
+		{
 			_input = new CameraInput();
 			_screenSize = new Vector2Int( Screen.width, Screen.height );
 		}
 
-		private void Update()
+		private void CalculateCameraBounds()
 		{
-			if ( _mapInited )
-			{
-				return;
-			}
-
-			var mapSettings = World.Active.EntityManager.CreateEntityQuery( ComponentType.ReadOnly<MapSettings>() ).ToEntityArray(Unity.Collections.Allocator.TempJob);
-			if ( mapSettings.Length < 1 )
-			{
-				mapSettings.Dispose();
-				return;
-			}
-
-			_mapSize = World.Active.EntityManager.GetComponentData<MapSettings>( mapSettings[0] ).MapEdgeSize;
-			_mapInited = true;
-			mapSettings.Dispose();
+			_mapSize = _tileSpawner.MapEdgeSize;
 
 			_mapBounds = CalculateBounds( _mapSize, _camera.orthographicSize, transform.position.y, _AspectRatio );
 			transform.position += _mapBounds.center;
@@ -65,11 +57,8 @@ namespace Input.Authoring
 
 		private void LateUpdate()
 		{
-			if ( _mapInited )
-			{
-				UpdateZoom();
-				UpdatePosition();
-			}
+			UpdateZoom();
+			UpdatePosition();
 		}
 
 		#region CameraInput lifetime
