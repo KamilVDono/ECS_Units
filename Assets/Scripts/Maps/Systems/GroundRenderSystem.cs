@@ -5,8 +5,6 @@ using Unity.Mathematics;
 using Unity.Rendering;
 using Unity.Transforms;
 
-using UnityEngine;
-
 namespace Maps.Systems
 {
     [UpdateInGroup( typeof( PresentationSystemGroup ) )]
@@ -27,7 +25,6 @@ namespace Maps.Systems
 
         protected override void OnUpdate()
         {
-            int counter = 0;
             Entities.WithNone<HasGroundRenderer>().ForEach(
                 ( Entity entity, GroundType groundType, ref MapIndex mapIndex ) =>
                 {
@@ -40,7 +37,6 @@ namespace Maps.Systems
                     PostUpdateCommands.SetComponent( visualEntity, new Rotation { Value = _rotation } );
 
                     PostUpdateCommands.AddComponent( entity, new HasGroundRenderer { VisualEntity = visualEntity } );
-                    Debug.Log( counter++ );
                 } );
 
             Entities.WithNone<GroundType>().ForEach(

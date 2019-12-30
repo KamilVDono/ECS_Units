@@ -760,7 +760,7 @@ MonoBehaviour:
   _offset:
     x: 2
     y: 2
-  _mapEdgeSize: 400
+  _mapEdgeSize: 70
   _tileTypes:
   - {fileID: 11400000, guid: 7942b79c142471449a501c187b483121, type: 2}
   - {fileID: 11400000, guid: 199ea09744cdf4045ba8af9a543c66f9, type: 2}
