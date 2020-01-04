@@ -1,4 +1,6 @@
-﻿using Helpers;
+﻿using Blobs;
+
+using Helpers;
 
 using Maps.Components;
 
@@ -52,7 +54,6 @@ namespace Maps.Systems
 				}
 			}
 
-			mapRequest.TileTypes.Dispose();
 			PostUpdateCommands.RemoveComponent( e, typeof( MapRequest ) );
 			PostUpdateCommands.DestroyEntity( e );
 
@@ -70,20 +71,20 @@ namespace Maps.Systems
 
 		private GroundType FindTileType( float2 position, MapRequest mapRequest )
 		{
-			var tileTypes = mapRequest.TileTypes;
+			var tileTypes = BlobsMemory.Instance.ReferencesOf<GroundTypeBlob>();
 
 			float perlin = math.remap(-1, 1, 0, 1, noise.snoise((position * mapRequest.Frequency) + mapRequest.Offset));
 
 			int index = 0;
 
-			while ( index < tileTypes.Length && perlin - tileTypes[index].TileTypeBlob.Value.NoiseRange > 0 )
+			while ( index < tileTypes.Length && perlin - tileTypes[index].Value.NoiseRange > 0 )
 			{
-				perlin -= tileTypes[index].TileTypeBlob.Value.NoiseRange;
+				perlin -= tileTypes[index].Value.NoiseRange;
 				index++;
 			}
 
 			index = math.clamp( index, 0, tileTypes.Length - 1 );
-			return mapRequest.TileTypes[index];
+			return new GroundType( tileTypes[index] );
 		}
 
 		#endregion Methods

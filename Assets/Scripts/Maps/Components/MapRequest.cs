@@ -1,6 +1,4 @@
-﻿using Helpers;
-
-using Unity.Entities;
+﻿using Unity.Entities;
 using Unity.Mathematics;
 
 namespace Maps.Components
@@ -9,7 +7,6 @@ namespace Maps.Components
 	{
 		public float2 Frequency;
 		public float2 Offset;
-		public BlitableArray<GroundType> TileTypes;
 		public int MapEdgeSize;
 	}
 }

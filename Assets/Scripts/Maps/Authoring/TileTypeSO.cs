@@ -1,29 +1,58 @@
-﻿using System;
+﻿using Blobs.Interfaces;
+
+using Maps.Components;
+
+using System;
+
+using Unity.Entities;
 
 using UnityEngine;
 
 namespace Maps.Authoring
 {
 	[CreateAssetMenu( menuName = "ScriptbleObjects/Map/TileType" )]
-	public class TileTypeSO : ScriptableObject, IEquatable<TileTypeSO>
+	public class TileTypeSO : ScriptableObject, IBlobableSO<GroundTypeBlob>
 	{
 		public Color32 Color;
 		public float Cost;
 		public Mesh Mesh;
+
 		[Range(0f, 1f)]
 		public float Range;
+
+		#region Cache
 		private Material _material;
 
 		private string _toString = null;
+		#endregion Cache
 
+		#region Properties
 		public Material Material => _material != null ? _material : CreateMaterial();
 
-		public bool Equals( TileTypeSO other ) => ReferenceEquals( this, other );
+		public BlobAssetReference<GroundTypeBlob> BlobReference { get; private set; }
+
+		public Type BlobType => typeof( GroundTypeBlob );
+		#endregion Properties
+
+		public void SetupBlobReference()
+		{
+			SetupToString();
+			Dispose();
+			BlobReference = GroundTypeBlob.FromSO( this );
+		}
 
 		public override string ToString() => _toString;
 
-		public void SetupToString() =>
-			_toString = $"Tile with cost: {Cost}, color: {Color}, mesh: {Mesh?.name}";
+		public void Dispose()
+		{
+			if ( BlobReference.IsCreated )
+			{
+				BlobReference.Release();
+			}
+		}
+
+		private void SetupToString() =>
+									_toString = $"Tile with cost: {Cost}, color: {Color}, mesh: {Mesh?.name}";
 
 		private Material CreateMaterial()
 		{

@@ -1,4 +1,6 @@
-﻿using Helpers;
+﻿using Blobs;
+
+using Helpers;
 
 using Input.Components;
 using Input.Systems;
@@ -19,26 +21,27 @@ namespace Tests.Input
 {
 	public class MouseOverTileTest : ECSSystemTester<MouseOverTileSystem>
 	{
-		private TileTypeSO SandTileSO;
+		private string _sandName = "sand";
 
 		[SetUp]
 		public override void SetUp()
 		{
 			base.SetUp();
-			SandTileSO = ScriptableObject.CreateInstance<TileTypeSO>();
-			SandTileSO.name = "sand";
+			TileTypeSO SandTileSO = ScriptableObject.CreateInstance<TileTypeSO>();
+			SandTileSO.name = _sandName;
 			SandTileSO.Cost = 1f;
 			SandTileSO.Color = Color.red;
 			SandTileSO.Range = 1f;
 			SandTileSO.hideFlags = HideFlags.HideAndDontSave;
-			SandTileSO.SetupToString();
+
+			BlobsMemory.FromSOs( new[] { SandTileSO } );
 		}
 
 		[TearDown]
 		public override void TearDown()
 		{
 			base.TearDown();
-			SandTileSO = null;
+			BlobsMemory.Instance.Dispose();
 		}
 
 		[Test]
@@ -76,7 +79,7 @@ namespace Tests.Input
 			Update();
 
 			var tileUnderMouse = _entityManager.GetComponentData<TileUnderMouse>( entity );
-			AreEqual( SandTileSO.name, _entityManager.GetSharedComponentData<GroundType>( tileUnderMouse.Tile ).TileTypeBlob.Value.Name.ToString() );
+			AreEqual( _sandName, _entityManager.GetSharedComponentData<GroundType>( tileUnderMouse.Tile ).TileTypeBlob.Value.Name.ToString() );
 		}
 
 		[Test]
@@ -102,7 +105,7 @@ namespace Tests.Input
 			Update();
 
 			var tileUnderMouse = _entityManager.GetComponentData<TileUnderMouse>( entity );
-			AreEqual( SandTileSO.name, _entityManager.GetSharedComponentData<GroundType>( tileUnderMouse.Tile ).TileTypeBlob.Value.Name.ToString() );
+			AreEqual( _sandName, _entityManager.GetSharedComponentData<GroundType>( tileUnderMouse.Tile ).TileTypeBlob.Value.Name.ToString() );
 		}
 
 		protected Entity SetMouseInput( float2 position )
@@ -135,7 +138,7 @@ namespace Tests.Input
 		{
 			var mapSize = edgeSize * edgeSize;
 			var tile = _entityManager.CreateEntity( typeof(GroundType) );
-			_entityManager.SetSharedComponentData( tile, new GroundType( SandTileSO ) );
+			_entityManager.SetSharedComponentData( tile, new GroundType( BlobsMemory.Instance.ReferencesOf<GroundTypeBlob>()[0] ) );
 			var tiles = new BlitableArray<Entity>(mapSize, Unity.Collections.Allocator.Temp);
 			for ( int i = 0; i < mapSize; i++ )
 			{

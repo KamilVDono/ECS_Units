@@ -27,5 +27,7 @@ namespace Maps.Components
 			var index1D = Helpers.IndexUtils.Index1D( index2D, edgeSize );
 			return new MapIndex( index1D, index2D );
 		}
+
+		public override string ToString() => $"Index2 {_index2D}. Index1 {_index1D}";
 	}
 }

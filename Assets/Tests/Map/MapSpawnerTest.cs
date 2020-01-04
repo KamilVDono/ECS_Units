@@ -1,12 +1,12 @@
-﻿using Helpers;
+﻿using Blobs;
+
+using Helpers;
 
 using Maps.Authoring;
 using Maps.Components;
 using Maps.Systems;
 
 using NUnit.Framework;
-
-using System.Linq;
 
 using Unity.Collections;
 using Unity.Mathematics;
@@ -19,14 +19,11 @@ namespace Tests.Map
 {
 	public class MapSpawnerTest : ECSSystemTester<MapSpawner>
 	{
-		private TileTypeSO SandTileSO;
-		private TileTypeSO[] AllTileSO;
-
 		[SetUp]
 		public override void SetUp()
 		{
 			base.SetUp();
-			AllTileSO = new TileTypeSO[10];
+			TileTypeSO[] AllTileSO = new TileTypeSO[10];
 			for ( int i = 0; i < AllTileSO.Length; i++ )
 			{
 				AllTileSO[i] = ScriptableObject.CreateInstance<TileTypeSO>();
@@ -35,17 +32,16 @@ namespace Tests.Map
 				AllTileSO[i].Color = new Color32( (byte)i, (byte)i, (byte)i, 1 );
 				AllTileSO[i].Range = 1f / AllTileSO.Length;
 				AllTileSO[i].hideFlags = HideFlags.HideAndDontSave;
-				AllTileSO[i].SetupToString();
 			}
-			SandTileSO = AllTileSO.First();
+
+			BlobsMemory.FromSOs( AllTileSO );
 		}
 
 		[TearDown]
 		public override void TearDown()
 		{
 			base.TearDown();
-			AllTileSO = null;
-			SandTileSO = null;
+			BlobsMemory.Instance.Dispose();
 		}
 
 		[Test]
@@ -55,8 +51,7 @@ namespace Tests.Map
 			// Create request
 			var requestEntity = _entityManager.CreateEntity(typeof(MapRequest));
 			var tileTypes = new BlitableArray<GroundType>( 1, Allocator.TempJob );
-			tileTypes[0] = new GroundType( SandTileSO );
-			_entityManager.SetSharedComponentData( requestEntity, new MapRequest() { Frequency = new float2( 0.1f, 0.1f ), TileTypes = tileTypes, MapEdgeSize = 1 } );
+			_entityManager.SetSharedComponentData( requestEntity, new MapRequest() { Frequency = new float2( 0.1f, 0.1f ), MapEdgeSize = 1 } );
 
 			// Update
 			Update();
@@ -67,10 +62,8 @@ namespace Tests.Map
 
 			var mapSetting = _entityManager.GetComponentData<MapSettings>(mapSettingEntities[0]);
 			var created = mapSetting.Tiles;
-			var tileType = _entityManager.GetSharedComponentData<GroundType>( created[0] );
 
 			AreEqual( 1, created.Length );
-			AreEqual( tileType.TileTypeBlob.Value.Name.ToString(), SandTileSO.name );
 			mapSettingEntities.Dispose();
 		}
 
@@ -82,14 +75,8 @@ namespace Tests.Map
 
 			// Create request
 			var requestEntity = _entityManager.CreateEntity(typeof(MapRequest));
-			var tileTypes = new BlitableArray<GroundType>( AllTileSO.Length, Allocator.TempJob );
 
-			for ( int i = 0; i < AllTileSO.Length; i++ )
-			{
-				tileTypes[i] = new GroundType( AllTileSO[i] );
-			}
-
-			_entityManager.SetSharedComponentData( requestEntity, new MapRequest() { Frequency = new float2( 0.1f, 0.1f ), TileTypes = tileTypes, MapEdgeSize = mapSize } );
+			_entityManager.SetSharedComponentData( requestEntity, new MapRequest() { Frequency = new float2( 0.1f, 0.1f ), MapEdgeSize = mapSize } );
 
 			// Update
 			Update();

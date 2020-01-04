@@ -1,4 +1,4 @@
-﻿using Helpers;
+﻿using Blobs;
 
 using Maps.Authoring;
 using Maps.Components;
@@ -11,7 +11,6 @@ using Pathfinding.Systems;
 
 using Tests;
 
-using Unity.Collections;
 using Unity.Mathematics;
 using Unity.PerformanceTesting;
 
@@ -46,14 +45,13 @@ namespace Performance
 					CreateRequest( 70 );
 					Update();
 				}
-
 			} )
 				.WarmupCount( 10 )
 				.MeasurementCount( 15 )
 				.IterationsPerMeasurement( 6 )
 				.Run();
 
-
+			BlobsMemory.Instance.Dispose();
 		}
 
 		private void CreateRequest( int mapSize )
@@ -74,16 +72,12 @@ namespace Performance
 				AllTileSO[i].Range = 1f / AllTileSO.Length;
 			}
 
+			BlobsMemory.FromSOs( AllTileSO );
+
 			// Create request
 			var requestEntity = _entityManager.CreateEntity(typeof(MapRequest), typeof(MapSettings));
-			var tileTypes = new BlitableArray<GroundType>( AllTileSO.Length, Allocator.TempJob );
 
-			for ( int i = 0; i < AllTileSO.Length; i++ )
-			{
-				tileTypes[i] = new GroundType( AllTileSO[i] );
-			}
-
-			_entityManager.SetSharedComponentData( requestEntity, new MapRequest() { Frequency = new float2( 0.1f, 0.1f ), TileTypes = tileTypes } );
+			_entityManager.SetSharedComponentData( requestEntity, new MapRequest() { Frequency = new float2( 0.1f, 0.1f ) } );
 			_entityManager.SetComponentData( requestEntity, new MapSettings() { MapEdgeSize = mapSize } );
 
 			var mapSpawnerSystem = _currentWorld.GetOrCreateSystem<MapSpawner>();
