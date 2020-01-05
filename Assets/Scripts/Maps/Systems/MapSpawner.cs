@@ -6,6 +6,8 @@ using Maps.Components;
 
 using Pathfinding.Components;
 
+using Resources.Components;
+
 using Unity.Collections;
 using Unity.Entities;
 using Unity.Mathematics;
@@ -26,6 +28,8 @@ namespace Maps.Systems
 				// Map data
 				typeof( GroundType ),
 				typeof( MapIndex ),
+				// Resources
+				typeof( ResourceOre ),
 				// A* data
 				typeof( MovementCost )
 			);
@@ -47,8 +51,11 @@ namespace Maps.Systems
 				{
 					var tileEntity = tileEntities[y * mapEdgeSize + x];
 					var tileType = FindTileType( new float2( x, y ), mapRequest );
-					PostUpdateCommands.SetSharedComponent( tileEntity, tileType );
+					var resourceOre = CalcResourceOre( new float2( x, y ), mapRequest, tileType );
+
+					PostUpdateCommands.SetComponent( tileEntity, tileType );
 					PostUpdateCommands.SetComponent( tileEntity, new MapIndex( index1D, new int2( x, y ) ) );
+					PostUpdateCommands.SetComponent( tileEntity, resourceOre );
 
 					++index1D;
 				}
@@ -65,7 +72,6 @@ namespace Maps.Systems
 
 			tileEntities.Dispose();
 		} );
-
 		protected override void OnDestroy() =>
 			Entities.ForEach( ( ref MapSettings mapSetting ) => mapSetting.Tiles.Dispose() );
 
@@ -85,6 +91,17 @@ namespace Maps.Systems
 
 			index = math.clamp( index, 0, tileTypes.Length - 1 );
 			return new GroundType( tileTypes[index] );
+		}
+
+		private ResourceOre CalcResourceOre( float2 position, MapRequest mapRequest, GroundType tileType )
+		{
+			float perlin = math.remap(-1, 1, 0, 1, noise.snoise((position * mapRequest.Frequency) + mapRequest.Offset));
+			if ( perlin > 0.3f && tileType.TileTypeBlob.Value.AcceptResourceOre )
+			{
+				return new ResourceOre() { Capacity = 100, Count = 100, Type = BlobsMemory.Instance.ReferencesOf<ResourceTypeBlob>()[0] };
+			}
+
+			return ResourceOre.EMPTY_ORE;
 		}
 
 		#endregion Methods

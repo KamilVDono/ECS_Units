@@ -6,7 +6,7 @@ using Unity.Entities;
 namespace Maps.Components
 {
 	[Serializable]
-	public struct GroundType : ISharedComponentData, IEquatable<GroundType>
+	public struct GroundType : IComponentData, IEquatable<GroundType>
 	{
 		public BlobAssetReference<GroundTypeBlob> TileTypeBlob;
 

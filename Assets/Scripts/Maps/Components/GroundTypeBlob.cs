@@ -1,5 +1,7 @@
 ﻿using Blobs.Interfaces;
 
+using Helpers;
+
 using Maps.Authoring;
 
 using Unity.Collections;
@@ -15,6 +17,7 @@ namespace Maps.Components
 		public Mesh Mesh;
 		public float MoveCost;
 		public float NoiseRange;
+		public Boolean AcceptResourceOre;
 		public BlobString Name;
 		public BlobString Description;
 
@@ -26,6 +29,7 @@ namespace Maps.Components
 			tileBlob.Mesh = tileTypeSO.Mesh;
 			tileBlob.MoveCost = tileTypeSO.Cost;
 			tileBlob.NoiseRange = tileTypeSO.Range;
+			tileBlob.AcceptResourceOre = tileTypeSO.AcceptResourceOre;
 			blobBuilder.AllocateString( ref tileBlob.Name, tileTypeSO.name );
 			blobBuilder.AllocateString( ref tileBlob.Description, tileTypeSO.ToString() );
 			var blobReference = blobBuilder.CreateBlobAssetReference<GroundTypeBlob>( Allocator.Persistent );

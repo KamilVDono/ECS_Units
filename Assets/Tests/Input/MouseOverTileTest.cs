@@ -79,7 +79,7 @@ namespace Tests.Input
 			Update();
 
 			var tileUnderMouse = _entityManager.GetComponentData<TileUnderMouse>( entity );
-			AreEqual( _sandName, _entityManager.GetSharedComponentData<GroundType>( tileUnderMouse.Tile ).TileTypeBlob.Value.Name.ToString() );
+			AreEqual( _sandName, _entityManager.GetComponentData<GroundType>( tileUnderMouse.Tile ).TileTypeBlob.Value.Name.ToString() );
 		}
 
 		[Test]
@@ -105,7 +105,7 @@ namespace Tests.Input
 			Update();
 
 			var tileUnderMouse = _entityManager.GetComponentData<TileUnderMouse>( entity );
-			AreEqual( _sandName, _entityManager.GetSharedComponentData<GroundType>( tileUnderMouse.Tile ).TileTypeBlob.Value.Name.ToString() );
+			AreEqual( _sandName, _entityManager.GetComponentData<GroundType>( tileUnderMouse.Tile ).TileTypeBlob.Value.Name.ToString() );
 		}
 
 		protected Entity SetMouseInput( float2 position )
@@ -138,7 +138,7 @@ namespace Tests.Input
 		{
 			var mapSize = edgeSize * edgeSize;
 			var tile = _entityManager.CreateEntity( typeof(GroundType) );
-			_entityManager.SetSharedComponentData( tile, new GroundType( BlobsMemory.Instance.ReferencesOf<GroundTypeBlob>()[0] ) );
+			_entityManager.SetComponentData( tile, new GroundType( BlobsMemory.Instance.ReferencesOf<GroundTypeBlob>()[0] ) );
 			var tiles = new BlitableArray<Entity>(mapSize, Unity.Collections.Allocator.Temp);
 			for ( int i = 0; i < mapSize; i++ )
 			{

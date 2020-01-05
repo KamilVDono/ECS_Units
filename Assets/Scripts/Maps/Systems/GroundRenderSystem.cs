@@ -26,7 +26,7 @@ namespace Maps.Systems
         protected override void OnUpdate()
         {
             Entities.WithNone<HasGroundRenderer>().ForEach(
-                ( Entity entity, GroundType groundType, ref MapIndex mapIndex ) =>
+                ( Entity entity, ref GroundType groundType, ref MapIndex mapIndex ) =>
                 {
                     // Need valid entity right now so can not use PostUpdateCommands here
                     var visualEntity = EntityManager.CreateEntity(_tileVisualArchetype);

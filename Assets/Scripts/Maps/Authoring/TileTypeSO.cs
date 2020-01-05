@@ -19,6 +19,7 @@ namespace Maps.Authoring
 
 		[Range(0f, 1f)]
 		public float Range;
+		public bool AcceptResourceOre;
 
 		#region Cache
 		private Material _material;
@@ -52,7 +53,7 @@ namespace Maps.Authoring
 		}
 
 		private void SetupToString() =>
-									_toString = $"Tile with cost: {Cost}, color: {Color}, mesh: {Mesh?.name}";
+			_toString = $"Tile {name}, cost {Cost};";
 
 		private Material CreateMaterial()
 		{

@@ -2,6 +2,12 @@
 
 using Maps.Components;
 
+using Pathfinding.Components;
+
+using Resources.Components;
+
+using System.Text;
+
 using TMPro;
 
 using Unity.Entities;
@@ -17,11 +23,28 @@ namespace Input.Authoring
 		[SF] private TextMeshProUGUI _tileInfoText;
 		private EntityQuery _tileUnderMouseQuery;
 		private Entity _lastTile;
+		private StringBuilder _descriptionBuilder = new StringBuilder( 50 );
+		private EntityManager _entityManager;
 
-		private static string ExtractDescription( TileUnderMouse tileUnderMouse ) =>
-			World.Active.EntityManager.GetSharedComponentData<GroundType>( tileUnderMouse.Tile ).TileTypeBlob.Value.Description.ToString();
+		private string ExtractDescription( TileUnderMouse tileUnderMouse )
+		{
+			var groundType = _entityManager.GetComponentData<GroundType>( tileUnderMouse.Tile );
+			var resourceOre = _entityManager.GetComponentData<ResourceOre>( tileUnderMouse.Tile );
+			var movementCost = _entityManager.GetComponentData<MovementCost>( tileUnderMouse.Tile );
 
-		private void Awake() => _tileUnderMouseQuery = World.Active.EntityManager.CreateEntityQuery( ComponentType.ReadOnly<TileUnderMouse>() );
+			_descriptionBuilder.Clear();
+			_descriptionBuilder.AppendLine( groundType.TileTypeBlob.Value.Description.ToString() );
+			_descriptionBuilder.AppendLine( resourceOre.ToString() );
+			_descriptionBuilder.AppendLine( movementCost.ToString() );
+
+			return _descriptionBuilder.ToString();
+		}
+
+		private void Awake()
+		{
+			_entityManager = World.Active.EntityManager;
+			_tileUnderMouseQuery = _entityManager.CreateEntityQuery( ComponentType.ReadOnly<TileUnderMouse>() );
+		}
 
 		private void Update()
 		{
