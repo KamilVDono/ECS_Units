@@ -1,55 +1,61 @@
-﻿using Maps.Components;
+﻿using Helpers;
+
+using Maps.Components;
 
 using Unity.Entities;
 using Unity.Mathematics;
 using Unity.Rendering;
 using Unity.Transforms;
 
+using UnityEngine;
+
 namespace Maps.Systems
 {
-    [UpdateInGroup( typeof( PresentationSystemGroup ) )]
+	internal struct HasGroundRenderer : ISystemStateComponentData
+	{
+		public Entity VisualEntity;
+	}
 
-    public class GroundRenderSystem : ComponentSystem
-    {
-        private EntityArchetype _tileVisualArchetype;
-        private readonly quaternion _rotation = quaternion.Euler( new float3( math.radians(90), 0, 0 ) );
+	[UpdateInGroup( typeof( PresentationSystemGroup ) )]
+	public class GroundRenderSystem : ComponentSystem
+	{
+		private const float EXTEND= 0.5f;
 
-        protected override void OnCreate() =>
-            _tileVisualArchetype = EntityManager.CreateArchetype(
-                // Visual
-                typeof( RenderMesh ),
-                typeof( Rotation ),
-                typeof( LocalToWorld ),
-                typeof( Translation )
-            );
+		private EntityArchetype _tileVisualArchetype;
+		private Mesh _groundMesh;
 
-        protected override void OnUpdate()
-        {
-            Entities.WithNone<HasGroundRenderer>().ForEach(
-                ( Entity entity, ref GroundType groundType, ref MapIndex mapIndex ) =>
-                {
-                    // Need valid entity right now so can not use PostUpdateCommands here
-                    var visualEntity = EntityManager.CreateEntity(_tileVisualArchetype);
-                    PostUpdateCommands.SetSharedComponent( visualEntity,
-                        new RenderMesh { mesh = groundType.TileTypeBlob.Value.Mesh, material = groundType.TileTypeBlob.Value.Material }
-                        );
-                    PostUpdateCommands.SetComponent( visualEntity, new Translation { Value = new float3( mapIndex.Index2D.x, 0, mapIndex.Index2D.y ) } );
-                    PostUpdateCommands.SetComponent( visualEntity, new Rotation { Value = _rotation } );
+		protected override void OnCreate()
+		{
+			_tileVisualArchetype = EntityManager.CreateArchetype(
+				typeof( RenderMesh ),
+				typeof( LocalToWorld ),
+				typeof( Translation )
+			);
 
-                    PostUpdateCommands.AddComponent( entity, new HasGroundRenderer { VisualEntity = visualEntity } );
-                } );
+			_groundMesh = MeshCreator.Quad( EXTEND, quaternion.Euler( new float3( math.radians( -90 ), 0, 0 ) ) );
+		}
 
-            Entities.WithNone<GroundType>().ForEach(
-                ( Entity entity, ref HasGroundRenderer visual ) =>
-                {
-                    PostUpdateCommands.DestroyEntity( visual.VisualEntity );
-                    PostUpdateCommands.RemoveComponent<HasGroundRenderer>( entity );
-                } );
-        }
-    }
+		protected override void OnUpdate()
+		{
+			Entities.WithNone<HasGroundRenderer>().ForEach(
+				( Entity entity, ref GroundType groundType, ref MapIndex mapIndex ) =>
+				{
+					// Need valid entity right now so can not use PostUpdateCommands here
+					var visualEntity = EntityManager.CreateEntity(_tileVisualArchetype);
+					PostUpdateCommands.SetSharedComponent( visualEntity,
+						new RenderMesh { mesh = _groundMesh, material = groundType.TileTypeBlob.Value.Material }
+						);
+					PostUpdateCommands.SetComponent( visualEntity, new Translation { Value = new float3( mapIndex.Index2D.x, 0, mapIndex.Index2D.y ) } );
 
-    internal struct HasGroundRenderer : ISystemStateComponentData
-    {
-        public Entity VisualEntity;
-    }
+					PostUpdateCommands.AddComponent( entity, new HasGroundRenderer { VisualEntity = visualEntity } );
+				} );
+
+			Entities.WithNone<GroundType>().ForEach(
+				( Entity entity, ref HasGroundRenderer visual ) =>
+				{
+					PostUpdateCommands.DestroyEntity( visual.VisualEntity );
+					PostUpdateCommands.RemoveComponent<HasGroundRenderer>( entity );
+				} );
+		}
+	}
 }

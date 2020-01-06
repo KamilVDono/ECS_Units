@@ -14,7 +14,6 @@ namespace Maps.Components
 	public struct GroundTypeBlob : IBlobable
 	{
 		public Material Material;
-		public Mesh Mesh;
 		public float MoveCost;
 		public float NoiseRange;
 		public Boolean AcceptResourceOre;
@@ -26,7 +25,6 @@ namespace Maps.Components
 			BlobBuilder blobBuilder = new BlobBuilder( Allocator.Persistent );
 			ref GroundTypeBlob tileBlob = ref blobBuilder.ConstructRoot<GroundTypeBlob>();
 			tileBlob.Material = tileTypeSO.Material;
-			tileBlob.Mesh = tileTypeSO.Mesh;
 			tileBlob.MoveCost = tileTypeSO.Cost;
 			tileBlob.NoiseRange = tileTypeSO.Range;
 			tileBlob.AcceptResourceOre = tileTypeSO.AcceptResourceOre;
