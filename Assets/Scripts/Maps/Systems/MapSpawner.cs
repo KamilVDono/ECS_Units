@@ -43,7 +43,6 @@ namespace Maps.Systems
 			NativeArray<Entity> tileEntities = new NativeArray<Entity>(mapEdgeSize * mapEdgeSize, Allocator.Temp, NativeArrayOptions.UninitializedMemory);
 			EntityManager.CreateEntity( _tileArchetype, tileEntities );
 
-
 			int index1D = 0;
 			for ( int y = 0; y < mapEdgeSize; y++ )
 			{
@@ -72,6 +71,7 @@ namespace Maps.Systems
 
 			tileEntities.Dispose();
 		} );
+
 		protected override void OnDestroy() =>
 			Entities.ForEach( ( ref MapSettings mapSetting ) => mapSetting.Tiles.Dispose() );
 

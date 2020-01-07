@@ -23,7 +23,7 @@ namespace Maps.Authoring
 
 		private void Awake()
 		{
-			var entityManager = World.Active.EntityManager;
+			var entityManager = World.DefaultGameObjectInjectionWorld.EntityManager;
 
 			Entity e = entityManager.CreateEntity( typeof(MapRequest) );
 

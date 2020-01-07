@@ -14,8 +14,8 @@ namespace Input.Authoring
 
 		private void Start()
 		{
-			var commandBuffer = World.Active.GetExistingSystem<EndSimulationEntityCommandBufferSystem>().CreateCommandBuffer();
-			var archetype = World.Active.EntityManager.CreateArchetype(typeof( CameraData ));
+			var commandBuffer = World.DefaultGameObjectInjectionWorld.GetExistingSystem<EndSimulationEntityCommandBufferSystem>().CreateCommandBuffer();
+			var archetype = World.DefaultGameObjectInjectionWorld.EntityManager.CreateArchetype(typeof( CameraData ));
 			var entity = commandBuffer.CreateEntity( archetype );
 			commandBuffer.SetSharedComponent( entity, new CameraData() { Camera = _camera } );
 			Destroy( this );

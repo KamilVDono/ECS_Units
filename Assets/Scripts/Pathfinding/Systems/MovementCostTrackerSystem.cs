@@ -24,8 +24,8 @@ namespace Pathfinding.Systems
 			};
 
 			_changedDataQuery = GetEntityQuery( queryDesc );
-			_changedDataQuery.SetFilterChanged( typeof( GroundType ) );
-			_changedDataQuery.SetFilterChanged( typeof( ResourceOre ) );
+			_changedDataQuery.SetChangedVersionFilter( typeof( GroundType ) );
+			_changedDataQuery.SetChangedVersionFilter( typeof( ResourceOre ) );
 		}
 
 		protected override void OnUpdate()

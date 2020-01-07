@@ -42,7 +42,7 @@ namespace Input.Authoring
 
 		private void Awake()
 		{
-			_entityManager = World.Active.EntityManager;
+			_entityManager = World.DefaultGameObjectInjectionWorld.EntityManager;
 			_tileUnderMouseQuery = _entityManager.CreateEntityQuery( ComponentType.ReadOnly<TileUnderMouse>() );
 		}
 

@@ -10,13 +10,13 @@ namespace Tests
 		protected World _currentWorld;
 		protected EntityManager _entityManager;
 
-		public T TargetSystem => World.Active.GetOrCreateSystem<T>();
+		public T TargetSystem => World.DefaultGameObjectInjectionWorld.GetOrCreateSystem<T>();
 
 		[SetUp]
 		public virtual void SetUp()
 		{
-			_previousWorld = World.Active;
-			_currentWorld = World.Active = new World( "Test World" );
+			_previousWorld = World.DefaultGameObjectInjectionWorld;
+			_currentWorld = World.DefaultGameObjectInjectionWorld = new World( "Test World" );
 
 			_entityManager = _currentWorld.EntityManager;
 		}
@@ -29,7 +29,7 @@ namespace Tests
 				_currentWorld.Dispose();
 				_currentWorld = null;
 
-				World.Active = _previousWorld;
+				World.DefaultGameObjectInjectionWorld = _previousWorld;
 				_previousWorld = null;
 				_entityManager = null;
 			}
