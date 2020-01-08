@@ -10,10 +10,10 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 9e469f05d33e2d14a8a381ab57f4a17d, type: 3}
-  m_Name: Coal
+  m_Name: Wood
   m_EditorClassIdentifier: 
-  MovementCost: 3
+  MovementCost: 1
   Color:
     serializedVersion: 2
-    rgba: 4278190080
+    rgba: 4282494021
   Stackable: 1

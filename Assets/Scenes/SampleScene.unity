@@ -788,11 +788,19 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 4b3f6b7ee2b7c6d499508ae8077328b6, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  _blobableSOs:
-  - {fileID: 11400000, guid: 7942b79c142471449a501c187b483121, type: 2}
-  - {fileID: 11400000, guid: 185f0e5998f6fd04091e365cb82c1e95, type: 2}
-  - {fileID: 11400000, guid: da2e0bcdae6d3414688867d5fe4be85f, type: 2}
-  - {fileID: 11400000, guid: d6b9bb911bfadab4989397288554a0be, type: 2}
-  - {fileID: 11400000, guid: d3dc79b836e56ac4a9612e7aaad9db61, type: 2}
-  - {fileID: 11400000, guid: 199ea09744cdf4045ba8af9a543c66f9, type: 2}
-  - {fileID: 11400000, guid: 8f6ee0d4c4012924e9b856981c509e69, type: 2}
+  _namedGroups:
+  - Name: GroundTypes
+    BlobableSOs:
+    - {fileID: 11400000, guid: 7942b79c142471449a501c187b483121, type: 2}
+    - {fileID: 11400000, guid: 199ea09744cdf4045ba8af9a543c66f9, type: 2}
+    - {fileID: 11400000, guid: d3dc79b836e56ac4a9612e7aaad9db61, type: 2}
+    - {fileID: 11400000, guid: 185f0e5998f6fd04091e365cb82c1e95, type: 2}
+    - {fileID: 11400000, guid: da2e0bcdae6d3414688867d5fe4be85f, type: 2}
+    - {fileID: 11400000, guid: d6b9bb911bfadab4989397288554a0be, type: 2}
+  - Name: ResourcesTypes
+    BlobableSOs:
+    - {fileID: 11400000, guid: 8f6ee0d4c4012924e9b856981c509e69, type: 2}
+    - {fileID: 11400000, guid: 06926e83e41e9744a9c2b1b998a7ba24, type: 2}
+    - {fileID: 11400000, guid: e664b25d792799d4f87d4120d500b43a, type: 2}
+    - {fileID: 11400000, guid: d3561fb0c61f7c048ada3ea3dbbe4bc9, type: 2}
+    - {fileID: 11400000, guid: e75c4ed447cd3a54aa731adecbfa26fa, type: 2}

@@ -8,8 +8,15 @@ namespace Blobs
 {
 	public class BlobsMemoryAuthoring : MonoBehaviour
 	{
-		[SerializeField] private ScriptableObject[] _blobableSOs;
+		[SerializeField] private NamedGroup[] _namedGroups;
 
-		private void Awake() => BlobsMemory.FromSOs( _blobableSOs.OfType<IBlobableSO>().ToArray() );
+		private void Awake() => BlobsMemory.FromSOs( _namedGroups.SelectMany( ng => ng.BlobableSOs ).OfType<IBlobableSO>().ToArray() );
+	}
+
+	[System.Serializable]
+	public class NamedGroup
+	{
+		public string Name;
+		public ScriptableObject[] BlobableSOs;
 	}
 }

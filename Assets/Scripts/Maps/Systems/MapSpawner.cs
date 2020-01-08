@@ -98,7 +98,7 @@ namespace Maps.Systems
 			float perlin = math.remap(-1, 1, 0, 1, noise.snoise((position * mapRequest.Frequency) + mapRequest.Offset));
 			if ( perlin > 0.3f && tileType.TileTypeBlob.Value.AcceptResourceOre )
 			{
-				return new ResourceOre() { Capacity = 100, Count = 100, Type = BlobsMemory.Instance.ReferencesOf<ResourceTypeBlob>()[0] };
+				return new ResourceOre() { Capacity = 100, Count = 100, Type = BlobsMemory.Instance.ReferencesOf<ResourceTypeBlob>().RandomPick() };
 			}
 
 			return ResourceOre.EMPTY_ORE;
