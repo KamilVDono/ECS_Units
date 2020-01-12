@@ -16,4 +16,6 @@ MonoBehaviour:
   Color:
     serializedVersion: 2
     rgba: 4282494021
+  WorkRequired: 2
+  PiecesPerWork: 2
   Stackable: 1

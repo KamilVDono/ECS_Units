@@ -9,7 +9,7 @@ using NUnit.Framework;
 using Pathfinding.Components;
 using Pathfinding.Systems;
 
-using Tests;
+using Tests.Utility;
 
 using Unity.Mathematics;
 using Unity.PerformanceTesting;

@@ -15,6 +15,8 @@ namespace Resources.Authoring
 	{
 		public float MovementCost;
 		public Color32 Color;
+		public float WorkRequired;
+		public int PiecesPerWork;
 		public bool Stackable;
 
 		public BlobAssetReference<ResourceTypeBlob> BlobReference { get; private set; }

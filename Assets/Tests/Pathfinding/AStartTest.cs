@@ -11,6 +11,8 @@ using Pathfinding.Systems;
 using System;
 using System.Text;
 
+using Tests.Utility;
+
 using Unity.Collections;
 using Unity.Entities;
 using Unity.Mathematics;

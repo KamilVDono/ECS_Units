@@ -14,6 +14,7 @@ namespace Resources.Components
 
 		public Boolean Empty => Count == 0;
 		public Boolean None => Type.IsCreated == false;
+		public Boolean IsValid => Empty == false && None == false;
 
 		public override string ToString()
 		{

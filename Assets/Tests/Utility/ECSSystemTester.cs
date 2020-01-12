@@ -2,15 +2,16 @@
 
 using Unity.Entities;
 
-namespace Tests
+namespace Tests.Utility
 {
-	public abstract class ECSSystemTester<T> where T : ComponentSystem
+	public abstract class ECSSystemTester<T> where T : ComponentSystemBase
 	{
 		protected World _previousWorld;
 		protected World _currentWorld;
 		protected EntityManager _entityManager;
 
-		public T TargetSystem => World.DefaultGameObjectInjectionWorld.GetOrCreateSystem<T>();
+		protected virtual bool _createAllSystems { get; } = false;
+		protected T TargetSystem => _currentWorld.GetOrCreateSystem<T>();
 
 		[SetUp]
 		public virtual void SetUp()
@@ -19,6 +20,18 @@ namespace Tests
 			_currentWorld = World.DefaultGameObjectInjectionWorld = new World( "Test World" );
 
 			_entityManager = _currentWorld.EntityManager;
+
+			if ( _createAllSystems )
+			{
+				// Right now not working :(
+				//var allSystems = DefaultWorldInitialization.GetAllSystems(WorldSystemFilterFlags.Default, requireExecuteAlways: false);
+				//allSystems.Add( typeof( ConstantDeltaTimeSystem ) ); //Need to be added with UpdateWorldTimeSystem at the same time.
+				//DefaultWorldInitialization.AddSystemsToRootLevelSystemGroups( w, allSystems );
+			}
+			else
+			{
+				_currentWorld.CreateSystem<T>();
+			}
 		}
 
 		[TearDown]
@@ -39,6 +52,8 @@ namespace Tests
 		{
 			if ( TargetSystem != null )
 			{
+				// Unfortunately, this do not work correctly 
+				//_currentWorld.Update();
 				foreach ( var system in _currentWorld.Systems )
 				{
 					system.Update();

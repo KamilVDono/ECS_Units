@@ -7,44 +7,27 @@ using Resources.Components;
 
 using Unity.Collections;
 using Unity.Entities;
+using Unity.Jobs;
 
 namespace Pathfinding.Systems
 {
 	[UpdateAfter( typeof( MapSpawner ) )]
 	[UpdateInGroup( typeof( InitializationSystemGroup ) )]
-	public class MovementCostTrackerSystem : ComponentSystem
+	public class MovementCostTrackerSystem : JobComponentSystem
 	{
-		private EntityQuery _changedDataQuery;
-
-		protected override void OnCreate()
-		{
-			var queryDesc = new EntityQueryDesc()
-			{
-				All = new ComponentType[] { typeof( MovementCost ), typeof( GroundType ), typeof( ResourceOre ) },
-			};
-
-			_changedDataQuery = GetEntityQuery( queryDesc );
-			_changedDataQuery.SetChangedVersionFilter( typeof( GroundType ) );
-			_changedDataQuery.SetChangedVersionFilter( typeof( ResourceOre ) );
-		}
-
-		protected override void OnUpdate()
-		{
-			var changed = _changedDataQuery.ToEntityArray( Allocator.TempJob );
-
-			for ( int i = 0; i < changed.Length; i++ )
-			{
-				var groundCost = EntityManager.GetComponentData<GroundType>( changed[i] );
-				var resourceOre = EntityManager.GetComponentData<ResourceOre>( changed[i] );
-				var resourceOreCost = 0f;
-				if ( resourceOre.Empty == false && resourceOre.None == false )
+		protected override JobHandle OnUpdate( JobHandle inputDependencies ) =>
+			Entities
+				//.WithChangeFilter<GroundType>()
+				//.WithChangeFilter<ResourceOre>()
+				.ForEach( ( ref MovementCost movementCost, in GroundType groundType, in ResourceOre resourceOre ) =>
 				{
-					resourceOreCost = resourceOre.Type.Value.MovementCost;
-				}
-				EntityManager.SetComponentData( changed[i], new MovementCost { Cost = groundCost.TileTypeBlob.Value.MoveCost + resourceOreCost } );
-			}
+					var resourceOreCost = 0f;
+					if ( resourceOre.IsValid )
+					{
+						resourceOreCost = resourceOre.Type.Value.MovementCost;
+					}
 
-			changed.Dispose();
-		}
+					movementCost.Cost = groundType.TileTypeBlob.Value.MoveCost + resourceOreCost;
+				} ).Schedule( inputDependencies );
 	}
 }

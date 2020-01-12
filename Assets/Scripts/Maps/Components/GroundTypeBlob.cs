@@ -11,7 +11,7 @@ using UnityEngine;
 
 namespace Maps.Components
 {
-	public struct GroundTypeBlob : IBlobable
+	public struct GroundTypeBlob : IBlobable<TileTypeSO>
 	{
 		public Material Material;
 		public float MoveCost;

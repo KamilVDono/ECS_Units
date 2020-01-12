@@ -11,11 +11,13 @@ using UnityEngine;
 
 namespace Resources.Components
 {
-	public struct ResourceTypeBlob : IBlobable
+	public struct ResourceTypeBlob : IBlobable<ResourceTypeSO>
 	{
 		public BlobString Name;
 		public float MovementCost;
 		public Color32 Color;
+		public float WorkRequired;
+		public int PiecesPerWork;
 		public Boolean Stackable;
 
 		public static BlobAssetReference<ResourceTypeBlob> FromSO( ResourceTypeSO resourceTypeSO )
@@ -25,6 +27,8 @@ namespace Resources.Components
 			blobBuilder.AllocateString( ref resourceTypeBlob.Name, resourceTypeSO.name );
 			resourceTypeBlob.MovementCost = resourceTypeSO.MovementCost;
 			resourceTypeBlob.Color = resourceTypeSO.Color;
+			resourceTypeBlob.WorkRequired = resourceTypeSO.WorkRequired;
+			resourceTypeBlob.PiecesPerWork = resourceTypeSO.PiecesPerWork;
 			resourceTypeBlob.Stackable = resourceTypeSO.Stackable;
 			var blobReference = blobBuilder.CreateBlobAssetReference<ResourceTypeBlob>( Allocator.Persistent );
 			blobBuilder.Dispose();

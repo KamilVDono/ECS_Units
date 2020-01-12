@@ -8,6 +8,8 @@ using Maps.Systems;
 
 using NUnit.Framework;
 
+using Tests.Utility;
+
 using Unity.Collections;
 using Unity.Mathematics;
 

@@ -4,4 +4,8 @@
 	public interface IBlobable
 	{
 	}
+
+	public interface IBlobable<T> : IBlobable where T : IBlobableSO
+	{
+	}
 }
