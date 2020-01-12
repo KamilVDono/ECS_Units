@@ -17,8 +17,8 @@ namespace Pathfinding.Systems
 	{
 		protected override JobHandle OnUpdate( JobHandle inputDependencies ) =>
 			Entities
-				//.WithChangeFilter<GroundType>()
-				//.WithChangeFilter<ResourceOre>()
+				.WithChangeFilter<GroundType>()
+				.WithChangeFilter<ResourceOre>()
 				.ForEach( ( ref MovementCost movementCost, in GroundType groundType, in ResourceOre resourceOre ) =>
 				{
 					var resourceOreCost = 0f;
