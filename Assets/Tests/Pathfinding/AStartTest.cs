@@ -1,7 +1,6 @@
 ﻿using Helpers;
 
 using Maps.Components;
-using Maps.Systems;
 
 using NUnit.Framework;
 
@@ -216,10 +215,9 @@ namespace Tests.Pathfinding
 			var blitableTiles = new BlitableArray<Entity>();
 			blitableTiles.Allocate( tiles, Allocator.Temp );
 
-			_entityManager.SetComponentData( mapEntity, new MapSettings { MapEdgeSize = EdgeSize( mapSize ), Tiles = blitableTiles } );
+			_entityManager.SetSharedComponentData( mapEntity, new MapSettings { MapEdgeSize = EdgeSize( mapSize ), Tiles = blitableTiles } );
 
-			var mapSpawnerSystem = _currentWorld.GetOrCreateSystem<MapSpawner>();
-			mapSpawnerSystem.Update();
+			TargetSystem.MapSettingsEntity = mapEntity;
 		}
 
 		#endregion Helpers

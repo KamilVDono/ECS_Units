@@ -1,6 +1,7 @@
 ﻿using Helpers;
 
 using Maps.Components;
+using Maps.Systems;
 
 using Pathfinding.Components;
 using Pathfinding.Helpers;
@@ -26,7 +27,7 @@ namespace Pathfinding.Systems
 	/// <item><see cref="Waypoint"/> for store response path</item>
 	/// </list>
 	/// </summary>
-	public class AStar : ComponentSystem
+	public class AStar : ComponentSystem, IRequiresMapSettings
 	{
 		#region ProfilerMarkers
 		private static ProfilerMarker _markerAStar        = new ProfilerMarker("AStar.System");
@@ -42,6 +43,9 @@ namespace Pathfinding.Systems
 		private EndSimulationEntityCommandBufferSystem _eseCommandBufferSystem;
 		private NativeArray<Neighbor> _neighbors;
 
+		private MapSettings MapSettings { get; set; }
+		public Entity MapSettingsEntity { get; set; }
+
 		#region Lifetime
 
 		// Obtain buffer
@@ -53,25 +57,22 @@ namespace Pathfinding.Systems
 
 		protected override void OnUpdate()
 		{
-			// Get tile entities and neighbors data
-			BlitableArray<Entity> tiles = new BlitableArray<Entity>();
-
-			Entities.ForEach( ( Entity e, ref MapSettings mapSettings ) =>
+			if ( EntityManager.Exists( MapSettingsEntity ) )
 			{
-				tiles = mapSettings.Tiles;
-			} );
+				MapSettings = EntityManager.GetSharedComponentData<MapSettings>( MapSettingsEntity );
+			}
 
 			// The data is in not valid state
-			if ( tiles.Length < 1 )
+			if ( MapSettings.Tiles.Length < 1 )
 			{
 				return;
 			}
 
 			// Other data
 			var movementComponents = GetComponentDataFromEntity<MovementCost>( true );
-			var tilesSize = tiles.Length;
+			var tilesSize = MapSettings.Tiles.Length;
 			var commandBuffer = _eseCommandBufferSystem.CreateCommandBuffer();
-			var movementData = new NativeArray<MovementCost>( tiles.Length, Allocator.Temp );
+			var movementData = new NativeArray<MovementCost>( MapSettings.Tiles.Length, Allocator.Temp, NativeArrayOptions.UninitializedMemory );
 
 			Entities.WithNone<Waypoint>().ForEach( ( Entity requestEntity, ref PathRequest pathRequest ) =>
 			{
@@ -87,9 +88,9 @@ namespace Pathfinding.Systems
 				#region Setup
 
 				_markerSetup.Begin();
-				NativeArray<float2> costs = new NativeArray<float2>( tilesSize, Allocator.Temp );
+				NativeArray<float2> costs = new NativeArray<float2>( tilesSize, Allocator.Temp, NativeArrayOptions.UninitializedMemory );
 				NativeArray<Boolean> closeSet = new NativeArray<Boolean>( tilesSize, Allocator.Temp );
-				NativeArray<int> camesFrom = new NativeArray<int>( tilesSize, Allocator.Temp );
+				NativeArray<int> camesFrom = new NativeArray<int>( tilesSize, Allocator.Temp, NativeArrayOptions.UninitializedMemory );
 				NativeMinHeap minSet = new NativeMinHeap(tilesSize, Allocator.Temp);
 
 				_markerSetupData.Begin();
@@ -98,7 +99,7 @@ namespace Pathfinding.Systems
 				{
 					costs[i] = new float2 { x = 0, y = float.MaxValue };
 					camesFrom[i] = -1;
-					movementData[i] = EntityManager.GetComponentData<MovementCost>( tiles[i] );
+					movementData[i] = EntityManager.GetComponentData<MovementCost>( MapSettings.Tiles[i] );
 				}
 				_markerSetupData.End();
 

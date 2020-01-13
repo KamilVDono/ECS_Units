@@ -75,10 +75,9 @@ namespace Performance
 			BlobsMemory.FromSOs( AllTileSO );
 
 			// Create request
-			var requestEntity = _entityManager.CreateEntity(typeof(MapRequest), typeof(MapSettings));
+			var requestEntity = _entityManager.CreateEntity(typeof(MapRequest));
 
-			_entityManager.SetSharedComponentData( requestEntity, new MapRequest() { Frequency = new float2( 0.1f, 0.1f ) } );
-			_entityManager.SetComponentData( requestEntity, new MapSettings() { MapEdgeSize = mapSize } );
+			_entityManager.SetSharedComponentData( requestEntity, new MapRequest() { Frequency = new float2( 0.1f, 0.1f ), MapEdgeSize = mapSize } );
 
 			var mapSpawnerSystem = _currentWorld.GetOrCreateSystem<MapSpawner>();
 			mapSpawnerSystem.Update();

@@ -19,6 +19,7 @@ namespace Resources.Components
 		public float WorkRequired;
 		public int PiecesPerWork;
 		public Boolean Stackable;
+		public float UnitSize;
 
 		public static BlobAssetReference<ResourceTypeBlob> FromSO( ResourceTypeSO resourceTypeSO )
 		{
@@ -30,6 +31,7 @@ namespace Resources.Components
 			resourceTypeBlob.WorkRequired = resourceTypeSO.WorkRequired;
 			resourceTypeBlob.PiecesPerWork = resourceTypeSO.PiecesPerWork;
 			resourceTypeBlob.Stackable = resourceTypeSO.Stackable;
+			resourceTypeBlob.UnitSize = resourceTypeSO.UnitSize;
 			var blobReference = blobBuilder.CreateBlobAssetReference<ResourceTypeBlob>( Allocator.Persistent );
 			blobBuilder.Dispose();
 			return blobReference;

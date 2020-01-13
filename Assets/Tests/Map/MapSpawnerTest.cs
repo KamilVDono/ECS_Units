@@ -62,7 +62,7 @@ namespace Tests.Map
 			var mapSettingEntities = _entityManager.CreateEntityQuery( typeof( MapSettings ) ).ToEntityArray(Allocator.TempJob);
 			AreEqual( 1, mapSettingEntities.Length );
 
-			var mapSetting = _entityManager.GetComponentData<MapSettings>(mapSettingEntities[0]);
+			var mapSetting = _entityManager.GetSharedComponentData<MapSettings>(mapSettingEntities[0]);
 			var created = mapSetting.Tiles;
 
 			AreEqual( 1, created.Length );
@@ -86,7 +86,7 @@ namespace Tests.Map
 			// Gather data
 			var mapSettingEntities = _entityManager.CreateEntityQuery( typeof( MapSettings ) ).ToEntityArray(Allocator.TempJob);
 			AreEqual( 1, mapSettingEntities.Length );
-			var created = _entityManager.GetComponentData<MapSettings>( mapSettingEntities[0] ).Tiles;
+			var created = _entityManager.GetSharedComponentData<MapSettings>( mapSettingEntities[0] ).Tiles;
 
 			AreEqual( mapSize * mapSize, created.Length );
 			mapSettingEntities.Dispose();

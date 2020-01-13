@@ -63,17 +63,27 @@ namespace Maps.Systems
 			PostUpdateCommands.RemoveComponent( e, typeof( MapRequest ) );
 			PostUpdateCommands.DestroyEntity( e );
 
-			var mapSettingsEntity = PostUpdateCommands.CreateEntity( _mapSettingsArchetype );
+			// Need valid entity right now
+			var mapSettingsEntity = EntityManager.CreateEntity( _mapSettingsArchetype );
 
 			var tiles = new BlitableArray<Entity>();
 			tiles.Allocate( tileEntities, Allocator.Persistent );
-			PostUpdateCommands.SetComponent( mapSettingsEntity, new MapSettings { MapEdgeSize = mapEdgeSize, Tiles = tiles } );
+			PostUpdateCommands.SetSharedComponent( mapSettingsEntity, new MapSettings { MapEdgeSize = mapEdgeSize, Tiles = tiles } );
 
 			tileEntities.Dispose();
+
+			// Feed all systems these needs mapSettingsEntity
+			foreach ( var system in World.Systems )
+			{
+				if ( system is IRequiresMapSettings requiresMapSettings )
+				{
+					requiresMapSettings.MapSettingsEntity = mapSettingsEntity;
+				}
+			}
 		} );
 
 		protected override void OnDestroy() =>
-			Entities.ForEach( ( ref MapSettings mapSetting ) => mapSetting.Tiles.Dispose() );
+			Entities.ForEach( ( MapSettings mapSetting ) => mapSetting.Tiles.Dispose() );
 
 		private GroundType FindTileType( float2 position, MapRequest mapRequest )
 		{

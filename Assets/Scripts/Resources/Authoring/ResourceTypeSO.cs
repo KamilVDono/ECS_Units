@@ -18,6 +18,7 @@ namespace Resources.Authoring
 		public float WorkRequired;
 		public int PiecesPerWork;
 		public bool Stackable;
+		public float UnitSize;
 
 		public BlobAssetReference<ResourceTypeBlob> BlobReference { get; private set; }
 

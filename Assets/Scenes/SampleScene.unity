@@ -761,7 +761,7 @@ MonoBehaviour:
   _offset:
     x: 2
     y: 2
-  _mapEdgeSize: 400
+  _mapEdgeSize: 100
 --- !u!4 &2038225693
 Transform:
   m_ObjectHideFlags: 0

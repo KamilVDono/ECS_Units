@@ -146,7 +146,10 @@ namespace Tests.Input
 			{
 				tiles[i] = tile;
 			}
-			_entityManager.SetComponentData( _entityManager.CreateEntity( typeof( MapSettings ) ), new MapSettings() { Tiles = tiles, MapEdgeSize = 1 } );
+
+			var mapEntity = _entityManager.CreateEntity( typeof( MapSettings ) );
+			_entityManager.SetSharedComponentData( mapEntity, new MapSettings() { Tiles = tiles, MapEdgeSize = 1 } );
+			TargetSystem.MapSettingsEntity = mapEntity;
 		}
 	}
 }

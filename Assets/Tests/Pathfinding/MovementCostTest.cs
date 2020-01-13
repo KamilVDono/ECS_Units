@@ -112,6 +112,7 @@ namespace Tests.Pathfinding
 		{
 			protected override JobHandle OnUpdate( JobHandle inputDependencies ) =>
 				Entities
+				.WithoutBurst()
 					.ForEach( ( ref ResourceOre resourceOre ) =>
 					{
 						resourceOre.Type = BlobsMemory.Instance.ReferencesOf<ResourceTypeBlob>()[0];
