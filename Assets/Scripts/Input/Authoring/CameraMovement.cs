@@ -33,7 +33,6 @@ namespace Input.Authoring
 			CalculateCameraBounds();
 		}
 
-
 		private void SetupInitialState()
 		{
 			_input = new CameraInput();
@@ -63,11 +62,20 @@ namespace Input.Authoring
 
 		#region CameraInput lifetime
 
-		private void OnEnable() => _input.Enable();
+		private void OnEnable()
+		{
+			_input.Enable();
+		}
 
-		private void OnDisable() => _input.Disable();
+		private void OnDisable()
+		{
+			_input.Disable();
+		}
 
-		private void OnDestroy() => _input.Dispose();
+		private void OnDestroy()
+		{
+			_input.Dispose();
+		}
 
 		#endregion CameraInput lifetime
 
@@ -125,7 +133,10 @@ namespace Input.Authoring
 			return bounds;
 		}
 
-		public static Vector3 CheckBounds( Bounds mapBounds, Vector3 position ) => mapBounds.ClosestPoint( position );
+		public static Vector3 CheckBounds( Bounds mapBounds, Vector3 position )
+		{
+			return mapBounds.ClosestPoint( position );
+		}
 
 		#endregion Static helpers
 	}

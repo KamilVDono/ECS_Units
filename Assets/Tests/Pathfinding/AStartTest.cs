@@ -181,12 +181,10 @@ namespace Tests.Pathfinding
 					return;
 				}
 			}
-
 		}
 
 		private void PrintWay( DynamicBuffer<Waypoint> dynamicBuffer )
 		{
-
 			StringBuilder sb = new StringBuilder("Map:");
 			for ( int i = 0; i < dynamicBuffer.Length; i++ )
 			{
@@ -215,9 +213,7 @@ namespace Tests.Pathfinding
 			var blitableTiles = new BlitableArray<Entity>();
 			blitableTiles.Allocate( tiles, Allocator.Temp );
 
-			_entityManager.SetSharedComponentData( mapEntity, new MapSettings { MapEdgeSize = EdgeSize( mapSize ), Tiles = blitableTiles } );
-
-			TargetSystem.MapSettingsEntity = mapEntity;
+			TargetSystem.SetSingleton( new MapSettings { MapEdgeSize = EdgeSize( mapSize ), Tiles = blitableTiles } );
 		}
 
 		#endregion Helpers

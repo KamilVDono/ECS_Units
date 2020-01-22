@@ -59,14 +59,10 @@ namespace Tests.Map
 			Update();
 
 			// Gather data
-			var mapSettingEntities = _entityManager.CreateEntityQuery( typeof( MapSettings ) ).ToEntityArray(Allocator.TempJob);
-			AreEqual( 1, mapSettingEntities.Length );
-
-			var mapSetting = _entityManager.GetSharedComponentData<MapSettings>(mapSettingEntities[0]);
+			var mapSetting = TargetSystem.GetSingleton<MapSettings>();
 			var created = mapSetting.Tiles;
 
 			AreEqual( 1, created.Length );
-			mapSettingEntities.Dispose();
 		}
 
 		[Test]
@@ -84,12 +80,9 @@ namespace Tests.Map
 			Update();
 
 			// Gather data
-			var mapSettingEntities = _entityManager.CreateEntityQuery( typeof( MapSettings ) ).ToEntityArray(Allocator.TempJob);
-			AreEqual( 1, mapSettingEntities.Length );
-			var created = _entityManager.GetSharedComponentData<MapSettings>( mapSettingEntities[0] ).Tiles;
+			var created = TargetSystem.GetSingleton<MapSettings>().Tiles;
 
 			AreEqual( mapSize * mapSize, created.Length );
-			mapSettingEntities.Dispose();
 		}
 	}
 }

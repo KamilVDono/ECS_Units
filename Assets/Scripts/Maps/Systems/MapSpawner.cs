@@ -68,22 +68,12 @@ namespace Maps.Systems
 
 			var tiles = new BlitableArray<Entity>();
 			tiles.Allocate( tileEntities, Allocator.Persistent );
-			PostUpdateCommands.SetSharedComponent( mapSettingsEntity, new MapSettings { MapEdgeSize = mapEdgeSize, Tiles = tiles } );
+			SetSingleton( new MapSettings { MapEdgeSize = mapEdgeSize, Tiles = tiles } );
 
 			tileEntities.Dispose();
-
-			// Feed all systems these needs mapSettingsEntity
-			foreach ( var system in World.Systems )
-			{
-				if ( system is IRequiresMapSettings requiresMapSettings )
-				{
-					requiresMapSettings.MapSettingsEntity = mapSettingsEntity;
-				}
-			}
 		} );
 
-		protected override void OnDestroy() =>
-			Entities.ForEach( ( MapSettings mapSetting ) => mapSetting.Tiles.Dispose() );
+		protected override void OnDestroy() => GetSingleton<MapSettings>().Tiles.Dispose();
 
 		private GroundType FindTileType( float2 position, MapRequest mapRequest )
 		{

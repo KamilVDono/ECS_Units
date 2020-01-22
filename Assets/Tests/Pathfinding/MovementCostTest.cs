@@ -37,7 +37,6 @@ namespace Tests.Pathfinding
 			ResourceTypeSO coal = ScriptableObject.CreateInstance<ResourceTypeSO>();
 			coal.MovementCost = 2;
 
-
 			BlobsMemory.FromSOs( new IBlobableSO[] { SandTileSO, coal } );
 		}
 
@@ -80,7 +79,8 @@ namespace Tests.Pathfinding
 			_entityManager.SetComponentData( tile, ResourceOre.EMPTY_ORE );
 
 			// Double update because MovementCostTrackerSystem get call before ChangeResourceOreJob
-			// So here MovementCostTrackerSystem calculate for ground and empty ore, after that ore become not empty
+			// So here MovementCostTrackerSystem calculate for ground and empty ore, after that ore
+			// become not empty
 			Update();
 			// Here MovementCostTrackerSystem calculate for ground and fake coal ore
 			Update();
@@ -98,8 +98,9 @@ namespace Tests.Pathfinding
 			_entityManager.SetComponentData( tile, new GroundType( BlobsMemory.Instance.ReferencesOf<GroundTypeBlob>()[0] ) );
 			_entityManager.SetComponentData( tile, ResourceOre.EMPTY_ORE );
 
-			// Double update because MovementCostTrackerSystem get call before ChangeResourceOre
-			// So here MovementCostTrackerSystem calculate for ground and empty ore, after that ore become not empty
+			// Double update because MovementCostTrackerSystem get call before ChangeResourceOre So
+			// here MovementCostTrackerSystem calculate for ground and empty ore, after that ore
+			// become not empty
 			Update();
 			// Here MovementCostTrackerSystem calculate for ground and fake coal ore
 			Update();
@@ -110,28 +111,32 @@ namespace Tests.Pathfinding
 		[DisableAutoCreation]
 		public class ChangeResourceOreJob : JobComponentSystem
 		{
-			protected override JobHandle OnUpdate( JobHandle inputDependencies ) =>
-				Entities
-				.WithoutBurst()
-					.ForEach( ( ref ResourceOre resourceOre ) =>
-					{
-						resourceOre.Type = BlobsMemory.Instance.ReferencesOf<ResourceTypeBlob>()[0];
-						resourceOre.Capacity = 10;
-						resourceOre.Count = 10;
-					} ).Schedule( inputDependencies );
+			protected override JobHandle OnUpdate( JobHandle inputDependencies )
+			{
+				return Entities
+.WithoutBurst()
+.ForEach( ( ref ResourceOre resourceOre ) =>
+{
+	resourceOre.Type = BlobsMemory.Instance.ReferencesOf<ResourceTypeBlob>()[0];
+	resourceOre.Capacity = 10;
+	resourceOre.Count = 10;
+} ).Schedule( inputDependencies );
+			}
 		}
 
 		[DisableAutoCreation]
 		public class ChangeResourceOre : ComponentSystem
 		{
-			protected override void OnUpdate() =>
+			protected override void OnUpdate()
+			{
 				Entities
-					.ForEach( ( ref ResourceOre resourceOre ) =>
-					{
-						resourceOre.Type = BlobsMemory.Instance.ReferencesOf<ResourceTypeBlob>()[0];
-						resourceOre.Capacity = 10;
-						resourceOre.Count = 10;
-					} );
+.ForEach( ( ref ResourceOre resourceOre ) =>
+{
+	resourceOre.Type = BlobsMemory.Instance.ReferencesOf<ResourceTypeBlob>()[0];
+	resourceOre.Capacity = 10;
+	resourceOre.Count = 10;
+} );
+			}
 		}
 	}
 }

@@ -3,34 +3,35 @@
 using Input.Components;
 
 using Maps.Components;
-using Maps.Systems;
 
 using Unity.Entities;
 
 namespace Input.Systems
 {
-	public class MouseOverTileSystem : ComponentSystem, IRequiresMapSettings
+	public class MouseOverTileSystem : ComponentSystem
 	{
-		public Entity MapSettingsEntity { get; set; }
-		private MapSettings MapSettings { get; set; }
-
-		protected override void OnCreate() => EntityManager.CreateEntity( typeof( TileUnderMouse ), typeof( MouseWorldPosition ) );
-
-		protected override void OnUpdate() => Entities.ForEach( ( ref TileUnderMouse tileUnderMouse, ref MouseWorldPosition mouseWorldPosition ) =>
+		protected override void OnCreate()
 		{
-			if ( EntityManager.Exists( MapSettingsEntity ) )
-			{
-				MapSettings = EntityManager.GetSharedComponentData<MapSettings>( MapSettingsEntity );
-			}
+			RequireSingletonForUpdate<MapSettings>();
+			EntityManager.CreateEntity( typeof( TileUnderMouse ), typeof( MouseWorldPosition ) );
+		}
 
-			if ( MapSettings.Tiles.Length != 0 )
-			{
-				tileUnderMouse.Tile = MapSettings.Tiles[IndexUtils.WorldIndex1D( mouseWorldPosition.Position, MapSettings.Tiles.Length )];
-			}
-			else
-			{
-				tileUnderMouse.Tile = new Entity();
-			}
-		} );
+		protected override void OnUpdate()
+		{
+			var mapSettings = GetSingleton<MapSettings>();
+
+			Entities
+				.ForEach( ( ref TileUnderMouse tileUnderMouse, ref MouseWorldPosition mouseWorldPosition ) =>
+				{
+					if ( mapSettings.Tiles.Length != 0 )
+					{
+						tileUnderMouse.Tile = mapSettings.Tiles[IndexUtils.WorldIndex1D( mouseWorldPosition.Position, mapSettings.Tiles.Length )];
+					}
+					else
+					{
+						tileUnderMouse.Tile = new Entity();
+					}
+				} );
+		}
 	}
 }

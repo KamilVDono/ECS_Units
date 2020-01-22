@@ -2,8 +2,7 @@
 
 namespace Resources.Components
 {
-    public interface IStockModifier : IComponentData
-    {
-
-    }
+	public interface IStockModifier : IComponentData
+	{
+	}
 }

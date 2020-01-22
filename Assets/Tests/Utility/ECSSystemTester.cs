@@ -30,6 +30,7 @@ namespace Tests.Utility
 			}
 			else
 			{
+				_currentWorld.CreateSystem<ConstTimeMockSystem>();
 				_currentWorld.CreateSystem<T>();
 			}
 		}
@@ -52,7 +53,7 @@ namespace Tests.Utility
 		{
 			if ( TargetSystem != null )
 			{
-				// Unfortunately, this do not work correctly 
+				// Unfortunately, this do not work correctly
 				//_currentWorld.Update();
 				foreach ( var system in _currentWorld.Systems )
 				{

@@ -21,6 +21,9 @@ using static NUnit.Framework.Assert;
 
 namespace Tests.Input
 {
+	/// <summary> There is some kind of bug, because TargetSystem.HasSingleton<MapSettings>()
+	/// returns false, but TargetSystem.SetSingleton( new MapSettings() { MapEdgeSize = 5 } ) throws
+	/// exception </summary>
 	public class MouseOverTileTest : ECSSystemTester<MouseOverTileSystem>
 	{
 		private string _sandName = "sand";
@@ -50,6 +53,11 @@ namespace Tests.Input
 		public void NoMap_NoTile()
 		{
 			var entity = SetMouseInput( float2.zero );
+
+			if ( TargetSystem.HasSingleton<MapSettings>() == false )
+			{
+				TargetSystem.SetSingleton( new MapSettings() { MapEdgeSize = 5 } );
+			}
 
 			Update();
 
@@ -123,19 +131,6 @@ namespace Tests.Input
 			return entity;
 		}
 
-		protected Entity SetMouseInput( float2 position, float2 delta )
-		{
-			var mousePosition = new MouseWorldPosition(){ Position = position, Delta = delta };
-			var tileUnderMouse = new TileUnderMouse();
-
-			var entity = _entityManager.CreateEntity( mousePosition.GetType(), tileUnderMouse.GetType() );
-
-			_entityManager.SetComponentData( entity, mousePosition );
-			_entityManager.SetComponentData( entity, tileUnderMouse );
-
-			return entity;
-		}
-
 		private void SetMap( int edgeSize )
 		{
 			var mapSize = edgeSize * edgeSize;
@@ -147,9 +142,7 @@ namespace Tests.Input
 				tiles[i] = tile;
 			}
 
-			var mapEntity = _entityManager.CreateEntity( typeof( MapSettings ) );
-			_entityManager.SetSharedComponentData( mapEntity, new MapSettings() { Tiles = tiles, MapEdgeSize = 1 } );
-			TargetSystem.MapSettingsEntity = mapEntity;
+			TargetSystem.SetSingleton( new MapSettings() { Tiles = tiles, MapEdgeSize = 1 } );
 		}
 	}
 }

@@ -1,7 +1,6 @@
 ﻿using Helpers;
 
 using Maps.Components;
-using Maps.Systems;
 
 using Pathfinding.Components;
 using Pathfinding.Helpers;
@@ -21,30 +20,28 @@ namespace Pathfinding.Systems
 	/// A* system Uses:
 	/// <list type="bullet">
 	/// <item><see cref="MapSettings"/> for map tiles</item>
-	/// <item><see cref="MapSettingsNeighborsState"/> for neighbors setting</item>
 	/// <item><see cref="MovementCost"/> for cost calculation</item>
 	/// <item><see cref="PathRequest"/> for request data</item>
 	/// <item><see cref="Waypoint"/> for store response path</item>
 	/// </list>
 	/// </summary>
-	public class AStar : ComponentSystem, IRequiresMapSettings
+	public class AStar : ComponentSystem
 	{
 		#region ProfilerMarkers
 		private static ProfilerMarker _markerAStar        = new ProfilerMarker("AStar.System");
 		private static ProfilerMarker _markerSetup        = new ProfilerMarker("AStar.Setup");
 		private static ProfilerMarker _markerSetupData    = new ProfilerMarker("AStar.Setup_data");
+		private static ProfilerMarker _markerSetupDataMovement    = new ProfilerMarker("AStar.Setup_data_movement");
 		private static ProfilerMarker _markerSearch       = new ProfilerMarker("AStar.Search");
 		private static ProfilerMarker _markerReconstruct  = new ProfilerMarker("AStar.Reconstruct");
 		private static ProfilerMarker _markerCleanup      = new ProfilerMarker("AStar.Cleanup");
 		private static ProfilerMarker _markerFindCurrent  = new ProfilerMarker("AStar.Find_current");
 		private static ProfilerMarker _markerMovementData = new ProfilerMarker("AStar.Movement_data");
+		private static ProfilerMarker _markerPop = new ProfilerMarker("AStar.Pop");
 		#endregion ProfilerMarkers
 
 		private EndSimulationEntityCommandBufferSystem _eseCommandBufferSystem;
 		private NativeArray<Neighbor> _neighbors;
-
-		private MapSettings MapSettings { get; set; }
-		public Entity MapSettingsEntity { get; set; }
 
 		#region Lifetime
 
@@ -57,22 +54,26 @@ namespace Pathfinding.Systems
 
 		protected override void OnUpdate()
 		{
-			if ( EntityManager.Exists( MapSettingsEntity ) )
-			{
-				MapSettings = EntityManager.GetSharedComponentData<MapSettings>( MapSettingsEntity );
-			}
+			var mapSettings = GetSingleton<MapSettings>();
 
 			// The data is in not valid state
-			if ( MapSettings.Tiles.Length < 1 )
+			if ( mapSettings.Tiles.Length < 1 )
 			{
 				return;
 			}
 
 			// Other data
 			var movementComponents = GetComponentDataFromEntity<MovementCost>( true );
-			var tilesSize = MapSettings.Tiles.Length;
+			var tilesSize = mapSettings.Tiles.Length;
 			var commandBuffer = _eseCommandBufferSystem.CreateCommandBuffer();
-			var movementData = new NativeArray<MovementCost>( MapSettings.Tiles.Length, Allocator.Temp, NativeArrayOptions.UninitializedMemory );
+			var movementData = new NativeArray<MovementCost>( mapSettings.Tiles.Length, Allocator.Temp, NativeArrayOptions.UninitializedMemory );
+
+			_markerSetupDataMovement.Begin();
+			for ( int i = 0; i < tilesSize; i++ )
+			{
+				movementData[i] = EntityManager.GetComponentData<MovementCost>( mapSettings.Tiles[i] );
+			}
+			_markerSetupDataMovement.End();
 
 			Entities.WithNone<Waypoint>().ForEach( ( Entity requestEntity, ref PathRequest pathRequest ) =>
 			{
@@ -89,7 +90,7 @@ namespace Pathfinding.Systems
 
 				_markerSetup.Begin();
 				NativeArray<float2> costs = new NativeArray<float2>( tilesSize, Allocator.Temp, NativeArrayOptions.UninitializedMemory );
-				NativeArray<Boolean> closeSet = new NativeArray<Boolean>( tilesSize, Allocator.Temp );
+				NativeArray<Boolean> closeSet = new NativeArray<Boolean>( tilesSize, Allocator.Temp, NativeArrayOptions.UninitializedMemory );
 				NativeArray<int> camesFrom = new NativeArray<int>( tilesSize, Allocator.Temp, NativeArrayOptions.UninitializedMemory );
 				NativeMinHeap minSet = new NativeMinHeap(tilesSize, Allocator.Temp);
 
@@ -99,7 +100,7 @@ namespace Pathfinding.Systems
 				{
 					costs[i] = new float2 { x = 0, y = float.MaxValue };
 					camesFrom[i] = -1;
-					movementData[i] = EntityManager.GetComponentData<MovementCost>( MapSettings.Tiles[i] );
+					closeSet[i] = false;
 				}
 				_markerSetupData.End();
 
@@ -199,7 +200,10 @@ namespace Pathfinding.Systems
 			movementData.Dispose();
 		}
 
-		protected override void OnDestroy() => _neighbors.Dispose();
+		protected override void OnDestroy()
+		{
+			_neighbors.Dispose();
+		}
 
 		#endregion Lifetime
 
@@ -209,7 +213,9 @@ namespace Pathfinding.Systems
 			_markerFindCurrent.Begin();
 			while ( minSet.HasNext() )
 			{
+				_markerPop.Begin();
 				var next = minSet.Pop();
+				_markerPop.End();
 				// Check if this is not visited tile
 				if ( closeSet[next.Position] == false )
 				{

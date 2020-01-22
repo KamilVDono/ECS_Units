@@ -35,7 +35,25 @@ namespace Pathfinding.Helpers
 			CheckValues( x, y );
 		}
 
-		public int Of( int index1D, int fullSize ) => Of( Index2D( index1D, fullSize ), fullSize );
+		public static NativeArray<Neighbor> FullNeighborhood( Allocator allocator )
+		{
+			return new NativeArray<Neighbor>( 8, allocator )
+			{
+				[0] = Neighbor.UPPER_LEFT,
+				[1] = Neighbor.UPPER,
+				[2] = Neighbor.UPPER_RIGHT,
+				[3] = Neighbor.LEFT,
+				[4] = Neighbor.RIGHT,
+				[5] = Neighbor.BOTTOM_LEFT,
+				[6] = Neighbor.BOTTOM,
+				[7] = Neighbor.BOTTOM_RIGHT,
+			};
+		}
+
+		public int Of( int index1D, int fullSize )
+		{
+			return Of( Index2D( index1D, fullSize ), fullSize );
+		}
 
 		public int Of( int2 index2D, int fullSize )
 		{
@@ -73,17 +91,5 @@ namespace Pathfinding.Helpers
 					$"Parameters {nameof( x )} and {nameof( y )} cannot both be zero" );
 			}
 		}
-
-		public static NativeArray<Neighbor> FullNeighborhood( Allocator allocator ) => new NativeArray<Neighbor>( 8, allocator )
-		{
-			[0] = Neighbor.UPPER_LEFT,
-			[1] = Neighbor.UPPER,
-			[2] = Neighbor.UPPER_RIGHT,
-			[3] = Neighbor.LEFT,
-			[4] = Neighbor.RIGHT,
-			[5] = Neighbor.BOTTOM_LEFT,
-			[6] = Neighbor.BOTTOM,
-			[7] = Neighbor.BOTTOM_RIGHT,
-		};
 	}
 }

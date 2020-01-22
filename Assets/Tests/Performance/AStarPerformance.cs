@@ -34,7 +34,9 @@ namespace Performance
 				new SampleGroupDefinition("AStar.Cleanup"),
 				new SampleGroupDefinition("AStar.Find_current" ),
 				new SampleGroupDefinition("AStar.Movement_data"),
-				new SampleGroupDefinition("AStar.Setup_data")
+				new SampleGroupDefinition("AStar.Setup_data"),
+				new SampleGroupDefinition("AStar.Setup_data_movement"),
+				new SampleGroupDefinition("AStar.Pop")
 			};
 
 			Measure.Method( () =>
@@ -49,6 +51,41 @@ namespace Performance
 				.WarmupCount( 10 )
 				.MeasurementCount( 15 )
 				.IterationsPerMeasurement( 6 )
+				.Run();
+
+			BlobsMemory.Instance.Dispose();
+		}
+
+		[Test]
+		[Performance]
+		[Version( "1" )]
+		public void AStarHardPasses()
+		{
+			SampleGroupDefinition[] markers =
+			{
+				new SampleGroupDefinition("AStar.System"),
+				new SampleGroupDefinition("AStar.Setup"),
+				new SampleGroupDefinition("AStar.Search"),
+				new SampleGroupDefinition("AStar.Reconstruct"),
+				new SampleGroupDefinition("AStar.Cleanup"),
+				new SampleGroupDefinition("AStar.Find_current" ),
+				new SampleGroupDefinition("AStar.Movement_data"),
+				new SampleGroupDefinition("AStar.Setup_data"),
+				new SampleGroupDefinition("AStar.Setup_data_movement")
+			};
+
+			Measure.Method( () =>
+			{
+				using ( Measure.ProfilerMarkers( markers ) )
+				{
+					CreateMap( 400 );
+					CreateRequest( 30 );
+					Update();
+				}
+			} )
+				.WarmupCount( 5 )
+				.MeasurementCount( 10 )
+				.IterationsPerMeasurement( 3 )
 				.Run();
 
 			BlobsMemory.Instance.Dispose();
@@ -81,6 +118,9 @@ namespace Performance
 
 			var mapSpawnerSystem = _currentWorld.GetOrCreateSystem<MapSpawner>();
 			mapSpawnerSystem.Update();
+
+			var movementCostSystem = _currentWorld.GetOrCreateSystem<MovementCostTrackerSystem>();
+			movementCostSystem.Update();
 		}
 	}
 }

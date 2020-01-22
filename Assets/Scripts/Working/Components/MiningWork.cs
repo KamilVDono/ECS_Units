@@ -4,7 +4,7 @@ namespace Working.Components
 {
 	public struct MiningWork : IWork
 	{
-		public float ProgressPerSecond { get; set; }
 		public Entity Worker;
+		public float ProgressPerSecond { get; set; }
 	}
 }

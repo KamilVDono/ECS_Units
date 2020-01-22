@@ -131,7 +131,6 @@ namespace Tests.Input
 
 		public class CheckBounds
 		{
-
 			[Test]
 			public void CheckBounds_OutsideLeft()
 			{
@@ -143,7 +142,6 @@ namespace Tests.Input
 
 				Assert.AreEqual( excepted, actual );
 			}
-
 		}
 	}
 }

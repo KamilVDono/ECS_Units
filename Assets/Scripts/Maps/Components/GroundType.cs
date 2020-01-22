@@ -1,5 +1,4 @@
-﻿
-using System;
+﻿using System;
 
 using Unity.Entities;
 
@@ -15,8 +14,14 @@ namespace Maps.Components
 			TileTypeBlob = tileType;
 		}
 
-		public bool Equals( GroundType other ) => TileTypeBlob.Equals( other.TileTypeBlob );
+		public bool Equals( GroundType other )
+		{
+			return TileTypeBlob.Equals( other.TileTypeBlob );
+		}
 
-		public override int GetHashCode() => TileTypeBlob.GetHashCode();
+		public override int GetHashCode()
+		{
+			return TileTypeBlob.GetHashCode();
+		}
 	}
 }

@@ -56,14 +56,14 @@ namespace Pathfinding.Helpers
 					$"Length * sizeof(T) cannot exceed {int.MaxValue} bytes" );
 			}
 
-			this._buffer = UnsafeUtility.Malloc( size, UnsafeUtility.AlignOf<MinHeapNode>(), allocator );
-			this._capacity = capacity;
-			this._allocator = allocator;
-			this._head = -1;
-			this._length = 0;
+			_buffer = UnsafeUtility.Malloc( size, UnsafeUtility.AlignOf<MinHeapNode>(), allocator );
+			_capacity = capacity;
+			_allocator = allocator;
+			_head = -1;
+			_length = 0;
 
 #if ENABLE_UNITY_COLLECTIONS_CHECKS
-			DisposeSentinel.Create( out this.m_Safety, out this.m_DisposeSentinel, 1, allocator );
+			DisposeSentinel.Create( out m_Safety, out m_DisposeSentinel, 1, allocator );
 #endif
 		}
 
@@ -74,9 +74,9 @@ namespace Pathfinding.Helpers
 		public bool HasNext()
 		{
 #if ENABLE_UNITY_COLLECTIONS_CHECKS
-			AtomicSafetyHandle.CheckReadAndThrow( this.m_Safety );
+			AtomicSafetyHandle.CheckReadAndThrow( m_Safety );
 #endif
-			return this._head >= 0;
+			return _head >= 0;
 		}
 
 		/// <summary>
@@ -87,41 +87,41 @@ namespace Pathfinding.Helpers
 		public void Push( MinHeapNode node )
 		{
 #if ENABLE_UNITY_COLLECTIONS_CHECKS
-			if ( this._length == this._capacity )
+			if ( _length == _capacity )
 			{
 				throw new IndexOutOfRangeException( "Capacity Reached" );
 			}
 
-			AtomicSafetyHandle.CheckReadAndThrow( this.m_Safety );
+			AtomicSafetyHandle.CheckReadAndThrow( m_Safety );
 #endif
-			if ( this._head < 0 )
+			if ( _head < 0 )
 			{
-				this._head = this._length;
+				_head = _length;
 			}
-			else if ( node.ExpectedCost < this.Get( this._head ).ExpectedCost )
+			else if ( node.ExpectedCost < Get( _head ).ExpectedCost )
 			{
-				node.Next = this._head;
-				this._head = this._length;
+				node.Next = _head;
+				_head = _length;
 			}
 			else
 			{
-				var currentPtr = this._head;
-				var current = this.Get(currentPtr);
+				var currentPtr = _head;
+				var current = Get(currentPtr);
 
-				while ( current.Next >= 0 && this.Get( current.Next ).ExpectedCost <= node.ExpectedCost )
+				while ( current.Next >= 0 && Get( current.Next ).ExpectedCost <= node.ExpectedCost )
 				{
 					currentPtr = current.Next;
-					current = this.Get( current.Next );
+					current = Get( current.Next );
 				}
 
 				node.Next = current.Next;
-				current.Next = this._length;
+				current.Next = _length;
 
-				UnsafeUtility.WriteArrayElement( this._buffer, currentPtr, current );
+				UnsafeUtility.WriteArrayElement( _buffer, currentPtr, current );
 			}
 
-			UnsafeUtility.WriteArrayElement( this._buffer, this._length, node );
-			this._length += 1;
+			UnsafeUtility.WriteArrayElement( _buffer, _length, node );
+			_length += 1;
 		}
 
 		/// <summary>
@@ -131,11 +131,11 @@ namespace Pathfinding.Helpers
 		public MinHeapNode Pop()
 		{
 #if ENABLE_UNITY_COLLECTIONS_CHECKS
-			AtomicSafetyHandle.CheckWriteAndThrow( this.m_Safety );
+			AtomicSafetyHandle.CheckWriteAndThrow( m_Safety );
 #endif
-			var result = this._head;
-			this._head = this.Get( this._head ).Next;
-			return this.Get( result );
+			var result = _head;
+			_head = Get( _head ).Next;
+			return Get( result );
 		}
 
 		/// <summary>
@@ -144,8 +144,8 @@ namespace Pathfinding.Helpers
 		/// <remarks>Does not clear memory.</remarks>
 		public void Clear()
 		{
-			this._head = -1;
-			this._length = 0;
+			_head = -1;
+			_length = 0;
 		}
 
 		/// <summary>
@@ -154,16 +154,16 @@ namespace Pathfinding.Helpers
 		/// <exception cref="InvalidOperationException">Memory hasn't been allocated.</exception>
 		public void Dispose()
 		{
-			if ( !UnsafeUtility.IsValidAllocator( this._allocator ) )
+			if ( !UnsafeUtility.IsValidAllocator( _allocator ) )
 			{
 				return;
 			}
 #if ENABLE_UNITY_COLLECTIONS_CHECKS
-			DisposeSentinel.Dispose( ref this.m_Safety, ref this.m_DisposeSentinel );
+			DisposeSentinel.Dispose( ref m_Safety, ref m_DisposeSentinel );
 #endif
-			UnsafeUtility.Free( this._buffer, this._allocator );
-			this._buffer = null;
-			this._capacity = 0;
+			UnsafeUtility.Free( _buffer, _allocator );
+			_buffer = null;
+			_capacity = 0;
 		}
 
 		public NativeMinHeap Slice( int start, int length )
@@ -172,12 +172,12 @@ namespace Pathfinding.Helpers
 
 			return new NativeMinHeap()
 			{
-				_buffer = (byte*)( (IntPtr)this._buffer + stride * start ),
+				_buffer = (byte*)( (IntPtr)_buffer + stride * start ),
 				_capacity = length,
 				_length = 0,
 				_head = -1,
 #if ENABLE_UNITY_COLLECTIONS_CHECKS
-				m_Safety = this.m_Safety,
+				m_Safety = m_Safety,
 #endif
 			};
 		}
@@ -185,20 +185,20 @@ namespace Pathfinding.Helpers
 		private MinHeapNode Get( int index )
 		{
 #if ENABLE_UNITY_COLLECTIONS_CHECKS
-			if ( index < 0 || index >= this._length )
+			if ( index < 0 || index >= _length )
 			{
-				this.FailOutOfRangeError( index );
+				FailOutOfRangeError( index );
 			}
 
-			AtomicSafetyHandle.CheckReadAndThrow( this.m_Safety );
+			AtomicSafetyHandle.CheckReadAndThrow( m_Safety );
 #endif
 
-			return UnsafeUtility.ReadArrayElement<MinHeapNode>( this._buffer, index );
+			return UnsafeUtility.ReadArrayElement<MinHeapNode>( _buffer, index );
 		}
 
 #if ENABLE_UNITY_COLLECTIONS_CHECKS
 
-		private void FailOutOfRangeError( int index ) => throw new IndexOutOfRangeException( $"Index {index} is out of range of '{this._capacity}' Length." );
+		private void FailOutOfRangeError( int index ) => throw new IndexOutOfRangeException( $"Index {index} is out of range of '{_capacity}' Length." );
 
 #endif
 	}

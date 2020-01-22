@@ -18,6 +18,7 @@ namespace Maps.Authoring
 
 		[Range(0f, 1f)]
 		public float Range;
+
 		public bool AcceptResourceOre;
 
 		#region Cache
@@ -41,7 +42,10 @@ namespace Maps.Authoring
 			BlobReference = GroundTypeBlob.FromSO( this );
 		}
 
-		public override string ToString() => _toString;
+		public override string ToString()
+		{
+			return _toString;
+		}
 
 		public void Dispose()
 		{
@@ -51,8 +55,10 @@ namespace Maps.Authoring
 			}
 		}
 
-		private void SetupToString() =>
+		private void SetupToString()
+		{
 			_toString = $"Tile {name}, cost {Cost};";
+		}
 
 		private Material CreateMaterial()
 		{
