@@ -34,7 +34,7 @@ namespace Maps.Authoring
 				MapEdgeSize = _mapEdgeSize
 			};
 
-			entityManager.SetSharedComponentData( e, request );
+			entityManager.SetComponentData( e, request );
 		}
 	}
 }

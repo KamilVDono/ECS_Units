@@ -1,7 +1,5 @@
 ﻿using Blobs;
 
-using Helpers;
-
 using Maps.Authoring;
 using Maps.Components;
 using Maps.Systems;
@@ -10,7 +8,6 @@ using NUnit.Framework;
 
 using Tests.Utility;
 
-using Unity.Collections;
 using Unity.Mathematics;
 
 using UnityEngine;
@@ -52,8 +49,7 @@ namespace Tests.Map
 		{
 			// Create request
 			var requestEntity = _entityManager.CreateEntity(typeof(MapRequest));
-			var tileTypes = new BlitableArray<GroundType>( 1, Allocator.TempJob );
-			_entityManager.SetSharedComponentData( requestEntity, new MapRequest() { Frequency = new float2( 0.1f, 0.1f ), MapEdgeSize = 1 } );
+			_entityManager.SetComponentData( requestEntity, new MapRequest() { Frequency = new float2( 0.1f, 0.1f ), MapEdgeSize = 1 } );
 
 			// Update
 			Update();
@@ -74,7 +70,7 @@ namespace Tests.Map
 			// Create request
 			var requestEntity = _entityManager.CreateEntity(typeof(MapRequest));
 
-			_entityManager.SetSharedComponentData( requestEntity, new MapRequest() { Frequency = new float2( 0.1f, 0.1f ), MapEdgeSize = mapSize } );
+			_entityManager.SetComponentData( requestEntity, new MapRequest() { Frequency = new float2( 0.1f, 0.1f ), MapEdgeSize = mapSize } );
 
 			// Update
 			Update();

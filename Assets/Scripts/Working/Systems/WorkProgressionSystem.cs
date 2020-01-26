@@ -6,6 +6,7 @@ using Working.Components;
 namespace Working.Systems
 {
 	// TODO: Find A way to use IWork instead of MiningWork Here some ideas https://forum.unity.com/threads/querying-components-on-an-entity-via-interface.663511/
+	[UpdateBefore( typeof( MiningWorkSystem ) )]
 	public class WorkProgressionSystem : JobComponentSystem
 	{
 		protected override JobHandle OnUpdate( JobHandle inputDeps )

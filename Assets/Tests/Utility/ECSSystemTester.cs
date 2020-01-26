@@ -1,5 +1,7 @@
 ﻿using NUnit.Framework;
 
+using System.Reflection;
+
 using Unity.Entities;
 
 namespace Tests.Utility
@@ -64,6 +66,12 @@ namespace Tests.Utility
 			{
 				throw new NUnit.Framework.InconclusiveException( "Can not localize system in world" );
 			}
+		}
+
+		protected void Inject( object value, string fieldName )
+		{
+			var fieldInfo = TargetSystem.GetType().GetField( fieldName, BindingFlags.Public | BindingFlags.Instance | BindingFlags.NonPublic | BindingFlags.GetField );
+			fieldInfo.SetValue( TargetSystem, value );
 		}
 	}
 }

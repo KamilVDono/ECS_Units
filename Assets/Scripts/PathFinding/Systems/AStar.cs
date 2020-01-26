@@ -66,14 +66,7 @@ namespace Pathfinding.Systems
 			var movementComponents = GetComponentDataFromEntity<MovementCost>( true );
 			var tilesSize = mapSettings.Tiles.Length;
 			var commandBuffer = _eseCommandBufferSystem.CreateCommandBuffer();
-			var movementData = new NativeArray<MovementCost>( mapSettings.Tiles.Length, Allocator.Temp, NativeArrayOptions.UninitializedMemory );
 
-			_markerSetupDataMovement.Begin();
-			for ( int i = 0; i < tilesSize; i++ )
-			{
-				movementData[i] = EntityManager.GetComponentData<MovementCost>( mapSettings.Tiles[i] );
-			}
-			_markerSetupDataMovement.End();
 
 			Entities.WithNone<Waypoint>().ForEach( ( Entity requestEntity, ref PathRequest pathRequest ) =>
 			{
@@ -102,6 +95,16 @@ namespace Pathfinding.Systems
 					camesFrom[i] = -1;
 					closeSet[i] = false;
 				}
+
+				var movementData = new NativeArray<MovementCost>( mapSettings.Tiles.Length, Allocator.Temp, NativeArrayOptions.UninitializedMemory );
+
+				_markerSetupDataMovement.Begin();
+				for ( int i = 0; i < tilesSize; i++ )
+				{
+					movementData[i] = EntityManager.GetComponentData<MovementCost>( mapSettings.Tiles[i] );
+				}
+				_markerSetupDataMovement.End();
+
 				_markerSetupData.End();
 
 				// Shortcuts
@@ -188,6 +191,7 @@ namespace Pathfinding.Systems
 				closeSet.Dispose();
 				camesFrom.Dispose();
 				minSet.Dispose();
+				movementData.Dispose();
 				// Mark request as completed
 				pathRequest.Done = true;
 				_markerCleanup.End();
@@ -197,7 +201,7 @@ namespace Pathfinding.Systems
 				_markerAStar.End();
 			} );
 
-			movementData.Dispose();
+
 		}
 
 		protected override void OnDestroy()

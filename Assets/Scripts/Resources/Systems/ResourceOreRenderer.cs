@@ -46,15 +46,14 @@ namespace Resources.Systems
 				{
 					// Need valid entity right now so can not use PostUpdateCommands here
 					var visualEntity = new Entity();
-					var isValidOre = ore.None == false && ore.Empty == false;
-					if ( isValidOre )
+					if ( ore.IsValid )
 					{
 						visualEntity = EntityManager.CreateEntity( _tileVisualArchetype );
 						PostUpdateCommands.SetSharedComponent( visualEntity, new RenderMesh { mesh = _oreMesh, material = GetOreMaterial( ore.Type.Value.Color ) } );
 						PostUpdateCommands.SetComponent( visualEntity, new Translation { Value = new float3( mapIndex.Index2D.x, 0.1f, mapIndex.Index2D.y ) } );
 					}
 
-					PostUpdateCommands.AddComponent( entity, new HasResourceOreRenderer { VisualEntity = visualEntity, Valid = isValidOre } );
+					PostUpdateCommands.AddComponent( entity, new HasResourceOreRenderer { VisualEntity = visualEntity, Valid = ore.IsValid } );
 				} );
 
 			Entities.WithNone<ResourceOre>().ForEach(

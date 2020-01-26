@@ -3,7 +3,7 @@ using Unity.Mathematics;
 
 namespace Maps.Components
 {
-	public struct MapRequest : ISharedComponentData
+	public struct MapRequest : IComponentData
 	{
 		public float2 Frequency;
 		public float2 Offset;

@@ -114,13 +114,13 @@ namespace Tests.Pathfinding
 			protected override JobHandle OnUpdate( JobHandle inputDependencies )
 			{
 				return Entities
-.WithoutBurst()
-.ForEach( ( ref ResourceOre resourceOre ) =>
-{
-	resourceOre.Type = BlobsMemory.Instance.ReferencesOf<ResourceTypeBlob>()[0];
-	resourceOre.Capacity = 10;
-	resourceOre.Count = 10;
-} ).Schedule( inputDependencies );
+					.WithoutBurst()
+					.ForEach( ( ref ResourceOre resourceOre ) =>
+				{
+					resourceOre.Type = BlobsMemory.Instance.ReferencesOf<ResourceTypeBlob>()[0];
+					resourceOre.Capacity = 10;
+					resourceOre.Count = 10;
+				} ).Schedule( inputDependencies );
 			}
 		}
 
@@ -130,12 +130,12 @@ namespace Tests.Pathfinding
 			protected override void OnUpdate()
 			{
 				Entities
-.ForEach( ( ref ResourceOre resourceOre ) =>
-{
-	resourceOre.Type = BlobsMemory.Instance.ReferencesOf<ResourceTypeBlob>()[0];
-	resourceOre.Capacity = 10;
-	resourceOre.Count = 10;
-} );
+					.ForEach( ( ref ResourceOre resourceOre ) =>
+				{
+					resourceOre.Type = BlobsMemory.Instance.ReferencesOf<ResourceTypeBlob>()[0];
+					resourceOre.Capacity = 10;
+					resourceOre.Count = 10;
+				} );
 			}
 		}
 	}

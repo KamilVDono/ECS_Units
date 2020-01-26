@@ -26,20 +26,6 @@ namespace Input.Authoring
 		private StringBuilder _descriptionBuilder = new StringBuilder( 50 );
 		private EntityManager _entityManager;
 
-		private string ExtractDescription( TileUnderMouse tileUnderMouse )
-		{
-			var groundType = _entityManager.GetComponentData<GroundType>( tileUnderMouse.Tile );
-			var resourceOre = _entityManager.GetComponentData<ResourceOre>( tileUnderMouse.Tile );
-			var movementCost = _entityManager.GetComponentData<MovementCost>( tileUnderMouse.Tile );
-
-			_descriptionBuilder.Clear();
-			_descriptionBuilder.AppendLine( groundType.TileTypeBlob.Value.Description.ToString() );
-			_descriptionBuilder.AppendLine( resourceOre.ToString() );
-			_descriptionBuilder.AppendLine( movementCost.ToString() );
-
-			return _descriptionBuilder.ToString();
-		}
-
 		private void Awake()
 		{
 			_entityManager = World.DefaultGameObjectInjectionWorld.EntityManager;
@@ -67,6 +53,29 @@ namespace Input.Authoring
 			infoComponents.Dispose();
 		}
 
-		private void OnDestroy() => _tileUnderMouseQuery.Dispose();
+		private void OnDestroy()
+		{
+			_tileUnderMouseQuery.Dispose();
+		}
+
+		private string ExtractDescription( TileUnderMouse tileUnderMouse )
+		{
+			var groundType = _entityManager.GetComponentData<GroundType>( tileUnderMouse.Tile );
+			var resourceOre = _entityManager.GetComponentData<ResourceOre>( tileUnderMouse.Tile );
+
+			var movementCost = _entityManager.GetComponentData<MovementCost>( tileUnderMouse.Tile );
+
+			_descriptionBuilder.Clear();
+			_descriptionBuilder.AppendLine( groundType.TileTypeBlob.Value.Description.ToString() );
+			_descriptionBuilder.AppendLine( resourceOre.ToString() );
+			if ( _entityManager.HasComponent<Stock>( tileUnderMouse.Tile ) )
+			{
+				var stock = _entityManager.GetComponentData<Stock>( tileUnderMouse.Tile );
+				_descriptionBuilder.AppendLine( stock.ToString() );
+			}
+			_descriptionBuilder.AppendLine( movementCost.ToString() );
+
+			return _descriptionBuilder.ToString();
+		}
 	}
 }

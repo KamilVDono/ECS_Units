@@ -36,44 +36,49 @@ namespace Maps.Systems
 			_mapSettingsArchetype = EntityManager.CreateArchetype( typeof( MapSettings ) );
 		}
 
-		protected override void OnUpdate() =>
-			Entities.ForEach( ( Entity e, MapRequest mapRequest ) =>
+		protected override void OnUpdate()
 		{
-			int mapEdgeSize = mapRequest.MapEdgeSize;
-			NativeArray<Entity> tileEntities = new NativeArray<Entity>(mapEdgeSize * mapEdgeSize, Allocator.Temp, NativeArrayOptions.UninitializedMemory);
-			EntityManager.CreateEntity( _tileArchetype, tileEntities );
-
-			int index1D = 0;
-			for ( int y = 0; y < mapEdgeSize; y++ )
+			Entities.ForEach( ( Entity e, ref MapRequest mapRequest ) =>
 			{
-				for ( int x = 0; x < mapEdgeSize; x++ )
+				int mapEdgeSize = mapRequest.MapEdgeSize;
+				NativeArray<Entity> tileEntities = new NativeArray<Entity>(mapEdgeSize * mapEdgeSize, Allocator.Temp, NativeArrayOptions.UninitializedMemory);
+				EntityManager.CreateEntity( _tileArchetype, tileEntities );
+
+				int index1D = 0;
+				for ( int y = 0; y < mapEdgeSize; y++ )
 				{
-					var tileEntity = tileEntities[y * mapEdgeSize + x];
-					var tileType = FindTileType( new float2( x, y ), mapRequest );
-					var resourceOre = CalcResourceOre( new float2( x, y ), mapRequest, tileType );
+					for ( int x = 0; x < mapEdgeSize; x++ )
+					{
+						var tileEntity = tileEntities[y * mapEdgeSize + x];
+						var tileType = FindTileType( new float2( x, y ), mapRequest );
+						var resourceOre = CalcResourceOre( new float2( x, y ), mapRequest, tileType );
 
-					PostUpdateCommands.SetComponent( tileEntity, tileType );
-					PostUpdateCommands.SetComponent( tileEntity, new MapIndex( index1D, new int2( x, y ) ) );
-					PostUpdateCommands.SetComponent( tileEntity, resourceOre );
+						PostUpdateCommands.SetComponent( tileEntity, tileType );
+						PostUpdateCommands.SetComponent( tileEntity, new MapIndex( index1D, new int2( x, y ) ) );
+						PostUpdateCommands.SetComponent( tileEntity, resourceOre );
 
-					++index1D;
+						++index1D;
+					}
 				}
-			}
 
-			PostUpdateCommands.RemoveComponent( e, typeof( MapRequest ) );
-			PostUpdateCommands.DestroyEntity( e );
+				PostUpdateCommands.RemoveComponent( e, typeof( MapRequest ) );
+				PostUpdateCommands.DestroyEntity( e );
 
-			// Need valid entity right now
-			var mapSettingsEntity = EntityManager.CreateEntity( _mapSettingsArchetype );
+				// Need valid entity right now
+				var mapSettingsEntity = EntityManager.CreateEntity( _mapSettingsArchetype );
 
-			var tiles = new BlitableArray<Entity>();
-			tiles.Allocate( tileEntities, Allocator.Persistent );
-			SetSingleton( new MapSettings { MapEdgeSize = mapEdgeSize, Tiles = tiles } );
+				var tiles = new BlitableArray<Entity>();
+				tiles.Allocate( tileEntities, Allocator.Persistent );
+				SetSingleton( new MapSettings { MapEdgeSize = mapEdgeSize, Tiles = tiles } );
 
-			tileEntities.Dispose();
-		} );
+				tileEntities.Dispose();
+			} );
+		}
 
-		protected override void OnDestroy() => GetSingleton<MapSettings>().Tiles.Dispose();
+		protected override void OnDestroy()
+		{
+			GetSingleton<MapSettings>().Tiles.Dispose();
+		}
 
 		private GroundType FindTileType( float2 position, MapRequest mapRequest )
 		{

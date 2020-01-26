@@ -114,7 +114,7 @@ namespace Performance
 			// Create request
 			var requestEntity = _entityManager.CreateEntity(typeof(MapRequest));
 
-			_entityManager.SetSharedComponentData( requestEntity, new MapRequest() { Frequency = new float2( 0.1f, 0.1f ), MapEdgeSize = mapSize } );
+			_entityManager.SetComponentData( requestEntity, new MapRequest() { Frequency = new float2( 0.1f, 0.1f ), MapEdgeSize = mapSize } );
 
 			var mapSpawnerSystem = _currentWorld.GetOrCreateSystem<MapSpawner>();
 			mapSpawnerSystem.Update();
