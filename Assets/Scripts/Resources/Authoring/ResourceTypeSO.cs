@@ -28,7 +28,7 @@ namespace Resources.Authoring
 		{
 			if ( BlobReference.IsCreated )
 			{
-				BlobReference.Release();
+				BlobReference.Dispose();
 			}
 		}
 

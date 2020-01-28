@@ -51,7 +51,7 @@ namespace Maps.Authoring
 		{
 			if ( BlobReference.IsCreated )
 			{
-				BlobReference.Release();
+				BlobReference.Dispose();
 			}
 		}
 

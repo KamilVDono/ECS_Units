@@ -49,7 +49,6 @@ namespace Working.Systems
 			var miningProgressHandle = Entities
 				.WithAll<MiningWork>()
 				.WithChangeFilter<WorkProgress>()
-				.WithReadOnly(minedArchetypeLocal)
 				.WithoutBurst()
 				.ForEach( ( Entity e, int entityInQueryIndex, ref WorkProgress workProgress, ref ResourceOre ore, in MapIndex index ) =>
 				{
