@@ -68,7 +68,9 @@ namespace Pathfinding.Systems
 			var commandBuffer = _eseCommandBufferSystem.CreateCommandBuffer();
 
 
-			Entities.WithNone<Waypoint>().ForEach( ( Entity requestEntity, ref PathRequest pathRequest ) =>
+			Entities
+				.WithNone<Waypoint>()
+				.ForEach( ( Entity requestEntity, ref PathRequest pathRequest ) =>
 			{
 				// Request already completed
 				// TODO: Split request from waypoints

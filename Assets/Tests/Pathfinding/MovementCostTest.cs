@@ -38,6 +38,9 @@ namespace Tests.Pathfinding
 			coal.MovementCost = 2;
 
 			BlobsMemory.FromSOs( new IBlobableSO[] { SandTileSO, coal } );
+
+			var ese = _currentWorld.CreateSystem<EndSimulationEntityCommandBufferSystem>();
+			Inject( ese, "_removeCmdBufferSystem" );
 		}
 
 		[Test]

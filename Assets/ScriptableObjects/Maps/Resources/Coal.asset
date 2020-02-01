@@ -19,3 +19,4 @@ MonoBehaviour:
   WorkRequired: 5
   PiecesPerWork: 2
   Stackable: 1
+  UnitSize: 1.5

@@ -15,9 +15,7 @@ using UnityEngine;
 
 namespace Tests.Resources
 {
-	// System requires:
-	// Stock, StockCountChange
-	// uses system EndSimulationEntityCommandBufferSystem
+	// System requires: Stock, StockCountChange uses system EndSimulationEntityCommandBufferSystem
 
 	public class StockUpdateTest : ECSSystemTester<StockUpdateSystem>
 	{
@@ -30,6 +28,7 @@ namespace Tests.Resources
 			coal.MovementCost = 2;
 			coal.WorkRequired = 1f;
 			coal.PiecesPerWork = 2;
+			coal.UnitSize = 1;
 
 			BlobsMemory.FromSOs( new IBlobableSO[] { coal } );
 
