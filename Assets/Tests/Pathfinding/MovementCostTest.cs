@@ -36,6 +36,7 @@ namespace Tests.Pathfinding
 
 			ResourceTypeSO coal = ScriptableObject.CreateInstance<ResourceTypeSO>();
 			coal.MovementCost = 2;
+			coal.UnitSize = 1f;
 
 			BlobsMemory.FromSOs( new IBlobableSO[] { SandTileSO, coal } );
 
@@ -69,6 +70,23 @@ namespace Tests.Pathfinding
 			Update();
 
 			Assert.AreEqual( 3, _entityManager.GetComponentData<MovementCost>( tile ).Cost );
+		}
+
+		[Test]
+		public void Initialize_With_Stock()
+		{
+			var tileArchetype = _entityManager.CreateArchetype(typeof( MovementCost ), typeof( GroundType ), typeof( ResourceOre ), typeof( Stock ));
+			var tile = _entityManager.CreateEntity( tileArchetype );
+
+			_entityManager.SetComponentData( tile, new GroundType( BlobsMemory.Instance.ReferencesOf<GroundTypeBlob>()[0] ) );
+			_entityManager.SetComponentData( tile, new ResourceOre() { Capacity = 10, Count = 10, Type = BlobsMemory.Instance.ReferencesOf<ResourceTypeBlob>()[0] } );
+			_entityManager.SetComponentData( tile, new Stock() { Capacity = 50, Count = 1, Type = BlobsMemory.Instance.ReferencesOf<ResourceTypeBlob>()[0] } );
+
+			Update();
+
+			var exceptedCost = BlobsMemory.Instance.ReferencesOf<GroundTypeBlob>()[0].Value.MoveCost
+				+ BlobsMemory.Instance.ReferencesOf<ResourceTypeBlob>()[0].Value.MovementCost * 2;
+			Assert.AreEqual( exceptedCost, _entityManager.GetComponentData<MovementCost>( tile ).Cost );
 		}
 
 		[Test]

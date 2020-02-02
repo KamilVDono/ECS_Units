@@ -40,7 +40,10 @@ namespace Pathfinding.Systems
 
 		protected override void OnDestroy()
 		{
-			_changedEntities.Dispose();
+			if ( _changedEntities.IsCreated )
+			{
+				_changedEntities.Dispose();
+			}
 		}
 
 		protected override JobHandle OnUpdate( JobHandle inputDependencies )
