@@ -48,6 +48,7 @@ namespace Pathfinding.Systems
 		// Obtain buffer
 		protected override void OnCreate()
 		{
+			RequireSingletonForUpdate<MapSettings>();
 			_eseCommandBufferSystem = World.GetOrCreateSystem<EndSimulationEntityCommandBufferSystem>();
 			_neighbors = Neighbor.FullNeighborhood( Allocator.Persistent );
 		}
@@ -66,7 +67,6 @@ namespace Pathfinding.Systems
 			var movementComponents = GetComponentDataFromEntity<MovementCost>( true );
 			var tilesSize = mapSettings.Tiles.Length;
 			var commandBuffer = _eseCommandBufferSystem.CreateCommandBuffer();
-
 
 			Entities
 				.WithNone<Waypoint>()
@@ -202,8 +202,6 @@ namespace Pathfinding.Systems
 
 				_markerAStar.End();
 			} );
-
-
 		}
 
 		protected override void OnDestroy()
