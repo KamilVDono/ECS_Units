@@ -1,42 +1,53 @@
-﻿using Unity.Entities;
+﻿using System;
+
+using Unity.Entities;
 using Unity.Mathematics;
 
 namespace Maps.Components
 {
-	public readonly struct MapIndex : IComponentData
+	public struct MapIndex : IComponentData, IEquatable<MapIndex>
 	{
-		private readonly int _index1D;
-		private readonly int2 _index2D;
-		public int Index1D => _index1D;
-		public int2 Index2D => _index2D;
+		public int Index1D;
+		public int2 Index2D;
 
 		public MapIndex( int index1D, int2 index2D )
 		{
-			_index1D = index1D;
-			_index2D = index2D;
+			Index1D = index1D;
+			Index2D = index2D;
 		}
 
 		public MapIndex( in MapIndex other )
 		{
-			_index1D = other._index1D;
-			_index2D = other._index2D;
+			Index1D = other.Index1D;
+			Index2D = other.Index2D;
 		}
 
 		public static MapIndex From( int index1D, int edgeSize )
 		{
-			var index2D = Helpers.IndexUtils.Index2D( index1D, edgeSize );
+			var index2D = Helpers.IndexUtils.Index2DEdge( index1D, edgeSize );
 			return new MapIndex( index1D, index2D );
 		}
 
 		public static MapIndex From( int2 index2D, int edgeSize )
 		{
-			var index1D = Helpers.IndexUtils.Index1D( index2D, edgeSize );
+			var index1D = Helpers.IndexUtils.Index1DEdge( index2D, edgeSize );
 			return new MapIndex( index1D, index2D );
 		}
 
-		public override string ToString()
+		public static MapIndex FromWorldPosition( float2 position, int edgeSize )
 		{
-			return $"Index2 {_index2D}. Index1 {_index1D}";
+			var index2D = Helpers.IndexUtils.WorldIndex2D(position);
+			return MapIndex.From( index2D, edgeSize );
 		}
+
+		public static MapIndex FromWorldPosition( float3 position, int edgeSize )
+		{
+			var index2D = Helpers.IndexUtils.WorldIndex2D(new float2(position.x, position.z));
+			return MapIndex.From( index2D, edgeSize );
+		}
+
+		public override string ToString() => $"Index2 {Index2D}. Index1 {Index1D}";
+
+		public bool Equals( MapIndex other ) => Index1D == other.Index1D;
 	}
 }

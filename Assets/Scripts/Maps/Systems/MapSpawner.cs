@@ -72,6 +72,8 @@ namespace Maps.Systems
 				SetSingleton( new MapSettings { MapEdgeSize = mapEdgeSize, Tiles = tiles } );
 
 				tileEntities.Dispose();
+
+				Enabled = false;
 			} );
 		}
 

@@ -66,9 +66,9 @@ namespace Resources.Systems
 			}
 			material = new Material( Shader.Find( "Map/TileWave" ) );
 			material.SetColor( "_MainColor", color );
+			material.enableInstancing = true;
 			_materials.Add( color, material );
 			return material;
 		}
 	}
 }
-

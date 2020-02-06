@@ -15,14 +15,24 @@ namespace Helpers
 
 		public static int Index1D( int2 index2D, int fullSize )
 		{
-			CheckIndex1D( index2D, fullSize );
-			return index2D.y * EdgeSize( fullSize ) + index2D.x;
+			return Index1DEdge( index2D, EdgeSize( fullSize ) );
+		}
+
+		public static int Index1DEdge( int2 index2D, int edgeSize )
+		{
+			CheckIndex1DEdge( index2D, edgeSize );
+			return index2D.y * edgeSize + index2D.x;
 		}
 
 		public static int2 Index2D( int index, int fullSize )
 		{
-			CheckIndex2D( index, fullSize );
-			return new int2( index % EdgeSize( fullSize ), index / EdgeSize( fullSize ) );
+			return Index2DEdge( index, EdgeSize( fullSize ) );
+		}
+
+		public static int2 Index2DEdge( int index, int edgeSize )
+		{
+			CheckIndex2DEdge( index, edgeSize );
+			return new int2( index % edgeSize, index / edgeSize );
 		}
 
 		public static int2 WorldIndex2D( float2 position )
@@ -31,7 +41,10 @@ namespace Helpers
 			return (int2)math.floor( position );
 		}
 
-		public static int WorldIndex1D( float2 position, int fullSize ) => Index1D( WorldIndex2D( position ), fullSize );
+		public static int WorldIndex1D( float2 position, int fullSize )
+		{
+			return Index1D( WorldIndex2D( position ), fullSize );
+		}
 
 		[System.Diagnostics.Conditional( "DEBUG" )]
 		private static void CheckEdgeSize( int edge, int fullSize )
@@ -43,19 +56,18 @@ namespace Helpers
 		}
 
 		[System.Diagnostics.Conditional( "DEBUG" )]
-		private static void CheckIndex1D( int2 index2D, int fullSize )
+		private static void CheckIndex1DEdge( int2 index2D, int edgeSize )
 		{
-			var edgeSize = EdgeSize(fullSize);
 			if ( index2D.x < 0 || index2D.x >= edgeSize || index2D.y < 0 || index2D.y >= edgeSize )
 			{
-				throw new ArgumentOutOfRangeException( $"In method Index1D the inputed index ({nameof( index2D )}) is not in world bound ({index2D})" );
+				throw new ArgumentOutOfRangeException( $"In method Index1D the inputed index ({nameof( index2D )}):[{index2D}] is not in world bound ({edgeSize}, {edgeSize})" );
 			}
 		}
 
 		[System.Diagnostics.Conditional( "DEBUG" )]
-		private static void CheckIndex2D( int index, int fullSize )
+		private static void CheckIndex2DEdge( int index, int edgeSize )
 		{
-			if ( index < 0 || index >= fullSize )
+			if ( index < 0 || index >= edgeSize * edgeSize )
 			{
 				throw new ArgumentOutOfRangeException( $"In method Index2D the inputed index ({nameof( index )}) is not in world bound ({index})" );
 			}

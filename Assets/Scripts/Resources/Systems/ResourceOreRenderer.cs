@@ -75,6 +75,7 @@ namespace Resources.Systems
 			}
 			material = new Material( Shader.Find( "Map/Tile" ) );
 			material.SetColor( "_MainColor", color );
+			material.enableInstancing = true;
 			_oreMaterials.Add( color, material );
 			return material;
 		}

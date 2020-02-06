@@ -14,7 +14,6 @@ namespace Input.Systems
 {
 	public class MouseMiningSystem : ComponentSystem
 	{
-
 		protected override void OnCreate()
 		{
 			RequireSingletonForUpdate<MapSettings>();

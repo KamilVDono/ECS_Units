@@ -64,6 +64,7 @@ namespace Maps.Authoring
 		{
 			_material = new Material( Shader.Find( "Map/Tile" ) );
 			_material.SetColor( "_MainColor", Color );
+			_material.enableInstancing = true;
 			return _material;
 		}
 	}
