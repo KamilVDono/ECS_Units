@@ -23,7 +23,7 @@ namespace Units.Systems
 {
 	[UpdateInGroup( typeof( InitializationSystemGroup ) )]
 	[UpdateAfter( typeof( MapSpawner ) )]
-	public class UnitsSpawnerSystem : ComponentSystem
+	public class UnitsSpawnerSystem : ComponentSystem // Just ComponentSystem because one time system
 	{
 		private EntityArchetype _unitArchetype;
 		private Mesh _unitMesh;
@@ -85,7 +85,7 @@ namespace Units.Systems
 					var mapIndex = freePositions[i];
 					PostUpdateCommands.SetComponent( entities[i], mapIndex );
 
-					var position = new float3(mapIndex.Index2D.x, 5, mapIndex.Index2D.y);
+					var position = new float3(mapIndex.Index2D.x, 3, mapIndex.Index2D.y);
 					PostUpdateCommands.SetComponent( entities[i], new Translation() { Value = position } );
 
 					var materialTile = random.NextInt2(0, 32);

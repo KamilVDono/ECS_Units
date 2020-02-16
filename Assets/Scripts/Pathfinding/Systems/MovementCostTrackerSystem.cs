@@ -13,6 +13,9 @@ using Unity.Jobs;
 
 namespace Pathfinding.Systems
 {
+	/// <summary>
+	/// Track move-through tile cost. New cost will be applied just before end of simulation <see cref="EndSimulationEntityCommandBufferSystem"/>
+	/// </summary>
 	[UpdateAfter( typeof( MapSpawner ) )]
 	[UpdateInGroup( typeof( InitializationSystemGroup ) )]
 	public class MovementCostTrackerSystem : JobComponentSystem
@@ -48,6 +51,7 @@ namespace Pathfinding.Systems
 
 		protected override JobHandle OnUpdate( JobHandle inputDependencies )
 		{
+			// calculate minimum allocation size
 			int maxEntities = _groundChangeQuery.CalculateEntityCount() + _resourceChangeQuery.CalculateEntityCount() + _stockChangeQuery.CalculateEntityCount();
 
 			if ( maxEntities < 1 )
@@ -55,11 +59,13 @@ namespace Pathfinding.Systems
 				return inputDependencies;
 			}
 
+			// check if need create map
 			if ( _changedEntities.IsCreated == false )
 			{
 				_changedEntities = new NativeHashMap<Entity, Boolean>( GetSingleton<MapSettings>().Tiles.Length, Allocator.Persistent );
 			}
 
+			// setup to collect changed entities
 			_changedEntities.Clear();
 			var groundEntities = _groundChangeQuery.ToEntityArray(Allocator.TempJob);
 			var resourceEntities = _resourceChangeQuery.ToEntityArray(Allocator.TempJob);
@@ -76,6 +82,7 @@ namespace Pathfinding.Systems
 				.WithDeallocateOnJobCompletion( stockEntities )
 				.WithCode( () =>
 				{
+					// just go through entities
 					for(int i = 0; i < groundEntities.Length; i++ )
 					{
 						changedEntitiesWriter.TryAdd( groundEntities[i], true );
@@ -90,8 +97,10 @@ namespace Pathfinding.Systems
 					}
 				} ).Schedule( inputDependencies );
 
+			// local shallow copy for job (jobs requirement)
 			var changedEntities = _changedEntities;
 
+			// setup data
 			var grounds = GetComponentDataFromEntity<GroundType>(true);
 			var resourceOres = GetComponentDataFromEntity<ResourceOre>(true);
 			var stocks = GetComponentDataFromEntity<Stock>(true);
@@ -104,9 +113,11 @@ namespace Pathfinding.Systems
 				.WithCode(
 				() =>
 				{
+					// obtain entities
 					var entities = changedEntities.GetKeyArray(Allocator.Temp);
 					for(int i = 0; i < entities.Length; i++ )
 					{
+						// calculate full movement cost
 						var entity = entities[i];
 						var resourceOre = resourceOres[entity];
 						var resourceOreCost = 0f;
@@ -123,11 +134,13 @@ namespace Pathfinding.Systems
 							stockCost = stocks[entity].Type.Value.MovementCost;
 						}
 
+						// apply new cost
 						applyCB.SetComponent(i, entity, new MovementCost()
 						{
 							Cost = resourceOreCost + groundCost + stockCost
 						} );
 					}
+					entities.Dispose();
 				}).Schedule(changeFillHandle);
 
 			_removeCmdBufferSystem.AddJobHandleForProducer( applyJobHandle );

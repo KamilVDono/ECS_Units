@@ -13,10 +13,7 @@ namespace Helpers
 			return edge;
 		}
 
-		public static int Index1D( int2 index2D, int fullSize )
-		{
-			return Index1DEdge( index2D, EdgeSize( fullSize ) );
-		}
+		public static int Index1D( int2 index2D, int fullSize ) => Index1DEdge( index2D, EdgeSize( fullSize ) );
 
 		public static int Index1DEdge( int2 index2D, int edgeSize )
 		{
@@ -24,10 +21,7 @@ namespace Helpers
 			return index2D.y * edgeSize + index2D.x;
 		}
 
-		public static int2 Index2D( int index, int fullSize )
-		{
-			return Index2DEdge( index, EdgeSize( fullSize ) );
-		}
+		public static int2 Index2D( int index, int fullSize ) => Index2DEdge( index, EdgeSize( fullSize ) );
 
 		public static int2 Index2DEdge( int index, int edgeSize )
 		{
@@ -41,10 +35,9 @@ namespace Helpers
 			return (int2)math.floor( position );
 		}
 
-		public static int WorldIndex1D( float2 position, int fullSize )
-		{
-			return Index1D( WorldIndex2D( position ), fullSize );
-		}
+		public static int WorldIndex1D( float2 position, int fullSize ) => Index1D( WorldIndex2D( position ), fullSize );
+
+		public static int WorldIndex1DEdge( float2 position, int edgeSize ) => Index1DEdge( WorldIndex2D( position ), edgeSize );
 
 		[System.Diagnostics.Conditional( "DEBUG" )]
 		private static void CheckEdgeSize( int edge, int fullSize )

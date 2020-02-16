@@ -97,10 +97,68 @@ namespace Tests.Helpers
 			}
 		}
 
+		public class Index1DEdge
+		{
+			[Test]
+			public void Index1DEdge_Zero_Zero()
+			{
+				int edgeSize = 5;
+				int2 index2D = new int2(0, 0);
+
+				int index = Index1DEdge(index2D, edgeSize);
+
+				AreEqual( 0, index );
+			}
+
+			[Test]
+			public void Index1DEdge_Four_Four()
+			{
+				int edgeSize = 5;
+				int2 index2D = new int2(4, 4);
+
+				int index = Index1DEdge(index2D, edgeSize);
+
+				AreEqual( 24, index );
+			}
+
+			[Test]
+			public void Index1DEdge_Zero_Four()
+			{
+				int edgeSize = 5;
+				int2 index2D = new int2(0, 4);
+
+				int index = Index1DEdge(index2D, edgeSize);
+
+				AreEqual( 20, index );
+			}
+
+			[Test]
+			public void Index1DEdge_Four_Zero()
+			{
+				int edgeSize = 5;
+				int2 index2D = new int2(4, 0);
+
+				int index = Index1DEdge(index2D, edgeSize);
+
+				AreEqual( 4, index );
+			}
+
+			[Test]
+			public void Index1DEdge_Three_Three()
+			{
+				int edgeSize = 5;
+				int2 index2D = new int2(3, 3);
+
+				int index = Index1DEdge(index2D, edgeSize);
+
+				AreEqual( 18, index );
+			}
+		}
+
 		public class Index2D
 		{
 			[Test]
-			public void Index1D_Zero()
+			public void Index2D_Zero()
 			{
 				int mapSize = 5 * 5;
 				int index1D = 0;
@@ -111,7 +169,7 @@ namespace Tests.Helpers
 			}
 
 			[Test]
-			public void Index1D_TwentyFour()
+			public void Index2D_TwentyFour()
 			{
 				int mapSize = 5 * 5;
 				int index1D = 24;
@@ -122,7 +180,7 @@ namespace Tests.Helpers
 			}
 
 			[Test]
-			public void Index1D_Twenty()
+			public void Index2D_Twenty()
 			{
 				int mapSize = 5 * 5;
 				int index1D = 20;
@@ -133,7 +191,7 @@ namespace Tests.Helpers
 			}
 
 			[Test]
-			public void Index1D_Four()
+			public void Index2D_Four()
 			{
 				int mapSize = 5 * 5;
 				int index1D = 4;
@@ -144,12 +202,70 @@ namespace Tests.Helpers
 			}
 
 			[Test]
-			public void Index1D_Seventeen()
+			public void Index2D_Seventeen()
 			{
 				int mapSize = 5 * 5;
 				int index1D = 17;
 
 				int2 index = Index2D(index1D, mapSize);
+
+				AreEqual( new int2( 2, 3 ), index );
+			}
+		}
+
+		public class Index2DEdge
+		{
+			[Test]
+			public void Index2DEdge_Zero()
+			{
+				int edgeSize = 5;
+				int index1D = 0;
+
+				int2 index = Index2DEdge(index1D, edgeSize);
+
+				AreEqual( new int2( 0, 0 ), index );
+			}
+
+			[Test]
+			public void Index2DEdge_TwentyFour()
+			{
+				int edgeSize = 5;
+				int index1D = 24;
+
+				int2 index = Index2DEdge(index1D, edgeSize);
+
+				AreEqual( new int2( 4, 4 ), index );
+			}
+
+			[Test]
+			public void Index2DEdge_Twenty()
+			{
+				int edgeSize = 5;
+				int index1D = 20;
+
+				int2 index = Index2DEdge(index1D, edgeSize);
+
+				AreEqual( new int2( 0, 4 ), index );
+			}
+
+			[Test]
+			public void Index2DEdge_Four()
+			{
+				int edgeSize = 5;
+				int index1D = 4;
+
+				int2 index = Index2DEdge(index1D, edgeSize);
+
+				AreEqual( new int2( 4, 0 ), index );
+			}
+
+			[Test]
+			public void Index2DEdge_Seventeen()
+			{
+				int edgeSize = 5;
+				int index1D = 17;
+
+				int2 index = Index2DEdge(index1D, edgeSize);
 
 				AreEqual( new int2( 2, 3 ), index );
 			}
