@@ -72,26 +72,9 @@ namespace Units.Systems
 					mapIndex = MapIndex.FromWorldPosition( translation.Value, edgeSize );
 				} ).Schedule( inputDeps );
 
-			// new random target job
-			var setTargetCMDBuffer = _cmdBufferSystem.CreateCommandBuffer().ToConcurrent();
-			Random random = new Random((uint)(Time.ElapsedTime * 100000) + 1);
-			var setTargetHandle = Entities
-				.WithAll<UnitTag>()
-				.WithNone<Waypoint, PathRequest>()
-				.ForEach( ( Entity e, int entityInQueryIndex, in MapIndex mapIndex ) =>
-				{
-					// just add random path request
-					setTargetCMDBuffer.AddComponent<PathRequest>(
-						entityInQueryIndex,
-						e,
-						new PathRequest(mapIndex.Index2D, new int2(random.NextInt(0, edgeSize), random.NextInt(0, edgeSize)))
-						);
-				} ).Schedule(moveHandleJob);
-
 			_cmdBufferSystem.AddJobHandleForProducer( moveHandleJob );
-			_cmdBufferSystem.AddJobHandleForProducer( setTargetHandle );
 
-			return setTargetHandle;
+			return moveHandleJob;
 		}
 	}
 }
