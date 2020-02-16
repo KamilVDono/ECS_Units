@@ -818,5 +818,8 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   _unitsCount: 5
+  _texturesRowsColumns:
+    x: 4
+    y: 8
   _movementSpeed: 2
   _unitMaterial: {fileID: 2100000, guid: 25ea2034f7f58474fab065b8d2ab4459, type: 2}

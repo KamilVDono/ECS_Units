@@ -62,6 +62,7 @@ namespace Pathfinding.Systems
 			// check if need create map
 			if ( _changedEntities.IsCreated == false )
 			{
+				// one big allocation so we are sure we have capacity to store whole map
 				_changedEntities = new NativeHashMap<Entity, Boolean>( GetSingleton<MapSettings>().Tiles.Length, Allocator.Persistent );
 			}
 

@@ -1,4 +1,5 @@
 ﻿using Unity.Entities;
+using Unity.Mathematics;
 
 namespace Units.Components
 {
@@ -6,5 +7,8 @@ namespace Units.Components
 	{
 		public int UnitsCount;
 		public float UnitSpeed;
+
+		// texture data
+		public int2 TextureTiles;
 	}
 }

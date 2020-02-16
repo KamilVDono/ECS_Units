@@ -179,7 +179,10 @@ namespace Working.Systems
 		protected override void OnDestroy()
 		{
 			_neighbors.Dispose();
-			_tiles.Dispose();
+			if ( _tiles.IsCreated )
+			{
+				_tiles.Dispose();
+			}
 		}
 	}
 }

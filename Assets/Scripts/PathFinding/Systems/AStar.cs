@@ -72,13 +72,6 @@ namespace Pathfinding.Systems
 				.WithNone<Waypoint>()
 				.ForEach( ( Entity requestEntity, ref PathRequest pathRequest ) =>
 			{
-				// Request already completed
-				// TODO: Split request from waypoints
-				if ( pathRequest.Done )
-				{
-					return;
-				}
-
 				_markerAStar.Begin();
 
 				#region Setup
@@ -87,7 +80,7 @@ namespace Pathfinding.Systems
 				NativeArray<float2> costs = new NativeArray<float2>( tilesSize, Allocator.Temp, NativeArrayOptions.UninitializedMemory );
 				NativeArray<Boolean> closeSet = new NativeArray<Boolean>( tilesSize, Allocator.Temp, NativeArrayOptions.UninitializedMemory );
 				NativeArray<int> camesFrom = new NativeArray<int>( tilesSize, Allocator.Temp, NativeArrayOptions.UninitializedMemory );
-				NativeMinHeap minSet = new NativeMinHeap(tilesSize, Allocator.Temp);
+				NativeMinHeap minSet = new NativeMinHeap(tilesSize * 4, Allocator.Temp);
 
 				_markerSetupData.Begin();
 				// Setup initial data
@@ -185,6 +178,8 @@ namespace Pathfinding.Systems
 
 				#endregion ReconstructPath
 
+				commandBuffer.RemoveComponent<PathRequest>( requestEntity );
+
 				#region Cleanup
 
 				_markerCleanup.Begin();
@@ -204,10 +199,7 @@ namespace Pathfinding.Systems
 			} );
 		}
 
-		protected override void OnDestroy()
-		{
-			_neighbors.Dispose();
-		}
+		protected override void OnDestroy() => _neighbors.Dispose();
 
 		#endregion Lifetime
 

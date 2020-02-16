@@ -1,5 +1,6 @@
 ﻿using System;
 
+using Unity.Burst;
 using Unity.Mathematics;
 
 namespace Helpers
@@ -40,6 +41,7 @@ namespace Helpers
 		public static int WorldIndex1DEdge( float2 position, int edgeSize ) => Index1DEdge( WorldIndex2D( position ), edgeSize );
 
 		[System.Diagnostics.Conditional( "DEBUG" )]
+		[BurstDiscard]
 		private static void CheckEdgeSize( int edge, int fullSize )
 		{
 			if ( fullSize - ( edge * edge ) > 0.001f )
@@ -49,6 +51,7 @@ namespace Helpers
 		}
 
 		[System.Diagnostics.Conditional( "DEBUG" )]
+		[BurstDiscard]
 		private static void CheckIndex1DEdge( int2 index2D, int edgeSize )
 		{
 			if ( index2D.x < 0 || index2D.x >= edgeSize || index2D.y < 0 || index2D.y >= edgeSize )
@@ -58,6 +61,7 @@ namespace Helpers
 		}
 
 		[System.Diagnostics.Conditional( "DEBUG" )]
+		[BurstDiscard]
 		private static void CheckIndex2DEdge( int index, int edgeSize )
 		{
 			if ( index < 0 || index >= edgeSize * edgeSize )

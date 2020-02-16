@@ -1,6 +1,7 @@
 ﻿using Units.Components;
 
 using Unity.Entities;
+using Unity.Mathematics;
 
 using UnityEngine;
 
@@ -11,6 +12,7 @@ namespace Units.Authoring
 	public class UnitsSpawnerAuthoring : MonoBehaviour
 	{
 		[SF] private int _unitsCount;
+		[SF] private int2 _texturesRowsColumns;
 		[SF] private float _movementSpeed;
 		[SF] private Material _unitMaterial;
 
@@ -23,7 +25,8 @@ namespace Units.Authoring
 			var request = new UnitsRequest()
 			{
 				UnitsCount = _unitsCount,
-				UnitSpeed = _movementSpeed
+				UnitSpeed = _movementSpeed,
+				TextureTiles = _texturesRowsColumns,
 			};
 
 			entityManager.SetComponentData( e, request );

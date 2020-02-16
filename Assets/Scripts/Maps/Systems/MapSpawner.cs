@@ -79,7 +79,10 @@ namespace Maps.Systems
 
 		protected override void OnDestroy()
 		{
-			GetSingleton<MapSettings>().Tiles.Dispose();
+			if ( HasSingleton<MapSettings>() )
+			{
+				GetSingleton<MapSettings>().Tiles.Dispose();
+			}
 		}
 
 		private GroundType FindTileType( float2 position, MapRequest mapRequest )

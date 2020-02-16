@@ -88,7 +88,7 @@ namespace Units.Systems
 					var position = new float3(mapIndex.Index2D.x, 3, mapIndex.Index2D.y);
 					PostUpdateCommands.SetComponent( entities[i], new Translation() { Value = position } );
 
-					var materialTile = random.NextInt2(0, 32);
+					var materialTile = new int2( random.NextInt(0, unitsRequest.TextureTiles.x), random.NextInt(0, unitsRequest.TextureTiles.y) );
 					PostUpdateCommands.SetSharedComponent( entities[i], new RenderMesh() { material = GetMaterial( materialTile, unitMaterial ), mesh = _unitMesh } );
 				}
 
