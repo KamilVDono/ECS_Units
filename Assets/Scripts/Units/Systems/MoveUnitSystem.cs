@@ -13,13 +13,7 @@ namespace Units.Systems
 {
 	public class MoveUnitSystem : JobComponentSystem
 	{
-		private EndSimulationEntityCommandBufferSystem _cmdBufferSystem;
-
-		protected override void OnCreate()
-		{
-			RequireSingletonForUpdate<MapSettings>();
-			_cmdBufferSystem = World.GetExistingSystem<EndSimulationEntityCommandBufferSystem>();
-		}
+		protected override void OnCreate() => RequireSingletonForUpdate<MapSettings>();
 
 		protected override JobHandle OnUpdate( JobHandle inputDeps )
 		{
@@ -28,11 +22,12 @@ namespace Units.Systems
 			var edgeSize = mapSettings.MapEdgeSize;
 
 			// move job
+			// TODO: check impossible way
 			var deltaTime = Time.DeltaTime;
 			var tiles = mapSettings.Tiles;
 			var movementCosts = GetComponentDataFromEntity<MovementCost>( true );
 			var moveHandleJob = Entities
-				.WithAll<UnitTag>()
+				.WithAll<UnitTag, MovingTag>()
 				.WithReadOnly(movementCosts)
 				.WithReadOnly(tiles)
 				.WithNativeDisableContainerSafetyRestriction( tiles )
@@ -48,7 +43,15 @@ namespace Units.Systems
 					var position2D = new float2( translation.Value.x, translation.Value.z );
 
 					var movementCost = movementCosts[tiles[mapIndex.Index1D]];
-					var stepSize = movementSpeed.Speed * deltaTime / movementCost.Cost;
+					var stepSize = movementSpeed.Speed * deltaTime;
+					if(movementCost.Cost < 0.001f)
+					{
+						stepSize /= 0.001f;
+					}
+					else
+					{
+						stepSize /= movementCost.Cost;
+					}
 
 					// we reach waypoint if we are close as single step distance
 					if ( math.distancesq( lastPoint.Position, position2D ) <= (stepSize * stepSize) )
@@ -71,8 +74,6 @@ namespace Units.Systems
 					translation.Value = new float3(translated2D.x, translation.Value.y, translated2D.y);
 					mapIndex = MapIndex.FromWorldPosition( translation.Value, edgeSize );
 				} ).Schedule( inputDeps );
-
-			_cmdBufferSystem.AddJobHandleForProducer( moveHandleJob );
 
 			return moveHandleJob;
 		}

@@ -9,13 +9,30 @@ namespace Working.Systems
 	[UpdateBefore( typeof( MiningWorkSystem ) )]
 	public class WorkProgressionSystem : JobComponentSystem
 	{
+		private EndSimulationEntityCommandBufferSystem _removeCmdBufferSystem;
+
+		protected override void OnCreate() => _removeCmdBufferSystem = World.GetExistingSystem<EndSimulationEntityCommandBufferSystem>();
+
 		protected override JobHandle OnUpdate( JobHandle inputDeps )
 		{
+			var cmdBuffer = _removeCmdBufferSystem.CreateCommandBuffer().ToConcurrent();
+			var addProgressHandle = Entities
+				.WithNone<WorkProgress>()
+				.WithAll<MiningWork>()
+				.ForEach( ( Entity e, int entityInQueryIndex ) =>
+				{
+					cmdBuffer.AddComponent<WorkProgress>( entityInQueryIndex, e);
+				} ).Schedule( inputDeps );
+
 			var deltaTime = Time.DeltaTime;
-			return Entities.ForEach( ( ref WorkProgress workProgress, in MiningWork work ) =>
+			var updateHandle = Entities.ForEach( ( ref WorkProgress workProgress, in MiningWork work ) =>
 			{
 				workProgress.Progress += work.ProgressPerSecond * deltaTime;
-			} ).Schedule( inputDeps );
+			} ).Schedule( addProgressHandle );
+
+			_removeCmdBufferSystem.AddJobHandleForProducer( addProgressHandle );
+
+			return updateHandle;
 		}
 	}
 }

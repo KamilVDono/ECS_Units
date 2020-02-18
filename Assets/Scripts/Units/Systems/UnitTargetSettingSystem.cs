@@ -48,7 +48,7 @@ namespace Units.Systems
 				.WithReadOnly(tiles)
 				.WithNativeDisableContainerSafetyRestriction( tiles )
 				.WithoutBurst()
-				.WithAll<UnitTag>()
+				.WithAll<UnitTag, SeekingOresTag>()
 				.WithNone<Waypoint, PathRequest>()
 				.ForEach( ( Entity e, int entityInQueryIndex, in MapIndex mapIndex ) =>
 				{
@@ -88,7 +88,6 @@ namespace Units.Systems
 					searched.Dispose();
 					#endregion Found ores
 
-					// just add random path request
 					setTargetCMDBuffer.AddComponent<PathRequest>( entityInQueryIndex, e, new PathRequest(mapIndex.Index2D, oreIndex) );
 				} ).Schedule(inputDeps);
 

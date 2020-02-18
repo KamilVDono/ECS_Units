@@ -12,9 +12,9 @@ namespace Maps.Authoring
 	public class TileSpawner : MonoBehaviour
 	{
 		#region Private fields
-		[SF] private float2 _frequency;
-		[SF] private float2 _offset;
-		[SF] private int _mapEdgeSize;
+		[SF] private float2 _frequency = new float2(2, 2);
+		[SF] private float2 _offset = new float2(0, 0);
+		[SF] private int _mapEdgeSize = 90;
 		#endregion Private fields
 
 		#region Properties

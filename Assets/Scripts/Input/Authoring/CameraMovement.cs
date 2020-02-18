@@ -11,11 +11,11 @@ namespace Input.Authoring
 {
 	public class CameraMovement : MonoBehaviour
 	{
-		[SF] private Camera _camera;
-		[SF] private Vector2 _speed;
-		[SF] private float _screenInputOffset;
-		[SF] private Vector2 _zoomBounds;
-		[SF] private TileSpawner _tileSpawner;
+		[SF] private Camera _camera = null;
+		[SF] private Vector2 _speed = new Vector2(5, 5);
+		[SF] private float _screenInputOffset = 0.1f;
+		[SF] private Vector2 _zoomBounds = new Vector2(1, 1);
+		[SF] private TileSpawner _tileSpawner = null;
 
 		private CameraInput _input;
 		private Bounds _mapBounds;
@@ -62,20 +62,11 @@ namespace Input.Authoring
 
 		#region CameraInput lifetime
 
-		private void OnEnable()
-		{
-			_input.Enable();
-		}
+		private void OnEnable() => _input.Enable();
 
-		private void OnDisable()
-		{
-			_input.Disable();
-		}
+		private void OnDisable() => _input.Disable();
 
-		private void OnDestroy()
-		{
-			_input.Dispose();
-		}
+		private void OnDestroy() => _input.Dispose();
 
 		#endregion CameraInput lifetime
 
@@ -133,10 +124,7 @@ namespace Input.Authoring
 			return bounds;
 		}
 
-		public static Vector3 CheckBounds( Bounds mapBounds, Vector3 position )
-		{
-			return mapBounds.ClosestPoint( position );
-		}
+		public static Vector3 CheckBounds( Bounds mapBounds, Vector3 position ) => mapBounds.ClosestPoint( position );
 
 		#endregion Static helpers
 	}

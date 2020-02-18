@@ -41,13 +41,32 @@ namespace Resources.Systems
 
 		protected override void OnUpdate()
 		{
-			Entities.WithNone<HasResourceOreRenderer>().ForEach(
-				( Entity entity, ref ResourceOre ore, ref MapIndex mapIndex ) =>
+			var hasResourceOreRenderers = GetComponentDataFromEntity<HasResourceOreRenderer>();
+			Entities
+				.ForEach( ( Entity changeProvider, ref ResourceOreChange resourceOreChange ) =>
 				{
-					// Need valid entity right now so can not use PostUpdateCommands here
+					PostUpdateCommands.DestroyEntity( changeProvider );
+					var oreEntity = resourceOreChange.oreEntity;
+
+					if ( hasResourceOreRenderers.Exists( oreEntity ) )
+					{
+						var visual = hasResourceOreRenderers[oreEntity];
+						if ( visual.Valid )
+						{
+							PostUpdateCommands.DestroyEntity( visual.VisualEntity );
+						}
+						PostUpdateCommands.RemoveComponent<HasResourceOreRenderer>( oreEntity );
+					}
+				} );
+
+			Entities
+				.WithNone<HasResourceOreRenderer>()
+				.ForEach( ( Entity entity, ref ResourceOre ore, ref MapIndex mapIndex ) =>
+				{
 					var visualEntity = new Entity();
 					if ( ore.IsValid )
 					{
+						// Need valid entity right now so can not use PostUpdateCommands here
 						visualEntity = EntityManager.CreateEntity( _tileVisualArchetype );
 						PostUpdateCommands.SetSharedComponent( visualEntity, new RenderMesh { mesh = _oreMesh, material = GetOreMaterial( ore.Type.Value.Color ) } );
 						PostUpdateCommands.SetComponent( visualEntity, new Translation { Value = new float3( mapIndex.Index2D.x, 0.1f, mapIndex.Index2D.y ) } );
@@ -56,8 +75,9 @@ namespace Resources.Systems
 					PostUpdateCommands.AddComponent( entity, new HasResourceOreRenderer { VisualEntity = visualEntity, Valid = ore.IsValid } );
 				} );
 
-			Entities.WithNone<ResourceOre>().ForEach(
-				( Entity entity, ref HasResourceOreRenderer visual ) =>
+			Entities
+				.WithNone<ResourceOre>()
+				.ForEach( ( Entity entity, ref HasResourceOreRenderer visual ) =>
 				{
 					if ( visual.Valid )
 					{

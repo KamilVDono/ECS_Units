@@ -6,6 +6,8 @@ using Pathfinding.Helpers;
 
 using Resources.Components;
 
+using Units.Components;
+
 using Unity.Collections;
 using Unity.Entities;
 using Unity.Jobs;
@@ -20,6 +22,7 @@ namespace Working.Systems
 		private EndSimulationEntityCommandBufferSystem _removeCmdBufferSystem;
 		private NativeArray<Neighbor> _neighbors;
 		private EntityArchetype _minedArchetype;
+		private EntityArchetype _changedOreArchetype;
 		private NativeArray<Entity> _tiles;
 
 		protected override void OnCreate()
@@ -28,6 +31,7 @@ namespace Working.Systems
 			_removeCmdBufferSystem = World.GetExistingSystem<EndSimulationEntityCommandBufferSystem>();
 			_neighbors = Neighbor.FullNeighborhood( Allocator.Persistent );
 			_minedArchetype = EntityManager.CreateArchetype( typeof( MinedOre ), typeof( MapIndex ) );
+			_changedOreArchetype = EntityManager.CreateArchetype( typeof( ResourceOreChange ) );
 		}
 
 		// TODO: More check
@@ -45,12 +49,14 @@ namespace Working.Systems
 			var spawnStocksCB = _removeCmdBufferSystem.CreateCommandBuffer().ToConcurrent();
 
 			var minedArchetypeLocal = _minedArchetype;
+			var changedOreArchetypeLocal = _changedOreArchetype;
+			var miningTags = GetComponentDataFromEntity<MiningTag>(true);
 
 			var miningProgressHandle = Entities
-				.WithAll<MiningWork>()
 				.WithChangeFilter<WorkProgress>()
 				.WithoutBurst()
-				.ForEach( ( Entity e, int entityInQueryIndex, ref WorkProgress workProgress, ref ResourceOre ore, in MapIndex index ) =>
+				.WithReadOnly(miningTags)
+				.ForEach( ( Entity e, int entityInQueryIndex, ref WorkProgress workProgress, ref ResourceOre ore, in MapIndex index, in MiningWork miningWork ) =>
 				{
 					if ( ore.IsValid && ore.Type.Value.WorkRequired > 0 )
 					{
@@ -67,6 +73,15 @@ namespace Working.Systems
 							ore.Count = 0;
 							miningProgressCB.RemoveComponent<MiningWork>( entityInQueryIndex, e );
 							miningProgressCB.SetComponent( entityInQueryIndex, e, new WorkProgress(){Progress = 0 } );
+
+							if( miningTags.Exists(miningWork.Worker) )
+							{
+								miningProgressCB.RemoveComponent<MiningTag>( entityInQueryIndex, miningWork.Worker );
+								miningProgressCB.AddComponent<IdleTag>( entityInQueryIndex, miningWork.Worker );
+							}
+
+							var changeEntity = miningProgressCB.CreateEntity(entityInQueryIndex, changedOreArchetypeLocal);
+							miningProgressCB.SetComponent( entityInQueryIndex, changeEntity, new ResourceOreChange(){ oreEntity = e } );
 						}
 
 						if(oresMined > 0)
@@ -121,6 +136,7 @@ namespace Working.Systems
 					NativeArray<Boolean> searched = new NativeArray<Boolean>(tiles.Length, Allocator.Temp, NativeArrayOptions.ClearMemory);
 					toSearch.Enqueue( oreIndex.Index1D );
 
+					bool skipNext = true;
 					while ( founded == false && toSearch.Count > 0 )
 					{
 						var currentIndex = toSearch.Dequeue();
@@ -135,6 +151,12 @@ namespace Working.Systems
 
 						var currentEntity = tiles[currentIndex];
 						searched[currentIndex] = true;
+
+						if(skipNext)
+						{
+							skipNext = false;
+							continue;
+						}
 
 						// No ore tile
 						if ( ores.HasComponent( currentEntity ) == false || ores[currentEntity].IsValid == false )

@@ -35,6 +35,7 @@ namespace Units.Systems
 			_unitArchetype = EntityManager.CreateArchetype(
 				// Custom
 				typeof( UnitTag ), typeof( MovementSpeed ), typeof( MapIndex ),
+				typeof( IdleTag ),
 				// 3D properties
 				typeof( LocalToWorld ),
 				typeof( Translation ),

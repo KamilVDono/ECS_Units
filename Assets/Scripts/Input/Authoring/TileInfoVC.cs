@@ -20,7 +20,7 @@ namespace Input.Authoring
 {
 	public class TileInfoVC : MonoBehaviour
 	{
-		[SF] private TextMeshProUGUI _tileInfoText;
+		[SF] private TextMeshProUGUI _tileInfoText = null;
 		private EntityQuery _tileUnderMouseQuery;
 		private Entity _lastTile;
 		private StringBuilder _descriptionBuilder = new StringBuilder( 50 );
@@ -53,10 +53,7 @@ namespace Input.Authoring
 			infoComponents.Dispose();
 		}
 
-		private void OnDestroy()
-		{
-			_tileUnderMouseQuery.Dispose();
-		}
+		private void OnDestroy() => _tileUnderMouseQuery.Dispose();
 
 		private string ExtractDescription( TileUnderMouse tileUnderMouse )
 		{

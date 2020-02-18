@@ -10,7 +10,7 @@ namespace Input.Authoring
 {
 	public class CameraDataAuthoring : MonoBehaviour
 	{
-		[SF] private Camera _camera;
+		[SF] private Camera _camera = null;
 
 		private void Start()
 		{

@@ -11,10 +11,10 @@ namespace Units.Authoring
 {
 	public class UnitsSpawnerAuthoring : MonoBehaviour
 	{
-		[SF] private int _unitsCount;
-		[SF] private int2 _texturesRowsColumns;
-		[SF] private float _movementSpeed;
-		[SF] private Material _unitMaterial;
+		[SF] private int _unitsCount = 10;
+		[SF] private int2 _texturesRowsColumns = new int2(8, 12);
+		[SF] private float _movementSpeed = 1;
+		[SF] private Material _unitMaterial = null;
 
 		private void Awake()
 		{
