@@ -1,6 +1,6 @@
 ﻿using Blobs;
 
-using Helpers;
+using Helpers.Types;
 
 using Input.Components;
 using Input.Systems;

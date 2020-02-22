@@ -1,4 +1,6 @@
-﻿using Unity.Entities;
+﻿using Helpers.Types;
+
+using Unity.Entities;
 using Unity.Mathematics;
 
 namespace Units.Components
@@ -6,7 +8,8 @@ namespace Units.Components
 	public struct UnitsRequest : IComponentData
 	{
 		public int UnitsCount;
-		public float UnitSpeed;
+		public FloatRange UnitSpeed;
+		public FloatRange UnitMiningSpeed;
 
 		// texture data
 		public int2 TextureTiles;

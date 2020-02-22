@@ -8,6 +8,8 @@ using Resources.Components;
 using System.Collections.Generic;
 
 using Units.Components;
+using Units.Components.Stats;
+using Units.Components.Tags;
 
 using Unity.Collections;
 using Unity.Entities;
@@ -34,7 +36,7 @@ namespace Units.Systems
 			RequireSingletonForUpdate<MapSettings>();
 			_unitArchetype = EntityManager.CreateArchetype(
 				// Custom
-				typeof( UnitTag ), typeof( MovementSpeed ), typeof( MapIndex ),
+				typeof( UnitTag ), typeof( MovementSpeed ), typeof( MiningSpeed ), typeof( MapIndex ),
 				typeof( IdleTag ),
 				// 3D properties
 				typeof( LocalToWorld ),
@@ -81,7 +83,8 @@ namespace Units.Systems
 
 				for ( int i = 0; i < unitsRequest.UnitsCount; i++ )
 				{
-					PostUpdateCommands.SetComponent( entities[i], new MovementSpeed() { Speed = unitsRequest.UnitSpeed } );
+					PostUpdateCommands.SetComponent( entities[i], new MovementSpeed() { Speed = (float)unitsRequest.UnitSpeed } );
+					PostUpdateCommands.SetComponent( entities[i], new MiningSpeed() { Speed = (float)unitsRequest.UnitMiningSpeed } );
 
 					var mapIndex = freePositions[i];
 					PostUpdateCommands.SetComponent( entities[i], mapIndex );

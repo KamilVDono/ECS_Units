@@ -2,7 +2,8 @@
 
 using Pathfinding.Components;
 
-using Units.Components;
+using Units.Components.Stats;
+using Units.Components.Tags;
 
 using Unity.Entities;
 using Unity.Jobs;

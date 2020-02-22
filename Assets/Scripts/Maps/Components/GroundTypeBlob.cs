@@ -1,6 +1,6 @@
 ﻿using Blobs.Interfaces;
 
-using Helpers;
+using Helpers.Types;
 
 using Maps.Authoring;
 

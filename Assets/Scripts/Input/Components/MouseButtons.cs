@@ -2,7 +2,7 @@
 
 using Unity.Entities;
 
-using Boolean = Helpers.Boolean;
+using Boolean = Helpers.Types.Boolean;
 
 namespace Input.Components
 {
@@ -32,19 +32,10 @@ namespace Input.Components
 		/// <summary>
 		/// Check if button become released within this frame
 		/// </summary>
-		public Boolean IsRelease( MouseButton button )
-		{
-			return ( ( Previous & button ) != 0 ) && ( ( Current & button ) == 0 );
-		}
+		public Boolean IsRelease( MouseButton button ) => ( ( Previous & button ) != 0 ) && ( ( Current & button ) == 0 );
 
-		public Boolean IsDown( MouseButton button )
-		{
-			return ( ( Current & button ) != 0 );
-		}
+		public Boolean IsDown( MouseButton button ) => ( ( Current & button ) != 0 );
 
-		public Boolean IsUp( MouseButton button )
-		{
-			return ( ( Current & button ) == 0 );
-		}
+		public Boolean IsUp( MouseButton button ) => ( ( Current & button ) == 0 );
 	}
 }

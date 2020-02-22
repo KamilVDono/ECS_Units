@@ -5,7 +5,8 @@ using Pathfinding.Helpers;
 
 using Resources.Components;
 
-using Units.Components;
+using Units.Components.Stats;
+using Units.Components.Tags;
 
 using Unity.Collections;
 using Unity.Entities;
@@ -30,7 +31,7 @@ namespace Units.Systems
 
 		protected override JobHandle OnUpdate( JobHandle inputDeps )
 		{
-			#region Seek or mine
+			#region Seek for mine
 			var seekingTagCB = _cmdBufferSystem.CreateCommandBuffer().ToConcurrent();
 
 			var seekingTagHandle = Entities
@@ -41,7 +42,7 @@ namespace Units.Systems
 					seekingTagCB.AddComponent<SeekingOresTag>( entityInQueryIndex, e );
 					seekingTagCB.RemoveComponent<IdleTag>( entityInQueryIndex, e );
 				} ).Schedule( inputDeps );
-			#endregion Seek or mine
+			#endregion Seek for mine
 
 			#region Moving tag
 			var movingTagCB = _cmdBufferSystem.CreateCommandBuffer().ToConcurrent();
@@ -68,7 +69,7 @@ namespace Units.Systems
 				} ).Schedule( inputDeps );
 			#endregion Moving tag
 
-			#region Arrived
+			#region Mining
 			var arrivedCB = _cmdBufferSystem.CreateCommandBuffer().ToConcurrent();
 			var tiles = GetSingleton<MapSettings>().Tiles;
 			var ores = GetComponentDataFromEntity<ResourceOre>(true);
@@ -79,13 +80,14 @@ namespace Units.Systems
 				.WithReadOnly(ores)
 				.WithAll<UnitTag, MovingTag>()
 				.WithNone<Waypoint>()
-				.ForEach( (Entity e, int entityInQueryIndex, in MapIndex mapIndex) =>
+				.ForEach( (Entity e, int entityInQueryIndex, in MapIndex mapIndex, in MiningSpeed miningSpeed) =>
 				{
 					arrivedCB.RemoveComponent<MovingTag>( entityInQueryIndex, e );
 
 					if(ores[tiles[mapIndex.Index1D]].IsValid)
 					{
-						arrivedCB.AddComponent<MiningWork>(entityInQueryIndex, tiles[mapIndex.Index1D], new MiningWork{ Worker = e, ProgressPerSecond = 20f } );
+						arrivedCB.AddComponent<MiningWork>(entityInQueryIndex, tiles[mapIndex.Index1D],
+							new MiningWork{ Worker = e, ProgressPerSecond = miningSpeed.Speed } );
 						arrivedCB.AddComponent<MiningTag>(entityInQueryIndex, e);
 					}
 					else
@@ -93,7 +95,7 @@ namespace Units.Systems
 						arrivedCB.AddComponent<IdleTag>(entityInQueryIndex, e);
 					}
 				} ).Schedule(inputDeps);
-			#endregion Arrived
+			#endregion Mining
 
 			_cmdBufferSystem.AddJobHandleForProducer( movingTagHandle );
 			_cmdBufferSystem.AddJobHandleForProducer( seekingTagHandle );

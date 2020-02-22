@@ -4,6 +4,8 @@ using Input.Components;
 
 using Maps.Components;
 
+using Units.Components.Tags;
+
 using Unity.Entities;
 
 namespace Input.Systems
@@ -13,7 +15,7 @@ namespace Input.Systems
 		protected override void OnCreate()
 		{
 			RequireSingletonForUpdate<MapSettings>();
-			EntityManager.CreateEntity( typeof( TileUnderMouse ), typeof( MouseWorldPosition ) );
+			EntityManager.CreateEntity( typeof( TileUnderMouse ), typeof( UnitUnderMouse ), typeof( MouseWorldPosition ) );
 		}
 
 		protected override void OnUpdate()
@@ -21,16 +23,21 @@ namespace Input.Systems
 			var mapSettings = GetSingleton<MapSettings>();
 
 			Entities
-				.ForEach( ( ref TileUnderMouse tileUnderMouse, ref MouseWorldPosition mouseWorldPosition ) =>
+				.ForEach( ( ref TileUnderMouse tileUnderMouse, ref UnitUnderMouse unitUnderMouse, ref MouseWorldPosition mouseWorldPosition ) =>
 				{
-					if ( mapSettings.Tiles.Length != 0 )
+					var mouseIndex = IndexUtils.WorldIndex1D( mouseWorldPosition.Position, mapSettings.Tiles.Length );
+					tileUnderMouse.Tile = mapSettings.Tiles[mouseIndex];
+
+					Entity unitEntity = new Entity();
+					Entities.WithAll<UnitTag>().ForEach( ( Entity unit, ref MapIndex mapIndex ) =>
 					{
-						tileUnderMouse.Tile = mapSettings.Tiles[IndexUtils.WorldIndex1D( mouseWorldPosition.Position, mapSettings.Tiles.Length )];
-					}
-					else
-					{
-						tileUnderMouse.Tile = new Entity();
-					}
+						if ( mapIndex.Index1D == mouseIndex )
+						{
+							unitEntity = unit;
+						}
+					} );
+
+					unitUnderMouse.Unit = unitEntity;
 				} );
 		}
 	}

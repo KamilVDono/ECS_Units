@@ -1,4 +1,6 @@
-﻿using Units.Components;
+﻿using Helpers.Types;
+
+using Units.Components;
 
 using Unity.Entities;
 using Unity.Mathematics;
@@ -13,7 +15,8 @@ namespace Units.Authoring
 	{
 		[SF] private int _unitsCount = 10;
 		[SF] private int2 _texturesRowsColumns = new int2(8, 12);
-		[SF] private float _movementSpeed = 1;
+		[SF] private FloatRange _movementSpeed = new FloatRange(0.8f, 2f);
+		[SF] private FloatRange _miningSpeed = new FloatRange(1, 4);
 		[SF] private Material _unitMaterial = null;
 
 		private void Awake()
@@ -26,6 +29,7 @@ namespace Units.Authoring
 			{
 				UnitsCount = _unitsCount,
 				UnitSpeed = _movementSpeed,
+				UnitMiningSpeed = _miningSpeed,
 				TextureTiles = _texturesRowsColumns,
 			};
 

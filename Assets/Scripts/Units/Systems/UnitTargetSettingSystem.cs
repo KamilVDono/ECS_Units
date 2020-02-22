@@ -1,4 +1,5 @@
 ﻿using Helpers;
+using Helpers.Types;
 
 using Maps.Components;
 
@@ -7,7 +8,7 @@ using Pathfinding.Helpers;
 
 using Resources.Components;
 
-using Units.Components;
+using Units.Components.Tags;
 
 using Unity.Collections;
 using Unity.Entities;
