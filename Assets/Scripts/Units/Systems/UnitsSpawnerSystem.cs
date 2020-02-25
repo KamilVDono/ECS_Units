@@ -27,6 +27,8 @@ namespace Units.Systems
 	[UpdateAfter( typeof( MapSpawner ) )]
 	public class UnitsSpawnerSystem : ComponentSystem // Just ComponentSystem because one time system
 	{
+		private const float EXTENDS = 0.5f;
+
 		private EntityArchetype _unitArchetype;
 		private Mesh _unitMesh;
 		private Dictionary<int2, Material> _materials = new Dictionary<int2, Material>();
@@ -43,10 +45,13 @@ namespace Units.Systems
 				typeof( Translation ),
 				typeof( Rotation ),
 				// Rendering
-				typeof( RenderMesh )
+				typeof( RenderMesh ),
+				typeof( RenderBounds ),
+				typeof( WorldRenderBounds ),
+				typeof( PerInstanceCullingTag )
 				);
 
-			_unitMesh = MeshCreator.Quad( 0.45f, quaternion.Euler( new float3( math.radians( -90 ), 0, 0 ) ) );
+			_unitMesh = MeshCreator.Quad( EXTENDS, quaternion.Euler( new float3( math.radians( -90 ), 0, 0 ) ) );
 		}
 
 		protected override void OnUpdate()
@@ -83,17 +88,28 @@ namespace Units.Systems
 
 				for ( int i = 0; i < unitsRequest.UnitsCount; i++ )
 				{
+					// Unit specific
 					PostUpdateCommands.SetComponent( entities[i], new MovementSpeed() { Speed = (float)unitsRequest.UnitSpeed } );
 					PostUpdateCommands.SetComponent( entities[i], new MiningSpeed() { Speed = (float)unitsRequest.UnitMiningSpeed } );
 
+					// Position
 					var mapIndex = freePositions[i];
 					PostUpdateCommands.SetComponent( entities[i], mapIndex );
 
 					var position = new float3(mapIndex.Index2D.x, 3, mapIndex.Index2D.y);
 					PostUpdateCommands.SetComponent( entities[i], new Translation() { Value = position } );
 
+					// Rendering
 					var materialTile = new int2( random.NextInt(0, unitsRequest.TextureTiles.x), random.NextInt(0, unitsRequest.TextureTiles.y) );
 					PostUpdateCommands.SetSharedComponent( entities[i], new RenderMesh() { material = GetMaterial( materialTile, unitMaterial ), mesh = _unitMesh } );
+					PostUpdateCommands.SetComponent( entities[i], new RenderBounds
+					{
+						Value = new AABB()
+						{
+							Center = float3.zero,
+							Extents = new float3( EXTENDS, 0, EXTENDS )
+						}
+					} );
 				}
 
 				entities.Dispose();

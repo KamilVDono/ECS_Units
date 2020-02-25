@@ -11,9 +11,6 @@ namespace Resources.Components
 
 		public int AvailableSpace => (int)math.floor( ( Capacity - (int)math.ceil( Type.Value.UnitSize * Count ) ) / Type.Value.UnitSize );
 
-		public override string ToString()
-		{
-			return $"Stock: {Type.Value.Name.ToString()} {Count}/{Capacity}";
-		}
+		public override string ToString() => $"Stock: {Type.Value.Name.ToString()} {Count}/{Capacity}";
 	}
 }

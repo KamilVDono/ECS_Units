@@ -20,25 +20,25 @@ namespace Performance
 {
 	public class AStarPerformance : ECSSystemTester<AStar>
 	{
+		private static readonly string[] markers =
+			{
+				"AStar.System",
+				"AStar.Setup",
+				"AStar.Search",
+				"AStar.Reconstruct",
+				"AStar.Cleanup",
+				"AStar.Find_current",
+				"AStar.Movement_data",
+				"AStar.Setup_data",
+				"AStar.Setup_data_movement",
+				"AStar.Pop"
+			};
+
 		[Test]
 		[Performance]
 		[Version( "1" )]
 		public void AStarSimplePasses()
 		{
-			SampleGroupDefinition[] markers =
-			{
-				new SampleGroupDefinition("AStar.System"),
-				new SampleGroupDefinition("AStar.Setup"),
-				new SampleGroupDefinition("AStar.Search"),
-				new SampleGroupDefinition("AStar.Reconstruct"),
-				new SampleGroupDefinition("AStar.Cleanup"),
-				new SampleGroupDefinition("AStar.Find_current" ),
-				new SampleGroupDefinition("AStar.Movement_data"),
-				new SampleGroupDefinition("AStar.Setup_data"),
-				new SampleGroupDefinition("AStar.Setup_data_movement"),
-				new SampleGroupDefinition("AStar.Pop")
-			};
-
 			Measure.Method( () =>
 			{
 				using ( Measure.ProfilerMarkers( markers ) )
@@ -61,19 +61,6 @@ namespace Performance
 		[Version( "1" )]
 		public void AStarHardPasses()
 		{
-			SampleGroupDefinition[] markers =
-			{
-				new SampleGroupDefinition("AStar.System"),
-				new SampleGroupDefinition("AStar.Setup"),
-				new SampleGroupDefinition("AStar.Search"),
-				new SampleGroupDefinition("AStar.Reconstruct"),
-				new SampleGroupDefinition("AStar.Cleanup"),
-				new SampleGroupDefinition("AStar.Find_current" ),
-				new SampleGroupDefinition("AStar.Movement_data"),
-				new SampleGroupDefinition("AStar.Setup_data"),
-				new SampleGroupDefinition("AStar.Setup_data_movement")
-			};
-
 			Measure.Method( () =>
 			{
 				using ( Measure.ProfilerMarkers( markers ) )

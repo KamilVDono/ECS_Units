@@ -6,10 +6,7 @@ namespace Helpers
 {
 	public static class MeshCreator
 	{
-		public static Mesh Quad( float extend )
-		{
-			return Quad( extend, quaternion.identity );
-		}
+		public static Mesh Quad( float extend ) => Quad( extend, quaternion.identity );
 
 		public static Mesh Quad( float extend, quaternion rotation )
 		{
