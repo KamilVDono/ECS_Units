@@ -28,7 +28,7 @@ namespace Resources.Systems
 	}
 
 	[UpdateInGroup( typeof( PresentationSystemGroup ) )]
-	public class ResourceOreRenderer : MeshCreatorSystem<HasResourceOreRenderer, ResourceOre>
+	public class ResourceOreRendererSystem : MeshCreatorSystem<HasResourceOreRenderer, ResourceOre>
 	{
 		private readonly Dictionary<Color32, Material> _oreMaterials = new Dictionary<Color32, Material>();
 

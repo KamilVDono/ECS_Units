@@ -1,0 +1,20 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: b19801a03828b424d9be908d415c62d3, type: 3}
+  m_Name: TestBuilding
+  m_EditorClassIdentifier: 
+  RequiredResources:
+  - ResourceType: {fileID: 11400000, guid: e75c4ed447cd3a54aa731adecbfa26fa, type: 2}
+    Quantity: 5
+  - ResourceType: {fileID: 11400000, guid: 06926e83e41e9744a9c2b1b998a7ba24, type: 2}
+    Quantity: 2
+  RequiredWork: 5

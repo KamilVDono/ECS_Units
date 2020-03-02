@@ -21,6 +21,7 @@ using SF = UnityEngine.SerializeField;
 
 namespace Input.Authoring
 {
+	// TODO: Change query to just component singleton 
 	public class TileInfoVC : MonoBehaviour
 	{
 		[SF] private TextMeshProUGUI _tileInfoText = null;

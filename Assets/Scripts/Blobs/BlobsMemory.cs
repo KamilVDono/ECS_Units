@@ -8,6 +8,7 @@ using Unity.Entities;
 
 namespace Blobs
 {
+	// TODO: Make it more DOTS style (Dictionary -> HashMap, IComponent)
 	public class BlobsMemory : IDisposable
 	{
 		#region Singleton
@@ -57,7 +58,7 @@ namespace Blobs
 
 		private void CreateBlobsData()
 		{
-			// Clear previous cache
+			// -- Clear previous cache Create blobReferences
 			foreach ( var blobable in _blobables )
 			{
 				blobable.SetupBlobReference();

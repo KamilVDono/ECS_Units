@@ -17,11 +17,18 @@ namespace Input.Systems
 		protected override void OnCreate()
 		{
 			RequireSingletonForUpdate<MapSettings>();
+			RequireSingletonForUpdate<CurrentMouseMode>();
 			EntityManager.CreateEntity( typeof( MouseButtons ), typeof( MouseWorldPosition ), typeof( MouseMiningTag ) );
 		}
 
 		protected override void OnUpdate()
 		{
+			var mouseMode = GetSingleton<CurrentMouseMode>();
+			if ( mouseMode.Mode != MouseMode.Mining )
+			{
+				return;
+			}
+
 			var mapSettings = GetSingleton<MapSettings>();
 			var ores = GetComponentDataFromEntity<ResourceOre>(true);
 
