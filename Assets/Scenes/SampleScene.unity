@@ -329,8 +329,10 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 01614664b831546d2ae94a42149d80ac, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  m_RepeatDelay: 0.5
-  m_RepeatRate: 0.1
+  m_MoveRepeatDelay: 0.5
+  m_MoveRepeatRate: 0.1
+  m_ActionsAsset: {fileID: -944628639613478452, guid: ca9f5fa95ffab41fb9a615ab714db018,
+    type: 3}
   m_PointAction: {fileID: 1054132383583890850, guid: ca9f5fa95ffab41fb9a615ab714db018,
     type: 3}
   m_MoveAction: {fileID: 3710738434707379630, guid: ca9f5fa95ffab41fb9a615ab714db018,
@@ -351,11 +353,8 @@ MonoBehaviour:
     type: 3}
   m_TrackedDeviceOrientationAction: {fileID: 1025543830046995696, guid: ca9f5fa95ffab41fb9a615ab714db018,
     type: 3}
-  m_TrackedDeviceSelectAction: {fileID: 2559092417903258184, guid: ca9f5fa95ffab41fb9a615ab714db018,
-    type: 3}
-  m_ActionsAsset: {fileID: -944628639613478452, guid: ca9f5fa95ffab41fb9a615ab714db018,
-    type: 3}
   m_DeselectOnBackgroundClick: 1
+  m_PointerBehavior: 0
 --- !u!114 &176559021
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -1717,7 +1716,7 @@ MonoBehaviour:
   _offset:
     x: 2
     y: 2
-  _mapEdgeSize: 64
+  _mapEdgeSize: 128
 --- !u!4 &2038225693
 Transform:
   m_ObjectHideFlags: 0
@@ -1775,7 +1774,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 0d6cb45114234f842b6586a56f6f6a3f, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  _unitsCount: 20
+  _unitsCount: 40
   _texturesRowsColumns:
     x: 4
     y: 8
