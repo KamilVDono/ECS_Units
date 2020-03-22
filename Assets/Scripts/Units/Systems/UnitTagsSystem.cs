@@ -1,7 +1,8 @@
-﻿using Maps.Components;
+﻿using Helpers.Types;
+
+using Maps.Components;
 
 using Pathfinding.Components;
-using Pathfinding.Helpers;
 
 using Resources.Components;
 

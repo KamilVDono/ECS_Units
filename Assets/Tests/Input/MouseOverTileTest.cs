@@ -51,7 +51,7 @@ namespace Tests.Input
 		}
 
 		[Test]
-		[ECSTest]
+		[ECS_INVALID_Test( "Set singleton throws error. ECS internal error." )]
 		public void NoMap_NoTile()
 		{
 			var entity = SetMouseInput( float2.zero );
@@ -69,7 +69,7 @@ namespace Tests.Input
 		}
 
 		[Test]
-		[ECSTest]
+		[ECS_INVALID_Test( "Set singleton throws error. ECS internal error." )]
 		public void OneTile_Result()
 		{
 			var entity = SetMouseInput( float2.zero );
@@ -83,7 +83,7 @@ namespace Tests.Input
 		}
 
 		[Test]
-		[ECSTest]
+		[ECS_INVALID_Test( "Set singleton throws error. ECS internal error." )]
 		public void OneTile_IsSand()
 		{
 			var entity = SetMouseInput( float2.zero );
@@ -97,7 +97,7 @@ namespace Tests.Input
 		}
 
 		[Test]
-		[ECSTest]
+		[ECS_INVALID_Test( "Set singleton throws error. ECS internal error." )]
 		public void FiveTileEdge_Result()
 		{
 			var entity = SetMouseInput( float2.zero );
@@ -111,7 +111,7 @@ namespace Tests.Input
 		}
 
 		[Test]
-		[ECSTest]
+		[ECS_INVALID_Test( "Set singleton throws error. ECS internal error." )]
 		public void FiveTileEdge_IsSand()
 		{
 			var entity = SetMouseInput( float2.zero );

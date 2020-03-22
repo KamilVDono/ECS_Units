@@ -1,4 +1,6 @@
-﻿using Unity.Mathematics;
+﻿using System;
+
+using Unity.Mathematics;
 
 using UnityEngine;
 
@@ -10,6 +12,8 @@ namespace Helpers
 
 		public static Mesh Quad( float extend, quaternion rotation )
 		{
+			CheckQuadExtend( extend );
+
 			return new Mesh
 			{
 				vertices = new Vector3[] {
@@ -31,6 +35,17 @@ namespace Helpers
 					new Vector2(0, 0),
 }
 			};
+		}
+
+		[System.Diagnostics.Conditional( "DEBUG" )]
+		private static void CheckQuadExtend( float extend )
+		{
+			if ( extend <= 0 )
+			{
+				throw new ArgumentException(
+					nameof( extend ),
+					$"Parameter {nameof( extend )}cannot both be less or equal zero" );
+			}
 		}
 	}
 }
