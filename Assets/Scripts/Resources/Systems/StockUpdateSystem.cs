@@ -12,10 +12,7 @@ namespace Resources.Systems
 
 		private EndSimulationEntityCommandBufferSystem _removeCmdBufferSystem;
 
-		protected override void OnCreate()
-		{
-			_removeCmdBufferSystem = World.GetExistingSystem<EndSimulationEntityCommandBufferSystem>();
-		}
+		protected override void OnCreate() => _removeCmdBufferSystem = World.GetExistingSystem<EndSimulationEntityCommandBufferSystem>();
 
 		// TODO: More checks (types), respawn some kind of stock request
 		protected override JobHandle OnUpdate( JobHandle inputDeps )

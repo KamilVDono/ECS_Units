@@ -7,7 +7,6 @@ namespace Pathfinding.Components
 {
 	public struct PathRequest : IComponentData
 	{
-		public Boolean Done;
 		public int2 End;
 		public int2 Start;
 

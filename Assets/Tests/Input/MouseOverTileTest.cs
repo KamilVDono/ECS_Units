@@ -10,6 +10,7 @@ using Maps.Components;
 
 using NUnit.Framework;
 
+using Tests.Categories;
 using Tests.Utility;
 
 using Unity.Entities;
@@ -50,6 +51,7 @@ namespace Tests.Input
 		}
 
 		[Test]
+		[ECSTest]
 		public void NoMap_NoTile()
 		{
 			var entity = SetMouseInput( float2.zero );
@@ -67,6 +69,7 @@ namespace Tests.Input
 		}
 
 		[Test]
+		[ECSTest]
 		public void OneTile_Result()
 		{
 			var entity = SetMouseInput( float2.zero );
@@ -80,6 +83,7 @@ namespace Tests.Input
 		}
 
 		[Test]
+		[ECSTest]
 		public void OneTile_IsSand()
 		{
 			var entity = SetMouseInput( float2.zero );
@@ -93,6 +97,7 @@ namespace Tests.Input
 		}
 
 		[Test]
+		[ECSTest]
 		public void FiveTileEdge_Result()
 		{
 			var entity = SetMouseInput( float2.zero );
@@ -106,6 +111,7 @@ namespace Tests.Input
 		}
 
 		[Test]
+		[ECSTest]
 		public void FiveTileEdge_IsSand()
 		{
 			var entity = SetMouseInput( float2.zero );

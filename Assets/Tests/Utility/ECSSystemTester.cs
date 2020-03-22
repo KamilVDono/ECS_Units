@@ -61,6 +61,7 @@ namespace Tests.Utility
 				{
 					system.Update();
 				}
+				_entityManager.CompleteAllJobs();
 			}
 			else
 			{

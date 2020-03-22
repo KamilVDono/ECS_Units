@@ -7,6 +7,7 @@ using Resources.Authoring;
 using Resources.Components;
 using Resources.Systems;
 
+using Tests.Categories;
 using Tests.Utility;
 
 using Unity.Entities;
@@ -37,6 +38,7 @@ namespace Tests.Resources
 		}
 
 		[Test]
+		[ECSTest]
 		public void SimpleUpdate_ExistingStock()
 		{
 			var resourceType = BlobsMemory.Instance.ReferencesOf<ResourceTypeBlob>()[0];
@@ -52,6 +54,7 @@ namespace Tests.Resources
 		}
 
 		[Test]
+		[ECSTest]
 		public void OverCapacityUpdate_ExistingStock()
 		{
 			var resourceType = BlobsMemory.Instance.ReferencesOf<ResourceTypeBlob>()[0];
@@ -67,6 +70,7 @@ namespace Tests.Resources
 		}
 
 		[Test]
+		[ECSTest]
 		public void SimpleUpdate_CreateStock()
 		{
 			var resourceType = BlobsMemory.Instance.ReferencesOf<ResourceTypeBlob>()[0];

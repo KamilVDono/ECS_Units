@@ -1,6 +1,9 @@
 ﻿using NUnit.Framework;
 
+using Tests.Categories;
 using Tests.Utility;
+
+using Unity.Entities;
 
 using Working.Components;
 using Working.Systems;
@@ -9,7 +12,16 @@ namespace Tests.Working
 {
 	public class WorkProgressionTest : ECSSystemTester<WorkProgressionSystem>
 	{
+		[SetUp]
+		public override void SetUp()
+		{
+			base.SetUp();
+			var ese = _currentWorld.CreateSystem<EndSimulationEntityCommandBufferSystem>();
+			Inject( ese, "_removeCmdBufferSystem" );
+		}
+
 		[Test]
+		[ECSTest]
 		public void MinigWork_OneUpdate()
 		{
 			var workEntity = _entityManager.CreateEntity( typeof( WorkProgress ), typeof( MiningWork ) );
@@ -23,6 +35,7 @@ namespace Tests.Working
 		}
 
 		[Test]
+		[ECSTest]
 		public void MinigWork_OneProgress()
 		{
 			var workEntity = _entityManager.CreateEntity( typeof( WorkProgress ), typeof( MiningWork ) );

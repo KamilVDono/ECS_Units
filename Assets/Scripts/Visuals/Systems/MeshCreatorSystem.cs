@@ -45,8 +45,7 @@ namespace Visuals.Systems
 				typeof( LocalToWorld ),
 				typeof( Translation ),
 				typeof( RenderBounds ),
-				typeof( WorldRenderBounds ),
-				typeof( PerInstanceCullingTag )
+				//typeof( PerInstanceCullingTag )
 			};
 
 			// Add additional
@@ -100,7 +99,5 @@ namespace Visuals.Systems
 			} );
 			return visualEntity;
 		}
-
-
 	}
 }

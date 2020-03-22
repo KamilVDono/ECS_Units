@@ -12,6 +12,7 @@ using Pathfinding.Systems;
 using Resources.Authoring;
 using Resources.Components;
 
+using Tests.Categories;
 using Tests.Utility;
 
 using Unity.Entities;
@@ -45,6 +46,8 @@ namespace Tests.Pathfinding
 		}
 
 		[Test]
+		[Order( 1 )]
+		[ECSTest]
 		public void Initialize_Without_Ore()
 		{
 			var tileArchetype = _entityManager.CreateArchetype(typeof( MovementCost ), typeof( GroundType ), typeof( ResourceOre ));
@@ -54,11 +57,14 @@ namespace Tests.Pathfinding
 			_entityManager.SetComponentData( tile, ResourceOre.EMPTY_ORE );
 
 			Update();
+			Update();
 
 			Assert.AreEqual( 1, _entityManager.GetComponentData<MovementCost>( tile ).Cost );
 		}
 
 		[Test]
+		[Order( 2 )]
+		[ECSTest]
 		public void Initialize_With_Ore()
 		{
 			var tileArchetype = _entityManager.CreateArchetype(typeof( MovementCost ), typeof( GroundType ), typeof( ResourceOre ));
@@ -73,6 +79,8 @@ namespace Tests.Pathfinding
 		}
 
 		[Test]
+		[Order( 3 )]
+		[ECSTest]
 		public void Initialize_With_Stock()
 		{
 			var tileArchetype = _entityManager.CreateArchetype(typeof( MovementCost ), typeof( GroundType ), typeof( ResourceOre ), typeof( Stock ));
@@ -90,6 +98,8 @@ namespace Tests.Pathfinding
 		}
 
 		[Test]
+		[Order( 4 )]
+		[ECSTest]
 		public void AfterAddOre_JobSystem()
 		{
 			_currentWorld.CreateSystem<ChangeResourceOreJob>();
@@ -110,6 +120,8 @@ namespace Tests.Pathfinding
 		}
 
 		[Test]
+		[Order( 5 )]
+		[ECSTest]
 		public void AfterAddOre_RegularSystem()
 		{
 			_currentWorld.CreateSystem<ChangeResourceOre>();

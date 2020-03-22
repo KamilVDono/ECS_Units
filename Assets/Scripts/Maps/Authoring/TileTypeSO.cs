@@ -42,10 +42,7 @@ namespace Maps.Authoring
 			BlobReference = GroundTypeBlob.FromSO( this );
 		}
 
-		public override string ToString()
-		{
-			return _toString;
-		}
+		public override string ToString() => _toString;
 
 		public void Dispose()
 		{
@@ -55,10 +52,7 @@ namespace Maps.Authoring
 			}
 		}
 
-		private void SetupToString()
-		{
-			_toString = $"Tile {name}, cost {Cost};";
-		}
+		private void SetupToString() => _toString = $"Tile {name}, cost {Cost};";
 
 		private Material CreateMaterial()
 		{

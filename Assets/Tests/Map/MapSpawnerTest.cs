@@ -6,6 +6,7 @@ using Maps.Systems;
 
 using NUnit.Framework;
 
+using Tests.Categories;
 using Tests.Utility;
 
 using Unity.Mathematics;
@@ -45,6 +46,7 @@ namespace Tests.Map
 
 		[Test]
 		[Order( 1 )]
+		[ECSTest]
 		public void Spawn_OneSand()
 		{
 			// Create request
@@ -63,6 +65,7 @@ namespace Tests.Map
 
 		[Test]
 		[Order( 1 )]
+		[ECSTest]
 		public void Spawn_BigRandom()
 		{
 			var mapSize = 50;

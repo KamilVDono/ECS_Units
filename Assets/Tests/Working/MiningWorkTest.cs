@@ -10,6 +10,7 @@ using NUnit.Framework;
 using Resources.Authoring;
 using Resources.Components;
 
+using Tests.Categories;
 using Tests.Utility;
 
 using Unity.Entities;
@@ -21,9 +22,7 @@ using Working.Systems;
 
 namespace Tests.Working
 {
-	// System requires:
-	// MiningWork, WorkProgress, ResourceOre, MapIndex, MapSettings
-	// uses system EndSimulationEntityCommandBufferSystem
+	// System requires: MiningWork, WorkProgress, ResourceOre, MapIndex, MapSettings uses system EndSimulationEntityCommandBufferSystem
 
 	public class MiningWorkTest : ECSSystemTester<MiningWorkSystem>
 	{
@@ -57,6 +56,7 @@ namespace Tests.Working
 		}
 
 		[Test]
+		[ECSTest]
 		public void MinigWork_CenterOre_NoMined()
 		{
 			CreateMap( 10, 1 );
@@ -69,6 +69,7 @@ namespace Tests.Working
 		}
 
 		[Test]
+		[ECSTest]
 		public void MinigWork_CenterOre_MinedOne()
 		{
 			CreateMap( 1, 0 );
@@ -89,6 +90,7 @@ namespace Tests.Working
 		}
 
 		[Test]
+		[ECSTest]
 		public void MinigWork_CenterOre_ZeroWorkRequired()
 		{
 			CreateMap( 1, 2 );
@@ -101,6 +103,7 @@ namespace Tests.Working
 		}
 
 		[Test]
+		[ECSTest]
 		public void MinigWork_CenterOre_StockChange()
 		{
 			MinigWork_CenterOre_MinedOne();
@@ -119,9 +122,7 @@ namespace Tests.Working
 
 		private void CreateMap( int oreCount = 10, int resourceTypeIndex = 0 )
 		{
-			// Generate map [3x3] with ore on center
-			// Setup MapSettings and others
-
+			// Generate map [3x3] with ore on center Setup MapSettings and others
 
 			var request = _entityManager.CreateEntity( typeof( MapRequest ) );
 			_entityManager.SetComponentData( request, new MapRequest()

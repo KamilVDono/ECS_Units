@@ -11,6 +11,8 @@ using Unity.Collections;
 using Unity.Entities;
 using Unity.Jobs;
 
+using UnityEngine;
+
 namespace Pathfinding.Systems
 {
 	/// <summary>
@@ -28,6 +30,7 @@ namespace Pathfinding.Systems
 
 		protected override void OnCreate()
 		{
+			Debug.Log( $"Create" );
 			_groundChangeQuery = GetEntityQuery( ComponentType.ReadOnly<MovementCost>(), ComponentType.ReadOnly<GroundType>(), ComponentType.ReadOnly<ResourceOre>() );
 			_groundChangeQuery.SetChangedVersionFilter( typeof( GroundType ) );
 
@@ -54,6 +57,7 @@ namespace Pathfinding.Systems
 			// calculate minimum allocation size
 			int maxEntities = _groundChangeQuery.CalculateEntityCount() + _resourceChangeQuery.CalculateEntityCount() + _stockChangeQuery.CalculateEntityCount();
 
+			Debug.Log( $"Max entities: {maxEntities}" );
 			if ( maxEntities < 1 )
 			{
 				return inputDependencies;

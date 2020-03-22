@@ -189,8 +189,6 @@ namespace Pathfinding.Systems
 				camesFrom.Dispose();
 				minSet.Dispose();
 				movementData.Dispose();
-				// Mark request as completed
-				pathRequest.Done = true;
 				_markerCleanup.End();
 
 				#endregion Cleanup

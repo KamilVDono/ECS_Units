@@ -10,6 +10,7 @@ using Pathfinding.Systems;
 using System;
 using System.Text;
 
+using Tests.Categories;
 using Tests.Utility;
 
 using Unity.Collections;
@@ -25,6 +26,7 @@ namespace Tests.Pathfinding
 	public class AStartTest : ECSSystemTester<AStar>
 	{
 		[Test]
+		[ECSTest]
 		public void NoWay_Simple()
 		{
 			CreateMap( new float[] {
@@ -39,11 +41,11 @@ namespace Tests.Pathfinding
 
 			var way = _entityManager.GetBuffer<Waypoint>( request );
 			PrintWay( way );
-			Assert.True( _entityManager.GetComponentData<PathRequest>( request ).Done );
 			Assert.Zero( way.Length );
 		}
 
 		[Test]
+		[ECSTest]
 		public void NoWay_Wall()
 		{
 			CreateMap( new float[] {
@@ -59,11 +61,11 @@ namespace Tests.Pathfinding
 
 			var way = _entityManager.GetBuffer<Waypoint>( request );
 			PrintWay( way );
-			Assert.True( _entityManager.GetComponentData<PathRequest>( request ).Done );
 			Assert.Zero( way.Length );
 		}
 
 		[Test]
+		[ECSTest]
 		public void From_IMPOSIBLE()
 		{
 			CreateMap( new float[] {
@@ -78,13 +80,13 @@ namespace Tests.Pathfinding
 
 			var way = _entityManager.GetBuffer<Waypoint>( request );
 			PrintWay( way );
-			Assert.True( _entityManager.GetComponentData<PathRequest>( request ).Done );
 
 			var expectedPath = new int2[] { new int2( 0, 0 ), new int2( 1, 1 ) };
 			ExpectedPath( way, expectedPath );
 		}
 
 		[Test]
+		[ECSTest]
 		public void OneCost_Right()
 		{
 			CreateMap( new float[] {
@@ -99,7 +101,6 @@ namespace Tests.Pathfinding
 
 			var way = _entityManager.GetBuffer<Waypoint>( request );
 			PrintWay( way );
-			Assert.True( _entityManager.GetComponentData<PathRequest>( request ).Done );
 			Assert.AreEqual( _entityManager.GetBuffer<Waypoint>( request ).Length, 2 );
 
 			var expectedPath = new int2[] { new int2( 0, 0 ), new int2( 1, 1 ) };
@@ -107,6 +108,7 @@ namespace Tests.Pathfinding
 		}
 
 		[Test]
+		[ECSTest]
 		public void OneCost_Diagonal()
 		{
 			CreateMap( new float[] {
@@ -122,13 +124,13 @@ namespace Tests.Pathfinding
 
 			var way = _entityManager.GetBuffer<Waypoint>( request );
 			PrintWay( way );
-			Assert.True( _entityManager.GetComponentData<PathRequest>( request ).Done );
 
 			var expectedPath = new int2[] { new int2( 0, 0 ), new int2( 1, 1 ), new int2(2, 2) };
 			ExpectedPath( way, expectedPath );
 		}
 
 		[Test]
+		[ECSTest]
 		public void Avoid()
 		{
 			CreateMap( new float[] {
@@ -144,7 +146,6 @@ namespace Tests.Pathfinding
 
 			var way = _entityManager.GetBuffer<Waypoint>( request );
 			PrintWay( way );
-			Assert.True( _entityManager.GetComponentData<PathRequest>( request ).Done );
 
 			var expectedPath1 = new int2[] { new int2( 0, 0 ), new int2( 1, 0 ), new int2(2, 1), new int2(2, 2) };
 			var expectedPath2 = new int2[] { new int2( 0, 0 ), new int2( 0, 1 ), new int2(1, 2), new int2(2, 2) };
