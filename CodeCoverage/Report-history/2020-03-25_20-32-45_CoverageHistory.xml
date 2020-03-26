@@ -1,0 +1,65 @@
+﻿<?xml version="1.0" encoding="utf-8" standalone="yes"?>
+<coverage version="1.0" date="2020-03-25_20-32-45" tag="">
+  <assembly name="Helpers">
+    <class name="Helpers.IndexUtils" coveredlines="36" coverablelines="36" totallines="73" coveredbranches="0" totalbranches="0" />
+    <class name="Helpers.MeshCreator" coveredlines="10" coverablelines="10" totallines="51" coveredbranches="0" totalbranches="0" />
+    <class name="Helpers.RandomUtils" coveredlines="6" coverablelines="6" totallines="33" coveredbranches="0" totalbranches="0" />
+    <class name="Helpers.Types.BlitableArray[T]" coveredlines="61" coverablelines="69" totallines="135" coveredbranches="0" totalbranches="0" />
+    <class name="Helpers.Types.Boolean" coveredlines="3" coverablelines="4" totallines="16" coveredbranches="0" totalbranches="0" />
+    <class name="Helpers.Types.FloatRange" coveredlines="4" coverablelines="6" totallines="21" coveredbranches="0" totalbranches="0" />
+    <class name="Helpers.Types.IntRange" coveredlines="0" coverablelines="6" totallines="23" coveredbranches="0" totalbranches="0" />
+    <class name="Helpers.Types.Neighbor" coveredlines="36" coverablelines="36" totallines="97" coveredbranches="0" totalbranches="0" />
+  </assembly>
+  <assembly name="Scripts">
+    <class name="Blobs.BlobsMemory" coveredlines="33" coverablelines="34" totallines="70" coveredbranches="0" totalbranches="0" />
+    <class name="Blobs.BlobsMemoryAuthoring" coveredlines="1" coverablelines="2" totallines="22" coveredbranches="0" totalbranches="0" />
+    <class name="Buildings.Authoring.BuildingBlueprintSO" coveredlines="0" coverablelines="12" totallines="50" coveredbranches="0" totalbranches="0" />
+    <class name="Buildings.Components.BuildingBlueprint" coveredlines="0" coverablelines="7" totallines="21" coveredbranches="0" totalbranches="0" />
+    <class name="Buildings.Components.BuildingBlueprintBlob" coveredlines="0" coverablelines="16" totallines="49" coveredbranches="0" totalbranches="0" />
+    <class name="Input.Authoring.CameraDataAuthoring" coveredlines="1" coverablelines="8" totallines="24" coveredbranches="0" totalbranches="0" />
+    <class name="Input.Authoring.CameraMovement" coveredlines="21" coverablelines="64" totallines="131" coveredbranches="0" totalbranches="0" />
+    <class name="Input.Authoring.MouseModeVC" coveredlines="2" coverablelines="29" totallines="67" coveredbranches="0" totalbranches="0" />
+    <class name="Input.Authoring.ScreenEdgeInput" coveredlines="46" coverablelines="46" totallines="70" coveredbranches="0" totalbranches="0" />
+    <class name="Input.Authoring.TileInfoVC" coveredlines="3" coverablelines="70" totallines="120" coveredbranches="0" totalbranches="0" />
+    <class name="Input.Components.CameraData" coveredlines="0" coverablelines="6" totallines="23" coveredbranches="0" totalbranches="0" />
+    <class name="Input.Components.MouseButtons" coveredlines="6" coverablelines="6" totallines="41" coveredbranches="0" totalbranches="0" />
+    <class name="Input.Systems.MouseAStarSystem" coveredlines="0" coverablelines="27" totallines="51" coveredbranches="0" totalbranches="0" />
+    <class name="Input.Systems.MouseInputFeeder" coveredlines="0" coverablelines="47" totallines="78" coveredbranches="0" totalbranches="0" />
+    <class name="Input.Systems.MouseMiningSystem" coveredlines="0" coverablelines="54" totallines="88" coveredbranches="0" totalbranches="0" />
+    <class name="Input.Systems.MouseOverTileSystem" coveredlines="4" coverablelines="21" totallines="44" coveredbranches="0" totalbranches="0" />
+    <class name="Maps.Authoring.TileSpawner" coveredlines="3" coverablelines="10" totallines="40" coveredbranches="0" totalbranches="0" />
+    <class name="Maps.Authoring.TileTypeSO" coveredlines="23" coverablelines="23" totallines="65" coveredbranches="0" totalbranches="0" />
+    <class name="Maps.Components.GroundType" coveredlines="3" coverablelines="9" totallines="27" coveredbranches="0" totalbranches="0" />
+    <class name="Maps.Components.GroundTypeBlob" coveredlines="13" coverablelines="13" totallines="38" coveredbranches="0" totalbranches="0" />
+    <class name="Maps.Components.MapIndex" coveredlines="8" coverablelines="26" totallines="53" coveredbranches="0" totalbranches="0" />
+    <class name="Maps.Systems.GroundRenderSystem" coveredlines="0" coverablelines="9" totallines="34" coveredbranches="0" totalbranches="0" />
+    <class name="Maps.Systems.HasGroundRenderer" coveredlines="0" coverablelines="2" totallines="34" coveredbranches="0" totalbranches="0" />
+    <class name="Maps.Systems.MapSpawner" coveredlines="57" coverablelines="59" totallines="120" coveredbranches="0" totalbranches="0" />
+    <class name="Pathfinding.Components.MovementCost" coveredlines="0" coverablelines="9" totallines="25" coveredbranches="0" totalbranches="0" />
+    <class name="Pathfinding.Components.PathRequest" coveredlines="0" coverablelines="5" totallines="25" coveredbranches="0" totalbranches="0" />
+    <class name="Pathfinding.Helpers.MinHeapNode" coveredlines="8" coverablelines="8" totallines="239" coveredbranches="0" totalbranches="0" />
+    <class name="Pathfinding.Helpers.NativeMinHeap" coveredlines="61" coverablelines="83" totallines="239" coveredbranches="0" totalbranches="0" />
+    <class name="Pathfinding.Systems.AStar" coveredlines="121" coverablelines="123" totallines="231" coveredbranches="0" totalbranches="0" />
+    <class name="Pathfinding.Systems.AStarVisual" coveredlines="0" coverablelines="28" totallines="83" coveredbranches="0" totalbranches="0" />
+    <class name="Pathfinding.Systems.MovementCostTrackerSystem" coveredlines="14" coverablelines="76" totallines="154" coveredbranches="0" totalbranches="0" />
+    <class name="Pathfinding.Systems.WaypointCleanupSystem" coveredlines="0" coverablelines="13" totallines="30" coveredbranches="0" totalbranches="0" />
+    <class name="Resources.Authoring.ResourceTypeSO" coveredlines="12" coverablelines="12" totallines="41" coveredbranches="0" totalbranches="0" />
+    <class name="Resources.Components.ResourceOre" coveredlines="4" coverablelines="11" totallines="31" coveredbranches="0" totalbranches="0" />
+    <class name="Resources.Components.ResourceTypeBlob" coveredlines="14" coverablelines="14" totallines="40" coveredbranches="0" totalbranches="0" />
+    <class name="Resources.Components.Stock" coveredlines="1" coverablelines="2" totallines="16" coveredbranches="0" totalbranches="0" />
+    <class name="Resources.Systems.HasResourceOreRenderer" coveredlines="0" coverablelines="2" totallines="86" coveredbranches="0" totalbranches="0" />
+    <class name="Resources.Systems.HasStockRenderer" coveredlines="0" coverablelines="2" totallines="55" coveredbranches="0" totalbranches="0" />
+    <class name="Resources.Systems.ResourceOreRendererSystem" coveredlines="0" coverablelines="39" totallines="86" coveredbranches="0" totalbranches="0" />
+    <class name="Resources.Systems.StockRendererSystem" coveredlines="0" coverablelines="20" totallines="55" coveredbranches="0" totalbranches="0" />
+    <class name="Resources.Systems.StockUpdateSystem" coveredlines="19" coverablelines="19" totallines="51" coveredbranches="0" totalbranches="0" />
+    <class name="Units.Authoring.UnitsSpawnerAuthoring" coveredlines="5" coverablelines="12" totallines="40" coveredbranches="0" totalbranches="0" />
+    <class name="Units.Systems.MoveUnitSystem" coveredlines="0" coverablelines="40" totallines="82" coveredbranches="0" totalbranches="0" />
+    <class name="Units.Systems.UnitsSpawnerSystem" coveredlines="0" coverablelines="56" totallines="132" coveredbranches="0" totalbranches="0" />
+    <class name="Units.Systems.UnitTagetSettingSystem" coveredlines="0" coverablelines="48" totallines="102" coveredbranches="0" totalbranches="0" />
+    <class name="Units.Systems.UnitTagsSystem" coveredlines="0" coverablelines="49" totallines="110" coveredbranches="0" totalbranches="0" />
+    <class name="Visuals.Systems.MeshCreatorSystem[TSystemComponent,TComponent]" coveredlines="0" coverablelines="38" totallines="102" coveredbranches="0" totalbranches="0" />
+    <class name="Working.Components.MiningWork" coveredlines="1" coverablelines="1" totallines="10" coveredbranches="0" totalbranches="0" />
+    <class name="Working.Systems.MiningWorkSystem" coveredlines="113" coverablelines="128" totallines="210" coveredbranches="0" totalbranches="0" />
+    <class name="Working.Systems.WorkProgressionSystem" coveredlines="12" coverablelines="15" totallines="38" coveredbranches="0" totalbranches="0" />
+  </assembly>
+</coverage>

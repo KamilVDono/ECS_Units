@@ -17,14 +17,14 @@ namespace Helpers
 		/// </summary>
 		/// <param name="min">Inclusive</param>
 		/// <param name="max">Exclusive</param>
-		public static int RandomValue( int min, int max ) => _random.NextInt( min, max );
+		public static int RandomValue( int min, int max ) => _random.NextInt( math.min( min, max ), math.max( min, max ) );
 
 		/// <summary>
 		/// Returns a uniformly random float value in the interval [min, max).
 		/// </summary>
 		/// <param name="min">Inclusive</param>
 		/// <param name="max">Exclusive</param>
-		public static float RandomValue( float min, float max ) => _random.NextFloat( min, max );
+		public static float RandomValue( float min, float max ) => _random.NextFloat( math.min( min, max ), math.max( min, max ) );
 
 		public static T RandomPick<T>( this ICollection<T> list ) => list.ElementAt( _random.NextInt( list.Count ) );
 

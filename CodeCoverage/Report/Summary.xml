@@ -1,36 +1,31 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <CoverageReport scope="Summary">
   <Summary>
-    <Generatedon>22.03.2020 - 13:55:02</Generatedon>
-    <Parser>MultiReportParser (4x CoberturaParser, 1x OpenCoverParser)</Parser>
-    <Assemblies>3</Assemblies>
-    <Classes>61</Classes>
-    <Files>57</Files>
-    <Coveredlines>714</Coveredlines>
-    <Uncoveredlines>973</Uncoveredlines>
-    <Coverablelines>1687</Coverablelines>
-    <Totallines>3990</Totallines>
-    <Linecoverage>42.3</Linecoverage>
+    <Generatedon>25.03.2020 - 20:32:46</Generatedon>
+    <Parser>MultiReportParser (9x CoberturaParser, 1x OpenCoverParser)</Parser>
+    <Assemblies>2</Assemblies>
+    <Classes>58</Classes>
+    <Files>54</Files>
+    <Coveredlines>765</Coveredlines>
+    <Uncoveredlines>861</Uncoveredlines>
+    <Coverablelines>1626</Coverablelines>
+    <Totallines>3708</Totallines>
+    <Linecoverage>47</Linecoverage>
     <Coveredbranches>0</Coveredbranches>
     <Totalbranches>0</Totalbranches>
   </Summary>
   <Coverage>
-    <Assembly name="Helpers" classes="8" coverage="64" coveredlines="105" coverablelines="164" totallines="421" branchcoverage="" coveredbranches="0" totalbranches="0">
+    <Assembly name="Helpers" classes="8" coverage="90.1" coveredlines="156" coverablelines="173" totallines="449" branchcoverage="" coveredbranches="0" totalbranches="0">
       <Class name="Helpers.IndexUtils" coverage="100" coveredlines="36" coverablelines="36" totallines="73" branchcoverage="" coveredbranches="0" totalbranches="0" />
-      <Class name="Helpers.MeshCreator" coverage="0" coveredlines="0" coverablelines="4" totallines="36" branchcoverage="" coveredbranches="0" totalbranches="0" />
-      <Class name="Helpers.RandomUtils" coverage="0" coveredlines="0" coverablelines="6" totallines="33" branchcoverage="" coveredbranches="0" totalbranches="0" />
-      <Class name="Helpers.Types.BlitableArray[T]" coverage="48.4" coveredlines="32" coverablelines="66" totallines="126" branchcoverage="" coveredbranches="0" totalbranches="0" />
+      <Class name="Helpers.MeshCreator" coverage="100" coveredlines="10" coverablelines="10" totallines="51" branchcoverage="" coveredbranches="0" totalbranches="0" />
+      <Class name="Helpers.RandomUtils" coverage="100" coveredlines="6" coverablelines="6" totallines="33" branchcoverage="" coveredbranches="0" totalbranches="0" />
+      <Class name="Helpers.Types.BlitableArray[T]" coverage="88.4" coveredlines="61" coverablelines="69" totallines="135" branchcoverage="" coveredbranches="0" totalbranches="0" />
       <Class name="Helpers.Types.Boolean" coverage="75" coveredlines="3" coverablelines="4" totallines="16" branchcoverage="" coveredbranches="0" totalbranches="0" />
       <Class name="Helpers.Types.FloatRange" coverage="66.6" coveredlines="4" coverablelines="6" totallines="21" branchcoverage="" coveredbranches="0" totalbranches="0" />
       <Class name="Helpers.Types.IntRange" coverage="0" coveredlines="0" coverablelines="6" totallines="23" branchcoverage="" coveredbranches="0" totalbranches="0" />
-      <Class name="Helpers.Types.Neighbor" coverage="83.3" coveredlines="30" coverablelines="36" totallines="93" branchcoverage="" coveredbranches="0" totalbranches="0" />
+      <Class name="Helpers.Types.Neighbor" coverage="100" coveredlines="36" coverablelines="36" totallines="97" branchcoverage="" coveredbranches="0" totalbranches="0" />
     </Assembly>
-    <Assembly name="Input" classes="3" coverage="0" coveredlines="0" coverablelines="69" totallines="306" branchcoverage="" coveredbranches="0" totalbranches="0">
-      <Class name="UnityInput.CameraInput" coverage="0" coveredlines="0" coverablelines="61" totallines="252" branchcoverage="" coveredbranches="0" totalbranches="0" />
-      <Class name="UnityInputActions.ConditionalComposite2D" coverage="0" coveredlines="0" coverablelines="4" totallines="24" branchcoverage="" coveredbranches="0" totalbranches="0" />
-      <Class name="UnityInputActions.InitializationUnityInput" coverage="0" coveredlines="0" coverablelines="4" totallines="30" branchcoverage="" coveredbranches="0" totalbranches="0" />
-    </Assembly>
-    <Assembly name="Scripts" classes="50" coverage="41.8" coveredlines="609" coverablelines="1454" totallines="3677" branchcoverage="" coveredbranches="0" totalbranches="0">
+    <Assembly name="Scripts" classes="50" coverage="41.9" coveredlines="609" coverablelines="1453" totallines="3673" branchcoverage="" coveredbranches="0" totalbranches="0">
       <Class name="Blobs.BlobsMemory" coverage="97" coveredlines="33" coverablelines="34" totallines="70" branchcoverage="" coveredbranches="0" totalbranches="0" />
       <Class name="Blobs.BlobsMemoryAuthoring" coverage="50" coveredlines="1" coverablelines="2" totallines="22" branchcoverage="" coveredbranches="0" totalbranches="0" />
       <Class name="Buildings.Authoring.BuildingBlueprintSO" coverage="0" coveredlines="0" coverablelines="12" totallines="50" branchcoverage="" coveredbranches="0" totalbranches="0" />
@@ -61,7 +56,7 @@
       <Class name="Pathfinding.Helpers.NativeMinHeap" coverage="73.4" coveredlines="61" coverablelines="83" totallines="239" branchcoverage="" coveredbranches="0" totalbranches="0" />
       <Class name="Pathfinding.Systems.AStar" coverage="98.3" coveredlines="121" coverablelines="123" totallines="231" branchcoverage="" coveredbranches="0" totalbranches="0" />
       <Class name="Pathfinding.Systems.AStarVisual" coverage="0" coveredlines="0" coverablelines="28" totallines="83" branchcoverage="" coveredbranches="0" totalbranches="0" />
-      <Class name="Pathfinding.Systems.MovementCostTrackerSystem" coverage="18.1" coveredlines="14" coverablelines="77" totallines="155" branchcoverage="" coveredbranches="0" totalbranches="0" />
+      <Class name="Pathfinding.Systems.MovementCostTrackerSystem" coverage="18.4" coveredlines="14" coverablelines="76" totallines="154" branchcoverage="" coveredbranches="0" totalbranches="0" />
       <Class name="Pathfinding.Systems.WaypointCleanupSystem" coverage="0" coveredlines="0" coverablelines="13" totallines="30" branchcoverage="" coveredbranches="0" totalbranches="0" />
       <Class name="Resources.Authoring.ResourceTypeSO" coverage="100" coveredlines="12" coverablelines="12" totallines="41" branchcoverage="" coveredbranches="0" totalbranches="0" />
       <Class name="Resources.Components.ResourceOre" coverage="36.3" coveredlines="4" coverablelines="11" totallines="31" branchcoverage="" coveredbranches="0" totalbranches="0" />
@@ -74,10 +69,10 @@
       <Class name="Resources.Systems.StockUpdateSystem" coverage="100" coveredlines="19" coverablelines="19" totallines="51" branchcoverage="" coveredbranches="0" totalbranches="0" />
       <Class name="Units.Authoring.UnitsSpawnerAuthoring" coverage="41.6" coveredlines="5" coverablelines="12" totallines="40" branchcoverage="" coveredbranches="0" totalbranches="0" />
       <Class name="Units.Systems.MoveUnitSystem" coverage="0" coveredlines="0" coverablelines="40" totallines="82" branchcoverage="" coveredbranches="0" totalbranches="0" />
-      <Class name="Units.Systems.UnitsSpawnerSystem" coverage="0" coveredlines="0" coverablelines="56" totallines="134" branchcoverage="" coveredbranches="0" totalbranches="0" />
+      <Class name="Units.Systems.UnitsSpawnerSystem" coverage="0" coveredlines="0" coverablelines="56" totallines="132" branchcoverage="" coveredbranches="0" totalbranches="0" />
       <Class name="Units.Systems.UnitTagetSettingSystem" coverage="0" coveredlines="0" coverablelines="48" totallines="102" branchcoverage="" coveredbranches="0" totalbranches="0" />
       <Class name="Units.Systems.UnitTagsSystem" coverage="0" coveredlines="0" coverablelines="49" totallines="110" branchcoverage="" coveredbranches="0" totalbranches="0" />
-      <Class name="Visuals.Systems.MeshCreatorSystem[TSystemComponent,TComponent]" coverage="0" coveredlines="0" coverablelines="38" totallines="103" branchcoverage="" coveredbranches="0" totalbranches="0" />
+      <Class name="Visuals.Systems.MeshCreatorSystem[TSystemComponent,TComponent]" coverage="0" coveredlines="0" coverablelines="38" totallines="102" branchcoverage="" coveredbranches="0" totalbranches="0" />
       <Class name="Working.Components.MiningWork" coverage="100" coveredlines="1" coverablelines="1" totallines="10" branchcoverage="" coveredbranches="0" totalbranches="0" />
       <Class name="Working.Systems.MiningWorkSystem" coverage="88.2" coveredlines="113" coverablelines="128" totallines="210" branchcoverage="" coveredbranches="0" totalbranches="0" />
       <Class name="Working.Systems.WorkProgressionSystem" coverage="80" coveredlines="12" coverablelines="15" totallines="38" branchcoverage="" coveredbranches="0" totalbranches="0" />

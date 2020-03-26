@@ -46,12 +46,10 @@ namespace Units.Systems
 				typeof( Rotation ),
 				// Rendering
 				typeof( RenderMesh ),
-				typeof( RenderBounds ),
-				typeof( WorldRenderBounds ),
-				typeof( PerInstanceCullingTag )
+				typeof( RenderBounds )
 				);
 
-			_unitMesh = MeshCreator.Quad( EXTENDS, quaternion.Euler( new float3( math.radians( -90 ), 0, 0 ) ) );
+			_unitMesh = MeshCreator.Quad( EXTENDS, quaternion.Euler( new float3( math.radians( 90 ), 0, 0 ) ) );
 		}
 
 		protected override void OnUpdate()

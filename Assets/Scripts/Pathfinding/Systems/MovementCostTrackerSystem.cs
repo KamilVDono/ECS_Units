@@ -57,7 +57,6 @@ namespace Pathfinding.Systems
 			// calculate minimum allocation size
 			int maxEntities = _groundChangeQuery.CalculateEntityCount() + _resourceChangeQuery.CalculateEntityCount() + _stockChangeQuery.CalculateEntityCount();
 
-			Debug.Log( $"Max entities: {maxEntities}" );
 			if ( maxEntities < 1 )
 			{
 				return inputDependencies;

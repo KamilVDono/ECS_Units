@@ -45,7 +45,6 @@ namespace Visuals.Systems
 				typeof( LocalToWorld ),
 				typeof( Translation ),
 				typeof( RenderBounds ),
-				//typeof( PerInstanceCullingTag )
 			};
 
 			// Add additional
@@ -64,7 +63,7 @@ namespace Visuals.Systems
 
 			if ( CreateDefaultMesh )
 			{
-				_mesh = MeshCreator.Quad( Extends, quaternion.Euler( new float3( math.radians( -90 ), 0, 0 ) ) );
+				_mesh = MeshCreator.Quad( Extends, quaternion.Euler( new float3( math.radians( 90 ), 0, 0 ) ) );
 			}
 		}
 
