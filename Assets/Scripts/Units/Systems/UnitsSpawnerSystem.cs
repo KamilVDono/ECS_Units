@@ -3,6 +3,8 @@
 using Maps.Components;
 using Maps.Systems;
 
+using Rendering.Components;
+
 using Resources.Components;
 
 using System.Collections.Generic;
@@ -46,7 +48,8 @@ namespace Units.Systems
 				typeof( Rotation ),
 				// Rendering
 				typeof( RenderMesh ),
-				typeof( RenderBounds )
+				typeof( RenderBounds ),
+				typeof( TileMaterialProperty )
 				);
 
 			_unitMesh = MeshCreator.Quad( EXTENDS, quaternion.Euler( new float3( math.radians( 90 ), 0, 0 ) ) );
@@ -98,8 +101,7 @@ namespace Units.Systems
 					PostUpdateCommands.SetComponent( entities[i], new Translation() { Value = position } );
 
 					// Rendering
-					var materialTile = new int2( random.NextInt(0, unitsRequest.TextureTiles.x), random.NextInt(0, unitsRequest.TextureTiles.y) );
-					PostUpdateCommands.SetSharedComponent( entities[i], new RenderMesh() { material = GetMaterial( materialTile, unitMaterial ), mesh = _unitMesh } );
+					PostUpdateCommands.SetSharedComponent( entities[i], new RenderMesh { material = unitMaterial, mesh = _unitMesh } );
 					PostUpdateCommands.SetComponent( entities[i], new RenderBounds
 					{
 						Value = new AABB()
@@ -108,6 +110,8 @@ namespace Units.Systems
 							Extents = new float3( EXTENDS, 0, EXTENDS )
 						}
 					} );
+					var materialTile = new float4( random.NextInt(0, unitsRequest.TextureTiles.x), random.NextInt(0, unitsRequest.TextureTiles.y), 0, 0 );
+					PostUpdateCommands.SetComponent( entities[i], new TileMaterialProperty { Tile = materialTile } );
 				}
 
 				entities.Dispose();
@@ -115,18 +119,6 @@ namespace Units.Systems
 				freePositions.Dispose();
 				PostUpdateCommands.DestroyEntity( e );
 			} );
-		}
-
-		private Material GetMaterial( int2 tileIndex, Material sourceMaterial )
-		{
-			if ( _materials.TryGetValue( tileIndex, out var material ) == false )
-			{
-				material = new Material( sourceMaterial );
-				material.SetFloat( "_TileX", tileIndex.x );
-				material.SetFloat( "_TileY", tileIndex.y );
-				_materials[tileIndex] = material;
-			}
-			return material;
 		}
 	}
 }

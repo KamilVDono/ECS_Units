@@ -63,24 +63,11 @@ namespace Resources.Systems
 					var visualEntity = new Entity();
 					if ( ore.IsValid )
 					{
-						visualEntity = CreateVisualEntity( GetOreMaterial( ore.Type.Value.Color ), ref mapIndex, 1 );
+						visualEntity = CreateVisualEntity( "Map/Tile", ore.Type.Value.Color, ref mapIndex, 1 );
 					}
 
 					PostUpdateCommands.AddComponent( entity, new HasResourceOreRenderer { VisualEntity = visualEntity, Valid = ore.IsValid } );
 				} );
-		}
-
-		private Material GetOreMaterial( Color32 color )
-		{
-			if ( _oreMaterials.TryGetValue( color, out var material ) )
-			{
-				return material;
-			}
-			material = new Material( Shader.Find( "Map/Tile" ) );
-			material.SetColor( "_MainColor", color );
-			material.enableInstancing = true;
-			_oreMaterials.Add( color, material );
-			return material;
 		}
 	}
 }

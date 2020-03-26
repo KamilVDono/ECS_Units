@@ -12,10 +12,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 0b41e024ed609bd43b09d15bebe1c889, type: 3}
   m_Name: Water
   m_EditorClassIdentifier: 
-  Color:
-    serializedVersion: 2
-    rgba: 4294952268
+  Color: {r: 0, g: 0.6310754, b: 1, a: 1}
   Cost: 20
-  Mesh: {fileID: 10210, guid: 0000000000000000e000000000000000, type: 0}
   Range: 0.1
   AcceptResourceOre: 1
+  ShaderName: Map/Tile

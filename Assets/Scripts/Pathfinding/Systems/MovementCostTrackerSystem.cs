@@ -11,8 +11,6 @@ using Unity.Collections;
 using Unity.Entities;
 using Unity.Jobs;
 
-using UnityEngine;
-
 namespace Pathfinding.Systems
 {
 	/// <summary>
@@ -30,7 +28,6 @@ namespace Pathfinding.Systems
 
 		protected override void OnCreate()
 		{
-			Debug.Log( $"Create" );
 			_groundChangeQuery = GetEntityQuery( ComponentType.ReadOnly<MovementCost>(), ComponentType.ReadOnly<GroundType>(), ComponentType.ReadOnly<ResourceOre>() );
 			_groundChangeQuery.SetChangedVersionFilter( typeof( GroundType ) );
 

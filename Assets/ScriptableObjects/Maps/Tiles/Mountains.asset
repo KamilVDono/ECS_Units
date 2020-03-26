@@ -12,10 +12,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 0b41e024ed609bd43b09d15bebe1c889, type: 3}
   m_Name: Mountains
   m_EditorClassIdentifier: 
-  Color:
-    serializedVersion: 2
-    rgba: 4284374622
+  Color: {r: 0.3962264, g: 0.3962264, b: 0.3962264, a: 1}
   Cost: 15
-  Mesh: {fileID: 10210, guid: 0000000000000000e000000000000000, type: 0}
   Range: 0.07
-  _baseMaterial: {fileID: 2100000, guid: 8fe1cd4a159e5d14f8ac045195ff1d1b, type: 2}
+  AcceptResourceOre: 0
+  ShaderName: Map/Tile

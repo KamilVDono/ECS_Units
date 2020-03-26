@@ -1,13 +1,13 @@
 ﻿using Blobs.Interfaces;
 
+using Helpers.Extensions;
 using Helpers.Types;
 
 using Resources.Authoring;
 
 using Unity.Collections;
 using Unity.Entities;
-
-using UnityEngine;
+using Unity.Mathematics;
 
 namespace Resources.Components
 {
@@ -15,7 +15,7 @@ namespace Resources.Components
 	{
 		public BlobString Name;
 		public float MovementCost;
-		public Color32 Color;
+		public float4 Color;
 		public float WorkRequired;
 		public int PiecesPerWork;
 		public Boolean Stackable;
@@ -27,7 +27,7 @@ namespace Resources.Components
 			ref ResourceTypeBlob resourceTypeBlob = ref blobBuilder.ConstructRoot<ResourceTypeBlob>();
 			blobBuilder.AllocateString( ref resourceTypeBlob.Name, resourceTypeSO.name );
 			resourceTypeBlob.MovementCost = resourceTypeSO.MovementCost;
-			resourceTypeBlob.Color = resourceTypeSO.Color;
+			resourceTypeBlob.Color = resourceTypeSO.Color.AsFloat4();
 			resourceTypeBlob.WorkRequired = resourceTypeSO.WorkRequired;
 			resourceTypeBlob.PiecesPerWork = resourceTypeSO.PiecesPerWork;
 			resourceTypeBlob.Stackable = resourceTypeSO.Stackable;

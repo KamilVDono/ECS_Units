@@ -80,7 +80,7 @@ namespace Pathfinding.Systems
 				NativeArray<float2> costs = new NativeArray<float2>( tilesSize, Allocator.Temp, NativeArrayOptions.UninitializedMemory );
 				NativeArray<Boolean> closeSet = new NativeArray<Boolean>( tilesSize, Allocator.Temp, NativeArrayOptions.UninitializedMemory );
 				NativeArray<int> camesFrom = new NativeArray<int>( tilesSize, Allocator.Temp, NativeArrayOptions.UninitializedMemory );
-				NativeMinHeap minSet = new NativeMinHeap(tilesSize * 4, Allocator.Temp);
+				NativeMinHeap minSet = new NativeMinHeap(tilesSize * 2, Allocator.Temp);
 
 				_markerSetupData.Begin();
 				// Setup initial data
@@ -90,15 +90,6 @@ namespace Pathfinding.Systems
 					camesFrom[i] = -1;
 					closeSet[i] = false;
 				}
-
-				var movementData = new NativeArray<MovementCost>( mapSettings.Tiles.Length, Allocator.Temp, NativeArrayOptions.UninitializedMemory );
-
-				_markerSetupDataMovement.Begin();
-				for ( int i = 0; i < tilesSize; i++ )
-				{
-					movementData[i] = EntityManager.GetComponentData<MovementCost>( mapSettings.Tiles[i] );
-				}
-				_markerSetupDataMovement.End();
 
 				_markerSetupData.End();
 
@@ -131,7 +122,7 @@ namespace Pathfinding.Systems
 						{
 							// Previous + current cost
 							_markerMovementData.Begin();
-							var currentCost = movementData[neighborIndex];
+							var currentCost = movementComponents[mapSettings.Tiles[neighborIndex]];
 							_markerMovementData.End();
 
 							if ( currentCost.Cost == MovementCost.IMPOSSIBLE )
@@ -188,7 +179,6 @@ namespace Pathfinding.Systems
 				closeSet.Dispose();
 				camesFrom.Dispose();
 				minSet.Dispose();
-				movementData.Dispose();
 				_markerCleanup.End();
 
 				#endregion Cleanup

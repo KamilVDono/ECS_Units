@@ -12,10 +12,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 0b41e024ed609bd43b09d15bebe1c889, type: 3}
   m_Name: Grass
   m_EditorClassIdentifier: 
-  Color:
-    serializedVersion: 2
-    rgba: 4278255411
+  Color: {r: 0, g: 0.468, b: 0, a: 1}
   Cost: 1
-  Mesh: {fileID: 10210, guid: 0000000000000000e000000000000000, type: 0}
   Range: 0.45
   AcceptResourceOre: 1
+  ShaderName: Map/Tile

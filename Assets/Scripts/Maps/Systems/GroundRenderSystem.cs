@@ -26,7 +26,8 @@ namespace Maps.Systems
 			Entities.WithNone<HasGroundRenderer>().ForEach(
 				( Entity entity, ref GroundType groundType, ref MapIndex mapIndex ) =>
 				{
-					var visualEntity = CreateVisualEntity( groundType.TileTypeBlob.Value.Material, ref mapIndex, 0 );
+					var visualEntity = CreateVisualEntity( groundType.TileTypeBlob.Value.ShaderName.ToString(),
+						groundType.TileTypeBlob.Value.MainColor, ref mapIndex, 0 );
 					PostUpdateCommands.AddComponent( entity, new HasGroundRenderer { VisualEntity = visualEntity } );
 				} );
 		}

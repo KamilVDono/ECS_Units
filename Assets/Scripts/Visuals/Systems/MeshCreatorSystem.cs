@@ -2,7 +2,10 @@
 
 using Maps.Components;
 
+using Rendering.Components;
+
 using System;
+using System.Collections.Generic;
 
 using Unity.Entities;
 using Unity.Mathematics;
@@ -29,6 +32,8 @@ namespace Visuals.Systems
 		protected EntityArchetype _meshArchetype;
 		protected Mesh _mesh;
 
+		private static Dictionary<string, Material> _shader2Material = new Dictionary<string, Material>();
+
 		#region Properties
 		protected virtual bool CreateDefaultMesh => true;
 		protected abstract float Extends { get; }
@@ -45,6 +50,7 @@ namespace Visuals.Systems
 				typeof( LocalToWorld ),
 				typeof( Translation ),
 				typeof( RenderBounds ),
+				typeof( MainColorMaterialProperty ),
 			};
 
 			// Add additional
@@ -81,12 +87,12 @@ namespace Visuals.Systems
 				} );
 		}
 
-		protected Entity CreateVisualEntity( Material material, ref MapIndex mapIndex, float orderIndex )
+		protected Entity CreateVisualEntity( string shader, float4 mainColor, ref MapIndex mapIndex, float orderIndex )
 		{
 			// Need valid entity right now so can not use PostUpdateCommands here
 			// TODO: Create all required entities via NativeArray overload
 			var visualEntity = EntityManager.CreateEntity( _meshArchetype );
-			PostUpdateCommands.SetSharedComponent( visualEntity, new RenderMesh { mesh = _mesh, material = material } );
+			PostUpdateCommands.SetSharedComponent( visualEntity, new RenderMesh { mesh = _mesh, material = MaterialFromShader( shader ) } );
 			PostUpdateCommands.SetComponent( visualEntity, new Translation { Value = new float3( mapIndex.Index2D.x, 0.1f * orderIndex, mapIndex.Index2D.y ) } );
 			PostUpdateCommands.SetComponent( visualEntity, new RenderBounds
 			{
@@ -96,7 +102,18 @@ namespace Visuals.Systems
 					Extents = new float3( Extends, 0, Extends )
 				}
 			} );
+			PostUpdateCommands.SetComponent( visualEntity, new MainColorMaterialProperty { Color = mainColor } );
 			return visualEntity;
+		}
+
+		private Material MaterialFromShader( string shader )
+		{
+			if ( _shader2Material.TryGetValue( shader, out var material ) == false )
+			{
+				material = new Material( Shader.Find( shader ) );
+				_shader2Material.Add( shader, material );
+			}
+			return material;
 		}
 	}
 }
