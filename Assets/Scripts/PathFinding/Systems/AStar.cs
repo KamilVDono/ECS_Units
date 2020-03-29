@@ -25,7 +25,7 @@ namespace Pathfinding.Systems
 	/// <item><see cref="Waypoint"/> for store response path</item>
 	/// </list>
 	/// </summary>
-	public class AStar : ComponentSystem
+	public class AStar : SystemBase
 	{
 		#region ProfilerMarkers
 		private static ProfilerMarker _markerAStar        = new ProfilerMarker("AStar.System");
@@ -54,6 +54,7 @@ namespace Pathfinding.Systems
 		protected override void OnUpdate()
 		{
 			var mapSettings = GetSingleton<MapSettings>();
+			var neighbors = _neighbors;
 
 			// The data is in not valid state
 			if ( mapSettings.Tiles.Length < 1 )
@@ -67,6 +68,7 @@ namespace Pathfinding.Systems
 			var commandBuffer = _eseCommandBufferSystem.CreateCommandBuffer();
 
 			Entities
+				.WithoutBurst()
 				.WithNone<Waypoint>()
 				.ForEach( ( Entity requestEntity, ref PathRequest pathRequest ) =>
 			{
@@ -109,9 +111,9 @@ namespace Pathfinding.Systems
 					// Mark current tile as visited
 					closeSet[lastTile] = 1;
 
-					for ( int i = 0; i < _neighbors.Length; ++i )
+					for ( int i = 0; i < neighbors.Length; ++i )
 					{
-						var neighbor = _neighbors[i];
+						var neighbor = neighbors[i];
 						// Find linear neighbor index
 						var neighborIndex = neighbor.Of( lastTile, tilesSize );
 						// Check if neighbor exists
@@ -129,7 +131,7 @@ namespace Pathfinding.Systems
 							}
 
 							var costG = costs[lastTile].x + neighbor.Distance * currentCost.Cost;
-							var costF = costG + Heuristic( pathRequest, neighborIndex, tilesSize );
+							var costF = costG + Implementation.Heuristic( pathRequest, neighborIndex, tilesSize );
 
 							if ( costs[neighborIndex].y > costF )
 							{
@@ -146,7 +148,7 @@ namespace Pathfinding.Systems
 						}
 					}
 
-					lastTile = FindCurrent( minSet, closeSet );
+					lastTile = Implementation.FindCurrent( minSet, closeSet );
 				}
 				_markerSearch.End();
 
@@ -181,38 +183,41 @@ namespace Pathfinding.Systems
 				#endregion Cleanup
 
 				_markerAStar.End();
-			} );
+			} ).Run();
 		}
 
 		protected override void OnDestroy() => _neighbors.Dispose();
 
 		#endregion Lifetime
 
-		[MethodImpl( MethodImplOptions.AggressiveInlining )]
-		private static int FindCurrent( NativeMinHeap minSet, NativeArray<byte> closeSet )
+		internal struct Implementation
 		{
-			_markerFindCurrent.Begin();
-			while ( minSet.HasNext() )
+			[MethodImpl( MethodImplOptions.AggressiveInlining )]
+			internal static int FindCurrent( NativeMinHeap minSet, NativeArray<byte> closeSet )
 			{
-				_markerPop.Begin();
-				var next = minSet.Pop();
-				_markerPop.End();
-				// Check if this is not visited tile
-				if ( closeSet[next.Position] == 0 )
+				_markerFindCurrent.Begin();
+				while ( minSet.HasNext() )
 				{
-					_markerFindCurrent.End();
-					return next.Position;
+					_markerPop.Begin();
+					var next = minSet.Pop();
+					_markerPop.End();
+					// Check if this is not visited tile
+					if ( closeSet[next.Position] == 0 )
+					{
+						_markerFindCurrent.End();
+						return next.Position;
+					}
 				}
+				_markerFindCurrent.End();
+				return -1;
 			}
-			_markerFindCurrent.End();
-			return -1;
-		}
 
-		[MethodImpl( MethodImplOptions.AggressiveInlining )]
-		private float Heuristic( PathRequest pathRequest, int neighborIndex, int TilesSize )
-		{
-			var index2D = Index2D( neighborIndex, TilesSize );
-			return math.abs( pathRequest.End.x - index2D.x ) + math.abs( pathRequest.End.y - index2D.y );
+			[MethodImpl( MethodImplOptions.AggressiveInlining )]
+			internal static float Heuristic( PathRequest pathRequest, int neighborIndex, int TilesSize )
+			{
+				var index2D = Index2D( neighborIndex, TilesSize );
+				return math.abs( pathRequest.End.x - index2D.x ) + math.abs( pathRequest.End.y - index2D.y );
+			}
 		}
 	}
 }
