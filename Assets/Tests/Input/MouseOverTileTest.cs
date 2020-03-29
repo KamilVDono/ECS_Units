@@ -148,7 +148,8 @@ namespace Tests.Input
 				tiles[i] = tile;
 			}
 
-			TargetSystem.SetSingleton( new MapSettings() { Tiles = tiles, MapEdgeSize = 1 } );
+			_entityManager.CreateEntity( typeof( MapSettings ) );
+			TargetSystem.SetSingleton( new MapSettings() { Tiles = tiles, MapEdgeSize = edgeSize } );
 		}
 	}
 }

@@ -1,6 +1,7 @@
 ﻿using System;
 
 using Unity.Entities;
+using Unity.Mathematics;
 
 using UnityEngine;
 
@@ -10,14 +11,14 @@ namespace Input.Components
 	{
 		public Camera Camera;
 
-		public bool Equals( CameraData other )
+		public float2 ScreenToWorldPoint2D( Vector2 screenPosition )
 		{
-			return ReferenceEquals( Camera, other.Camera );
+			var worldPosition = Camera.ScreenToWorldPoint( screenPosition );
+			return new float2( worldPosition.x, worldPosition.z );
 		}
 
-		public override int GetHashCode()
-		{
-			return Camera.GetHashCode();
-		}
+		public bool Equals( CameraData other ) => ReferenceEquals( Camera, other.Camera );
+
+		public override int GetHashCode() => Camera.GetHashCode();
 	}
 }

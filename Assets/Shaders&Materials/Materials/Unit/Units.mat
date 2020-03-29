@@ -12,7 +12,7 @@ Material:
     type: 3}
   m_ShaderKeywords: 
   m_LightmapFlags: 4
-  m_EnableInstancingVariants: 0
+  m_EnableInstancingVariants: 1
   m_DoubleSidedGI: 0
   m_CustomRenderQueue: -1
   stringTagMap: {}
@@ -57,6 +57,7 @@ Material:
     - _AnimSpeed: 0.5
     - _AnimationColumns: 3
     - _AnimationRows: 0
+    - _AnimationSpeed: 1
     - _Blend: 0
     - _BumpScale: 1
     - _ColumnsCount: 12
@@ -86,7 +87,10 @@ Material:
     - _BaseColor: {r: 0.5, g: 0.5, b: 0.5, a: 1}
     - _Color: {r: 0.5, g: 0.5, b: 0.5, a: 1}
     - _EmissionColor: {r: 0, g: 0, b: 0, a: 1}
+    - _RowsColumns_Tex_Anim: {r: 36, g: 36, b: 0, a: 0}
     - _SpecColor: {r: 0.19999996, g: 0.19999996, b: 0.19999996, a: 1}
+    - _Tile_1: {r: 0, g: 0, b: 0, a: 0}
+  m_BuildTextureStacks: []
 --- !u!114 &91754993063900985
 MonoBehaviour:
   m_ObjectHideFlags: 11

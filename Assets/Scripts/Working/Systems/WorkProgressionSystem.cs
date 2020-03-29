@@ -7,32 +7,31 @@ namespace Working.Systems
 {
 	// TODO: Find A way to use IWork instead of MiningWork Here some ideas https://forum.unity.com/threads/querying-components-on-an-entity-via-interface.663511/
 	[UpdateBefore( typeof( MiningWorkSystem ) )]
-	public class WorkProgressionSystem : JobComponentSystem
+	public class WorkProgressionSystem : SystemBase
 	{
 		private EndSimulationEntityCommandBufferSystem _removeCmdBufferSystem;
 
 		protected override void OnCreate() => _removeCmdBufferSystem = World.GetExistingSystem<EndSimulationEntityCommandBufferSystem>();
 
-		protected override JobHandle OnUpdate( JobHandle inputDeps )
+		protected override void OnUpdate()
 		{
 			var cmdBuffer = _removeCmdBufferSystem.CreateCommandBuffer().ToConcurrent();
-			var addProgressHandle = Entities
+			Entities
 				.WithNone<WorkProgress>()
 				.WithAll<MiningWork>()
 				.ForEach( ( Entity e, int entityInQueryIndex ) =>
 				{
-					cmdBuffer.AddComponent<WorkProgress>( entityInQueryIndex, e);
-				} ).Schedule( inputDeps );
+					cmdBuffer.AddComponent<WorkProgress>( entityInQueryIndex, e );
+				} ).ScheduleParallel();
 
 			var deltaTime = Time.DeltaTime;
-			var updateHandle = Entities.ForEach( ( ref WorkProgress workProgress, in MiningWork work ) =>
+			Entities
+				.ForEach( ( ref WorkProgress workProgress, in MiningWork work ) =>
 			{
 				workProgress.Progress += work.ProgressPerSecond * deltaTime;
-			} ).Schedule( addProgressHandle );
+			} ).ScheduleParallel();
 
-			_removeCmdBufferSystem.AddJobHandleForProducer( addProgressHandle );
-
-			return updateHandle;
+			_removeCmdBufferSystem.AddJobHandleForProducer( Dependency );
 		}
 	}
 }

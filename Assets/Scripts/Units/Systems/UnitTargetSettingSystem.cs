@@ -4,11 +4,12 @@ using Helpers.Types;
 using Maps.Components;
 
 using Pathfinding.Components;
-using Pathfinding.Helpers;
 
 using Resources.Components;
 
-using Units.Components.Tags;
+using StateMachine.Components;
+
+using Units.Components;
 
 using Unity.Collections;
 using Unity.Entities;
@@ -17,7 +18,7 @@ using Unity.Mathematics;
 
 namespace Units.Systems
 {
-	public class UnitTagetSettingSystem : JobComponentSystem
+	public class UnitTagetSettingSystem : SystemBase
 	{
 		private EndSimulationEntityCommandBufferSystem _cmdBufferSystem;
 		private NativeArray<Neighbor> _neighbors;
@@ -29,7 +30,7 @@ namespace Units.Systems
 			_neighbors = Neighbor.FullNeighborhood( Allocator.Persistent );
 		}
 
-		protected override JobHandle OnUpdate( JobHandle inputDeps )
+		protected override void OnUpdate()
 		{
 			var mapSettings = GetSingleton<MapSettings>();
 			var edgeSize = mapSettings.MapEdgeSize;
@@ -40,13 +41,12 @@ namespace Units.Systems
 			var neighborsLocal = _neighbors;
 
 			var setTargetCMDBuffer = _cmdBufferSystem.CreateCommandBuffer().ToConcurrent();
-			Random random = new Random((uint)(Time.ElapsedTime * 100000) + 1);
 
 			// TODO: Enable burst (native queue allocation problem)
-			var setTargetHandle = Entities
-				.WithReadOnly(ores)
-				.WithReadOnly(neighborsLocal)
-				.WithReadOnly(tiles)
+			Entities
+				.WithReadOnly( ores )
+				.WithReadOnly( neighborsLocal )
+				.WithReadOnly( tiles )
 				.WithNativeDisableContainerSafetyRestriction( tiles )
 				.WithoutBurst()
 				.WithAll<UnitTag, SeekingOresTag>()
@@ -80,7 +80,7 @@ namespace Units.Systems
 
 						if ( ores.HasComponent( currentEntity ) && ores[currentEntity].IsValid )
 						{
-							oreIndex = IndexUtils.Index2D(currentIndex, tilesSize);
+							oreIndex = IndexUtils.Index2D( currentIndex, tilesSize );
 							founded = true;
 						}
 					}
@@ -89,12 +89,10 @@ namespace Units.Systems
 					searched.Dispose();
 					#endregion Found ores
 
-					setTargetCMDBuffer.AddComponent<PathRequest>( entityInQueryIndex, e, new PathRequest(mapIndex.Index2D, oreIndex) );
-				} ).Schedule(inputDeps);
+					setTargetCMDBuffer.AddComponent<PathRequest>( entityInQueryIndex, e, new PathRequest( mapIndex.Index2D, oreIndex ) );
+				} ).ScheduleParallel();
 
-			_cmdBufferSystem.AddJobHandleForProducer( setTargetHandle );
-
-			return setTargetHandle;
+			_cmdBufferSystem.AddJobHandleForProducer( Dependency );
 		}
 
 		protected override void OnDestroy() => _neighbors.Dispose();

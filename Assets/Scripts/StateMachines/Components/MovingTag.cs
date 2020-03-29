@@ -1,6 +1,6 @@
 ﻿using Unity.Entities;
 
-namespace Units.Components.Tags
+namespace StateMachine.Components
 {
 	public struct MovingTag : IComponentData, IUnitState
 	{

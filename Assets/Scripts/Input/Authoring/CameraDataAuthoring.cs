@@ -14,10 +14,10 @@ namespace Input.Authoring
 
 		private void Start()
 		{
-			var commandBuffer = World.DefaultGameObjectInjectionWorld.GetExistingSystem<EndSimulationEntityCommandBufferSystem>().CreateCommandBuffer();
-			var archetype = World.DefaultGameObjectInjectionWorld.EntityManager.CreateArchetype(typeof( CameraData ));
-			var entity = commandBuffer.CreateEntity( archetype );
-			commandBuffer.SetSharedComponent( entity, new CameraData() { Camera = _camera } );
+			var entityManager = World.DefaultGameObjectInjectionWorld.EntityManager;
+			var cameraEntity = entityManager.CreateEntity(typeof(CameraData));
+			entityManager.SetSharedComponentData<CameraData>( cameraEntity, new CameraData { Camera = _camera } );
+			entityManager.SetName( cameraEntity, "Camera data" );
 			Destroy( this );
 		}
 	}

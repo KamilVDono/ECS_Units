@@ -31,7 +31,6 @@ namespace Pathfinding.Systems
 		private static ProfilerMarker _markerAStar        = new ProfilerMarker("AStar.System");
 		private static ProfilerMarker _markerSetup        = new ProfilerMarker("AStar.Setup");
 		private static ProfilerMarker _markerSetupData    = new ProfilerMarker("AStar.Setup_data");
-		private static ProfilerMarker _markerSetupDataMovement    = new ProfilerMarker("AStar.Setup_data_movement");
 		private static ProfilerMarker _markerSearch       = new ProfilerMarker("AStar.Search");
 		private static ProfilerMarker _markerReconstruct  = new ProfilerMarker("AStar.Reconstruct");
 		private static ProfilerMarker _markerCleanup      = new ProfilerMarker("AStar.Cleanup");
@@ -45,7 +44,6 @@ namespace Pathfinding.Systems
 
 		#region Lifetime
 
-		// Obtain buffer
 		protected override void OnCreate()
 		{
 			RequireSingletonForUpdate<MapSettings>();
@@ -78,7 +76,7 @@ namespace Pathfinding.Systems
 
 				_markerSetup.Begin();
 				NativeArray<float2> costs = new NativeArray<float2>( tilesSize, Allocator.Temp, NativeArrayOptions.UninitializedMemory );
-				NativeArray<Boolean> closeSet = new NativeArray<Boolean>( tilesSize, Allocator.Temp, NativeArrayOptions.UninitializedMemory );
+				NativeArray<byte> closeSet = new NativeArray<byte>( tilesSize, Allocator.Temp );
 				NativeArray<int> camesFrom = new NativeArray<int>( tilesSize, Allocator.Temp, NativeArrayOptions.UninitializedMemory );
 				NativeMinHeap minSet = new NativeMinHeap(tilesSize * 2, Allocator.Temp);
 
@@ -88,7 +86,6 @@ namespace Pathfinding.Systems
 				{
 					costs[i] = new float2 { x = 0, y = float.MaxValue };
 					camesFrom[i] = -1;
-					closeSet[i] = false;
 				}
 
 				_markerSetupData.End();
@@ -110,7 +107,7 @@ namespace Pathfinding.Systems
 				while ( lastTile != endTile && lastTile != -1 )
 				{
 					// Mark current tile as visited
-					closeSet[lastTile] = true;
+					closeSet[lastTile] = 1;
 
 					for ( int i = 0; i < _neighbors.Length; ++i )
 					{
@@ -127,7 +124,7 @@ namespace Pathfinding.Systems
 
 							if ( currentCost.Cost == MovementCost.IMPOSSIBLE )
 							{
-								closeSet[neighborIndex] = true;
+								closeSet[neighborIndex] = 0;
 								continue;
 							}
 
@@ -141,7 +138,7 @@ namespace Pathfinding.Systems
 								camesFrom[neighborIndex] = lastTile;
 
 								// Update min set
-								if ( closeSet[neighborIndex] == false )
+								if ( closeSet[neighborIndex] == 0 )
 								{
 									minSet.Push( new MinHeapNode( neighborIndex, costF ) );
 								}
@@ -192,7 +189,7 @@ namespace Pathfinding.Systems
 		#endregion Lifetime
 
 		[MethodImpl( MethodImplOptions.AggressiveInlining )]
-		private static int FindCurrent( NativeMinHeap minSet, NativeArray<Boolean> closeSet )
+		private static int FindCurrent( NativeMinHeap minSet, NativeArray<byte> closeSet )
 		{
 			_markerFindCurrent.Begin();
 			while ( minSet.HasNext() )
@@ -201,7 +198,7 @@ namespace Pathfinding.Systems
 				var next = minSet.Pop();
 				_markerPop.End();
 				// Check if this is not visited tile
-				if ( closeSet[next.Position] == false )
+				if ( closeSet[next.Position] == 0 )
 				{
 					_markerFindCurrent.End();
 					return next.Position;

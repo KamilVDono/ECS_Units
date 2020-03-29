@@ -1723,7 +1723,7 @@ MonoBehaviour:
   _offset:
     x: 2
     y: 2
-  _mapEdgeSize: 256
+  _mapEdgeSize: 128
 --- !u!4 &2038225693
 Transform:
   m_ObjectHideFlags: 0
@@ -1781,7 +1781,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 0d6cb45114234f842b6586a56f6f6a3f, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  _unitsCount: 500
+  _unitsCount: 250
   _texturesRowsColumns:
     x: 4
     y: 8

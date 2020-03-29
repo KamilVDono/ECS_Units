@@ -1,6 +1,6 @@
 ﻿using Unity.Entities;
 
-namespace Units.Components.Tags
+namespace Units.Components
 {
 	/// <summary>
 	/// Marks entity as unit entity

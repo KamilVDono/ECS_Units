@@ -18,7 +18,7 @@ namespace Pathfinding.Systems
 	/// </summary>
 	[UpdateAfter( typeof( MapSpawner ) )]
 	[UpdateInGroup( typeof( InitializationSystemGroup ) )]
-	public class MovementCostTrackerSystem : JobComponentSystem
+	public class MovementCostTrackerSystem : SystemBase
 	{
 		private EntityQuery _groundChangeQuery;
 		private EntityQuery _resourceChangeQuery;
@@ -49,14 +49,14 @@ namespace Pathfinding.Systems
 			}
 		}
 
-		protected override JobHandle OnUpdate( JobHandle inputDependencies )
+		protected override void OnUpdate()
 		{
 			// calculate minimum allocation size
 			int maxEntities = _groundChangeQuery.CalculateEntityCount() + _resourceChangeQuery.CalculateEntityCount() + _stockChangeQuery.CalculateEntityCount();
 
 			if ( maxEntities < 1 )
 			{
-				return inputDependencies;
+				return;
 			}
 
 			// check if need create map
@@ -74,29 +74,30 @@ namespace Pathfinding.Systems
 
 			var changedEntitiesWriter = _changedEntities.AsParallelWriter();
 
-			var changeFillHandle = Job
-				.WithReadOnly(groundEntities)
-				.WithReadOnly(resourceEntities)
-				.WithReadOnly(stockEntities)
+			Job
+				.WithReadOnly( groundEntities )
+				.WithReadOnly( resourceEntities )
+				.WithReadOnly( stockEntities )
 				.WithDeallocateOnJobCompletion( groundEntities )
 				.WithDeallocateOnJobCompletion( resourceEntities )
 				.WithDeallocateOnJobCompletion( stockEntities )
+				.WithName( "Collect_changed_entities" )
 				.WithCode( () =>
 				{
 					// just go through entities
-					for(int i = 0; i < groundEntities.Length; i++ )
+					for ( int i = 0; i < groundEntities.Length; i++ )
 					{
 						changedEntitiesWriter.TryAdd( groundEntities[i], true );
 					}
-					for(int i = 0; i < resourceEntities.Length; i++ )
+					for ( int i = 0; i < resourceEntities.Length; i++ )
 					{
 						changedEntitiesWriter.TryAdd( resourceEntities[i], true );
 					}
-					for(int i = 0; i < stockEntities.Length; i++ )
+					for ( int i = 0; i < stockEntities.Length; i++ )
 					{
 						changedEntitiesWriter.TryAdd( stockEntities[i], true );
 					}
-				} ).Schedule( inputDependencies );
+				} ).Schedule();
 
 			// local shallow copy for job (jobs requirement)
 			var changedEntities = _changedEntities;
@@ -107,22 +108,23 @@ namespace Pathfinding.Systems
 			var stocks = GetComponentDataFromEntity<Stock>(true);
 			var applyCB = _removeCmdBufferSystem.CreateCommandBuffer().ToConcurrent();
 
-			var applyJobHandle = Job
-				.WithReadOnly(grounds)
-				.WithReadOnly(resourceOres)
-				.WithReadOnly(stocks)
+			Job
+				.WithReadOnly( grounds )
+				.WithReadOnly( resourceOres )
+				.WithReadOnly( stocks )
+				.WithName( "Calculate_new_costs" )
 				.WithCode(
 				() =>
 				{
 					// obtain entities
 					var entities = changedEntities.GetKeyArray(Allocator.Temp);
-					for(int i = 0; i < entities.Length; i++ )
+					for ( int i = 0; i < entities.Length; i++ )
 					{
 						// calculate full movement cost
 						var entity = entities[i];
 						var resourceOre = resourceOres[entity];
 						var resourceOreCost = 0f;
-						if (resourceOre.IsValid)
+						if ( resourceOre.IsValid )
 						{
 							resourceOreCost = resourceOre.Type.Value.MovementCost;
 						}
@@ -130,22 +132,21 @@ namespace Pathfinding.Systems
 						var groundCost = grounds[entity].TileTypeBlob.Value.MoveCost;
 
 						var stockCost = 0f;
-						if (stocks.HasComponent( entity ) )
+						if ( stocks.HasComponent( entity ) )
 						{
 							stockCost = stocks[entity].Type.Value.MovementCost;
 						}
 
 						// apply new cost
-						applyCB.SetComponent(i, entity, new MovementCost()
+						applyCB.SetComponent( i, entity, new MovementCost()
 						{
 							Cost = resourceOreCost + groundCost + stockCost
 						} );
 					}
 					entities.Dispose();
-				}).Schedule(changeFillHandle);
+				} ).Schedule();
 
-			_removeCmdBufferSystem.AddJobHandleForProducer( applyJobHandle );
-			return applyJobHandle;
+			_removeCmdBufferSystem.AddJobHandleForProducer( Dependency );
 		}
 	}
 }

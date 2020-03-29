@@ -22,6 +22,8 @@ namespace Visuals.Systems
 		bool IsValid { get; }
 	}
 
+	// TODO: If want use in more effective way should use CommandBuffer
+	// TODO: When SystemBase Entities starts support generic types change ComponentSystem to SystemBase
 	public abstract class MeshCreatorSystem<TSystemComponent, TComponent> : ComponentSystem
 		where TSystemComponent : struct, MeshCreatorSystemVisualComponent where TComponent : struct, IComponentData
 	{
@@ -75,15 +77,16 @@ namespace Visuals.Systems
 
 		protected override void OnUpdate()
 		{
+			// When render owner removed remove render
 			Entities
 				.WithNone<TComponent>()
 				.ForEach( ( Entity entity, ref TSystemComponent visual ) =>
 				{
 					if ( visual.IsValid )
 					{
-						PostUpdateCommands.DestroyEntity( visual.ValueEntity );
+						EntityManager.DestroyEntity( visual.ValueEntity );
 					}
-					PostUpdateCommands.RemoveComponent<TSystemComponent>( entity );
+					EntityManager.RemoveComponent<TSystemComponent>( entity );
 				} );
 		}
 
@@ -92,9 +95,9 @@ namespace Visuals.Systems
 			// Need valid entity right now so can not use PostUpdateCommands here
 			// TODO: Create all required entities via NativeArray overload
 			var visualEntity = EntityManager.CreateEntity( _meshArchetype );
-			PostUpdateCommands.SetSharedComponent( visualEntity, new RenderMesh { mesh = _mesh, material = MaterialFromShader( shader ) } );
-			PostUpdateCommands.SetComponent( visualEntity, new Translation { Value = new float3( mapIndex.Index2D.x, 0.1f * orderIndex, mapIndex.Index2D.y ) } );
-			PostUpdateCommands.SetComponent( visualEntity, new RenderBounds
+			EntityManager.SetSharedComponentData( visualEntity, new RenderMesh { mesh = _mesh, material = MaterialFromShader( shader ) } );
+			EntityManager.SetComponentData( visualEntity, new Translation { Value = new float3( mapIndex.Index2D.x, 0.1f * orderIndex, mapIndex.Index2D.y ) } );
+			EntityManager.SetComponentData( visualEntity, new RenderBounds
 			{
 				Value = new AABB()
 				{
@@ -102,7 +105,7 @@ namespace Visuals.Systems
 					Extents = new float3( Extends, 0, Extends )
 				}
 			} );
-			PostUpdateCommands.SetComponent( visualEntity, new MainColorMaterialProperty { Color = mainColor } );
+			EntityManager.SetComponentData( visualEntity, new MainColorMaterialProperty { Color = mainColor } );
 			return visualEntity;
 		}
 
@@ -110,7 +113,10 @@ namespace Visuals.Systems
 		{
 			if ( _shader2Material.TryGetValue( shader, out var material ) == false )
 			{
-				material = new Material( Shader.Find( shader ) );
+				material = new Material( Shader.Find( shader ) )
+				{
+					enableInstancing = true
+				};
 				_shader2Material.Add( shader, material );
 			}
 			return material;

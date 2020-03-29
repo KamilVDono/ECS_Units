@@ -12,7 +12,7 @@ using Working.Components;
 
 namespace Input.Systems
 {
-	public class MouseMiningSystem : ComponentSystem
+	public class MouseMiningSystem : SystemBase
 	{
 		protected override void OnCreate()
 		{
@@ -33,6 +33,8 @@ namespace Input.Systems
 			var ores = GetComponentDataFromEntity<ResourceOre>(true);
 
 			Entities
+				.WithoutBurst()
+				.WithStructuralChanges()
 				.WithAll<MouseMiningTag>()
 				.ForEach( ( ref MouseButtons mouseButtons, ref MouseWorldPosition mouseWorldPosition ) =>
 				{
@@ -80,7 +82,7 @@ namespace Input.Systems
 							}
 						}
 					}
-				} );
+				} ).Run();
 		}
 
 		internal struct MouseMiningTag : IComponentData { }

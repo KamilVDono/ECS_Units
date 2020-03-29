@@ -2,6 +2,8 @@
 
 using Maps.Systems;
 
+using System.Diagnostics;
+
 using Unity.Entities;
 using Unity.Mathematics;
 
@@ -12,11 +14,17 @@ namespace Input.Systems
 {
 	[UpdateInGroup( typeof( InitializationSystemGroup ) )]
 	[UpdateAfter( typeof( MapSpawner ) )]
-	public class MouseInputFeeder : ComponentSystem
+	public class MouseInputFeeder : SystemBase
 	{
 		private float2 _screenSize;
 
-		protected override void OnCreate() => _screenSize = new float2( Screen.width, Screen.height );
+		private EntityQuery _tileUnderMouseQuery;
+
+		protected override void OnCreate()
+		{
+			_screenSize = new float2( Screen.width, Screen.height );
+			_tileUnderMouseQuery = EntityManager.CreateEntityQuery( ComponentType.ReadOnly<CameraData>() );
+		}
 
 		protected override void OnUpdate()
 		{
@@ -33,27 +41,28 @@ namespace Input.Systems
 				var lastPos = mouseScreenPosition.Position;
 				mouseScreenPosition.Position = mousePosition;
 				mouseScreenPosition.Delta = mouseScreenPosition.Position - lastPos;
-			} );
+			} ).Run();
 
 			var currentButtons = ExtractMouseButtons( );
 			Entities.ForEach( ( ref MouseButtons mouseButtons ) =>
 			{
 				mouseButtons.Previous = mouseButtons.Current;
 				mouseButtons.Current = currentButtons;
-			} );
+			} ).Run();
 
-			Entities.ForEach( ( CameraData cameraData ) =>
+			ValidateCameraDataCount();
+
+			var cameraDataEntities = _tileUnderMouseQuery.ToEntityArray(Unity.Collections.Allocator.Temp);
+			var cameraData = EntityManager.GetSharedComponentData<CameraData>(cameraDataEntities[0]);
+			cameraDataEntities.Dispose();
+
+			var worldPosition2D = cameraData.ScreenToWorldPoint2D(unityMousePosition);
+			Entities.ForEach( ( ref MouseWorldPosition mouseWorldPosition ) =>
 			{
-				var worldPosition = cameraData.Camera.ScreenToWorldPoint(new UnityEngine.Vector3(unityMousePosition.x, unityMousePosition.y, 0));
-				var worldPosition2D = new float2(worldPosition.x, worldPosition.z);
-
-				Entities.ForEach( ( ref MouseWorldPosition mouseWorldPosition ) =>
-				{
-					var lastPos = mouseWorldPosition.Position;
-					mouseWorldPosition.Position = worldPosition2D;
-					mouseWorldPosition.Delta = mouseWorldPosition.Position - lastPos;
-				} );
-			} );
+				var lastPos = mouseWorldPosition.Position;
+				mouseWorldPosition.Position = worldPosition2D;
+				mouseWorldPosition.Delta = mouseWorldPosition.Position - lastPos;
+			} ).Run();
 		}
 
 		private static MouseButton ExtractMouseButtons()
@@ -73,6 +82,20 @@ namespace Input.Systems
 			}
 
 			return currentButtons;
+		}
+
+		[Conditional( "DEBUG" )]
+		private void ValidateCameraDataCount()
+		{
+			var count = _tileUnderMouseQuery.CalculateEntityCount();
+			if ( count > 1 )
+			{
+				throw new System.Exception( $"There is more than one {typeof( CameraData )} components" );
+			}
+			if ( count < 1 )
+			{
+				throw new System.Exception( $"There is more than no {typeof( CameraData )} component" );
+			}
 		}
 	}
 }

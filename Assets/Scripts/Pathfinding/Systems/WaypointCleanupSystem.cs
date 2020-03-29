@@ -5,26 +5,25 @@ using Unity.Jobs;
 
 namespace Pathfinding.Systems
 {
-	public class WaypointCleanupSystem : JobComponentSystem
+	public class WaypointCleanupSystem : SystemBase
 	{
 		private EndSimulationEntityCommandBufferSystem _cmdBufferSystem;
 
 		protected override void OnCreate() => _cmdBufferSystem = World.GetExistingSystem<EndSimulationEntityCommandBufferSystem>();
 
-		protected override JobHandle OnUpdate( JobHandle inputDeps )
+		protected override void OnUpdate()
 		{
 			var cmdBuffer = _cmdBufferSystem.CreateCommandBuffer().ToConcurrent();
-			var handle = Entities
+			Entities
 				.ForEach( ( Entity e, int entityInQueryIndex, in DynamicBuffer<Waypoint> waypoints ) =>
 				{
-					if(waypoints.Length < 1)
+					if ( waypoints.Length < 1 )
 					{
-						cmdBuffer.RemoveComponent<Waypoint>(entityInQueryIndex, e);
+						cmdBuffer.RemoveComponent<Waypoint>( entityInQueryIndex, e );
 					}
-				} ).Schedule( inputDeps );
+				} ).ScheduleParallel();
 
-			_cmdBufferSystem.AddJobHandleForProducer( handle );
-			return handle;
+			_cmdBufferSystem.AddJobHandleForProducer( Dependency );
 		}
 	}
 }

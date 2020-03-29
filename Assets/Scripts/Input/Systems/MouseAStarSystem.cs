@@ -8,7 +8,7 @@ using static Helpers.IndexUtils;
 
 namespace Input.Systems
 {
-	public class MouseAStarSystem : ComponentSystem
+	public class MouseAStarSystem : SystemBase
 	{
 		private EntityArchetype _requestArchetype;
 
@@ -26,15 +26,18 @@ namespace Input.Systems
 				return;
 			}
 
-			Entities.ForEach( ( ref PathRequestBuilder builder, ref MouseButtons mouseButtons, ref MouseWorldPosition mouseWorldPosition ) =>
+			Entities
+				.WithStructuralChanges()
+				.WithoutBurst()
+				.ForEach( ( ref PathRequestBuilder builder, ref MouseButtons mouseButtons, ref MouseWorldPosition mouseWorldPosition ) =>
 			{
 				if ( mouseButtons.Previous.HasFlag( MouseButton.Left ) && ( mouseButtons.Current.HasFlag( MouseButton.Left ) == false ) )
 				{
 					var tileIndex = WorldIndex2D( mouseWorldPosition.Position);
 					if ( builder.Started )
 					{
-						var entity = PostUpdateCommands.CreateEntity( _requestArchetype );
-						PostUpdateCommands.SetComponent( entity, new PathRequest( builder.Start, tileIndex ) );
+						var entity = EntityManager.CreateEntity( _requestArchetype );
+						SetComponent( entity, new PathRequest( builder.Start, tileIndex ) );
 						builder.Started = false;
 					}
 					else
@@ -43,7 +46,7 @@ namespace Input.Systems
 						builder.Start = tileIndex;
 					}
 				}
-			} );
+			} ).Run();
 		}
 
 		public struct MouseRequestedPath : IComponentData { }

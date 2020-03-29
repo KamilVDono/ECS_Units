@@ -6,12 +6,14 @@ using Pathfinding.Components;
 
 using Resources.Components;
 
+using StateMachine.Components;
+
 using System.Text;
 
 using TMPro;
 
+using Units.Components;
 using Units.Components.Stats;
-using Units.Components.Tags;
 
 using Unity.Entities;
 
@@ -21,7 +23,7 @@ using SF = UnityEngine.SerializeField;
 
 namespace Input.Authoring
 {
-	// TODO: Change query to just component singleton 
+	// TODO: Change query to just component singleton
 	public class TileInfoVC : MonoBehaviour
 	{
 		[SF] private TextMeshProUGUI _tileInfoText = null;

@@ -4,11 +4,7 @@ using Maps.Components;
 
 using Resources.Components;
 
-using System.Collections.Generic;
-
 using Unity.Entities;
-
-using UnityEngine;
 
 using Visuals.Systems;
 
@@ -30,8 +26,6 @@ namespace Resources.Systems
 	[UpdateInGroup( typeof( PresentationSystemGroup ) )]
 	public class ResourceOreRendererSystem : MeshCreatorSystem<HasResourceOreRenderer, ResourceOre>
 	{
-		private readonly Dictionary<Color32, Material> _oreMaterials = new Dictionary<Color32, Material>();
-
 		protected override float Extends => 0.35f;
 
 		protected override void OnUpdate()
@@ -39,10 +33,11 @@ namespace Resources.Systems
 			base.OnUpdate();
 
 			var hasResourceOreRenderers = GetComponentDataFromEntity<HasResourceOreRenderer>();
+
+			// resource ore has zero count so remove
 			Entities
 				.ForEach( ( Entity changeProvider, ref ResourceOreChange resourceOreChange ) =>
 				{
-					PostUpdateCommands.DestroyEntity( changeProvider );
 					var oreEntity = resourceOreChange.oreEntity;
 
 					if ( hasResourceOreRenderers.Exists( oreEntity ) )
@@ -52,10 +47,12 @@ namespace Resources.Systems
 						{
 							PostUpdateCommands.DestroyEntity( visual.VisualEntity );
 						}
-						PostUpdateCommands.RemoveComponent<HasResourceOreRenderer>( oreEntity );
 					}
+
+					EntityManager.DestroyEntity( changeProvider );
 				} );
 
+			// create new renderer for ore without renderer
 			Entities
 				.WithNone<HasResourceOreRenderer>()
 				.ForEach( ( Entity entity, ref ResourceOre ore, ref MapIndex mapIndex ) =>
@@ -66,7 +63,7 @@ namespace Resources.Systems
 						visualEntity = CreateVisualEntity( "Map/Tile", ore.Type.Value.Color, ref mapIndex, 1 );
 					}
 
-					PostUpdateCommands.AddComponent( entity, new HasResourceOreRenderer { VisualEntity = visualEntity, Valid = ore.IsValid } );
+					EntityManager.AddComponentData( entity, new HasResourceOreRenderer { VisualEntity = visualEntity, Valid = ore.IsValid } );
 				} );
 		}
 	}

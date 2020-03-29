@@ -214,7 +214,11 @@ namespace Tests.Pathfinding
 			var blitableTiles = new BlitableArray<Entity>();
 			blitableTiles.Allocate( tiles, Allocator.Temp );
 
-			TargetSystem.SetSingleton( new MapSettings { MapEdgeSize = EdgeSize( mapSize ), Tiles = blitableTiles } );
+			if ( TargetSystem.HasSingleton<MapSettings>() == false )
+			{
+				TargetSystem.EntityManager.CreateEntity( typeof( MapSettings ) );
+				TargetSystem.SetSingleton( new MapSettings { MapEdgeSize = EdgeSize( mapSize ), Tiles = blitableTiles } );
+			}
 		}
 
 		#endregion Helpers

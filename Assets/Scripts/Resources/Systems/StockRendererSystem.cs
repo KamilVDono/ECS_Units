@@ -25,11 +25,13 @@ namespace Resources.Systems
 		{
 			base.OnUpdate();
 
-			Entities.WithNone<HasStockRenderer>().ForEach(
+			Entities
+				.WithNone<HasStockRenderer>()
+				.ForEach(
 				( Entity entity, ref Stock stock, ref MapIndex mapIndex ) =>
 				{
 					var visualEntity = CreateVisualEntity( "Map/TileWave", stock.Type.Value.Color, ref mapIndex, 1 );
-					PostUpdateCommands.AddComponent( entity, new HasStockRenderer { VisualEntity = visualEntity } );
+					EntityManager.AddComponentData( entity, new HasStockRenderer { VisualEntity = visualEntity } );
 				} );
 		}
 	}

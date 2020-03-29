@@ -6,8 +6,10 @@ using Pathfinding.Components;
 
 using Resources.Components;
 
+using StateMachine.Components;
+
+using Units.Components;
 using Units.Components.Stats;
-using Units.Components.Tags;
 
 using Unity.Collections;
 using Unity.Entities;
@@ -18,7 +20,7 @@ using Working.Components;
 namespace Units.Systems
 {
 	[UpdateInGroup( typeof( InitializationSystemGroup ) )]
-	public class UnitTagsSystem : JobComponentSystem
+	public class UnitTagsSystem : SystemBase
 	{
 		private EndInitializationEntityCommandBufferSystem _cmdBufferSystem;
 		private NativeArray<Neighbor> _neighbors;
@@ -30,7 +32,7 @@ namespace Units.Systems
 			_neighbors = Neighbor.FullNeighborhood( Allocator.Persistent );
 		}
 
-		protected override JobHandle OnUpdate( JobHandle inputDeps )
+		protected override void OnUpdate()
 		{
 			#region Seek for mine
 			var seekingTagCB = _cmdBufferSystem.CreateCommandBuffer().ToConcurrent();
@@ -42,7 +44,7 @@ namespace Units.Systems
 				{
 					seekingTagCB.AddComponent<SeekingOresTag>( entityInQueryIndex, e );
 					seekingTagCB.RemoveComponent<IdleTag>( entityInQueryIndex, e );
-				} ).Schedule( inputDeps );
+				} ).ScheduleParallel( Dependency );
 			#endregion Seek for mine
 
 			#region Moving tag
@@ -67,7 +69,7 @@ namespace Units.Systems
 					}
 
 					movingTagCB.AddComponent<MovingTag>(entityInQueryIndex, e);
-				} ).Schedule( inputDeps );
+				} ).ScheduleParallel( Dependency );
 			#endregion Moving tag
 
 			#region Mining
@@ -95,14 +97,11 @@ namespace Units.Systems
 					{
 						arrivedCB.AddComponent<IdleTag>(entityInQueryIndex, e);
 					}
-				} ).Schedule(inputDeps);
+				} ).ScheduleParallel(Dependency);
 			#endregion Mining
 
-			_cmdBufferSystem.AddJobHandleForProducer( movingTagHandle );
-			_cmdBufferSystem.AddJobHandleForProducer( seekingTagHandle );
-			_cmdBufferSystem.AddJobHandleForProducer( arrivedHandle );
-
-			return JobHandle.CombineDependencies( movingTagHandle, seekingTagHandle, arrivedHandle );
+			Dependency = JobHandle.CombineDependencies( movingTagHandle, seekingTagHandle, arrivedHandle );
+			_cmdBufferSystem.AddJobHandleForProducer( Dependency );
 		}
 
 		protected override void OnDestroy() => _neighbors.Dispose();

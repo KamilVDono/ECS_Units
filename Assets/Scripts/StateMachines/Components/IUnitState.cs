@@ -1,4 +1,4 @@
-﻿namespace Units.Components.Tags
+﻿namespace StateMachine.Components
 {
 	public interface IUnitState
 	{

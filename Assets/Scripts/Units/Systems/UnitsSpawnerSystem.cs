@@ -7,11 +7,12 @@ using Rendering.Components;
 
 using Resources.Components;
 
-using System.Collections.Generic;
+using StateMachine.Components;
+
+using System;
 
 using Units.Components;
 using Units.Components.Stats;
-using Units.Components.Tags;
 
 using Unity.Collections;
 using Unity.Entities;
@@ -27,13 +28,12 @@ namespace Units.Systems
 {
 	[UpdateInGroup( typeof( InitializationSystemGroup ) )]
 	[UpdateAfter( typeof( MapSpawner ) )]
-	public class UnitsSpawnerSystem : ComponentSystem // Just ComponentSystem because one time system
+	public class UnitsSpawnerSystem : SystemBase
 	{
 		private const float EXTENDS = 0.5f;
 
 		private EntityArchetype _unitArchetype;
 		private Mesh _unitMesh;
-		private Dictionary<int2, Material> _materials = new Dictionary<int2, Material>();
 
 		protected override void OnCreate()
 		{
@@ -41,15 +41,13 @@ namespace Units.Systems
 			_unitArchetype = EntityManager.CreateArchetype(
 				// Custom
 				typeof( UnitTag ), typeof( MovementSpeed ), typeof( MiningSpeed ), typeof( MapIndex ),
+				// FSM
 				typeof( IdleTag ),
 				// 3D properties
-				typeof( LocalToWorld ),
-				typeof( Translation ),
-				typeof( Rotation ),
+				typeof( LocalToWorld ), typeof( Translation ), typeof( Rotation ),
 				// Rendering
-				typeof( RenderMesh ),
-				typeof( RenderBounds ),
-				typeof( TileMaterialProperty )
+				typeof( RenderMesh ), typeof( RenderBounds ), typeof( TileMaterialProperty ), typeof( AnimationSpeedMaterialProperty ),
+				typeof( RowsColumns_Tex_AnimMaterialProperty )
 				);
 
 			_unitMesh = MeshCreator.Quad( EXTENDS, quaternion.Euler( new float3( math.radians( 90 ), 0, 0 ) ) );
@@ -60,13 +58,16 @@ namespace Units.Systems
 			var mapSettings = GetSingleton<MapSettings>();
 			var resourceOres = GetComponentDataFromEntity<ResourceOre>( true );
 
-			Entities.ForEach( ( Entity e, ref UnitsRequest unitsRequest ) =>
-			{
-				// Init random
-				Random random = new Random();
-				var seed = (uint)Time.ElapsedTime.ToString( "0.######" ).GetHashCode();
-				random.InitState( seed == 0 ? 1 : seed );
+			var seed = (uint)DateTime.Now.GetHashCode();
+			// Init random
+			Random random = new Random();
+			random.InitState( seed );
 
+			Entities
+				.WithReadOnly( resourceOres )
+				.WithStructuralChanges()
+				.ForEach( ( Entity e, in UnitsRequest unitsRequest ) =>
+			{
 				// Search for positions
 				NativeHashMap<MapIndex, byte> freePositionsSet = new NativeHashMap<MapIndex, byte>( unitsRequest.UnitsCount, Allocator.Temp );
 				for ( int i = 0; i < unitsRequest.UnitsCount; i++ )
@@ -90,19 +91,19 @@ namespace Units.Systems
 				for ( int i = 0; i < unitsRequest.UnitsCount; i++ )
 				{
 					// Unit specific
-					PostUpdateCommands.SetComponent( entities[i], new MovementSpeed() { Speed = (float)unitsRequest.UnitSpeed } );
-					PostUpdateCommands.SetComponent( entities[i], new MiningSpeed() { Speed = (float)unitsRequest.UnitMiningSpeed } );
+					EntityManager.SetComponentData( entities[i], new MovementSpeed() { Speed = (float)unitsRequest.UnitSpeed } );
+					EntityManager.SetComponentData( entities[i], new MiningSpeed() { Speed = (float)unitsRequest.UnitMiningSpeed } );
 
 					// Position
 					var mapIndex = freePositions[i];
-					PostUpdateCommands.SetComponent( entities[i], mapIndex );
+					EntityManager.SetComponentData( entities[i], mapIndex );
 
 					var position = new float3(mapIndex.Index2D.x, 3, mapIndex.Index2D.y);
-					PostUpdateCommands.SetComponent( entities[i], new Translation() { Value = position } );
+					EntityManager.SetComponentData( entities[i], new Translation() { Value = position } );
 
 					// Rendering
-					PostUpdateCommands.SetSharedComponent( entities[i], new RenderMesh { material = unitMaterial, mesh = _unitMesh } );
-					PostUpdateCommands.SetComponent( entities[i], new RenderBounds
+					EntityManager.SetSharedComponentData( entities[i], new RenderMesh { material = unitMaterial, mesh = _unitMesh } );
+					EntityManager.SetComponentData( entities[i], new RenderBounds
 					{
 						Value = new AABB()
 						{
@@ -111,14 +112,16 @@ namespace Units.Systems
 						}
 					} );
 					var materialTile = new float4( random.NextInt(0, unitsRequest.TextureTiles.x), random.NextInt(0, unitsRequest.TextureTiles.y), 0, 0 );
-					PostUpdateCommands.SetComponent( entities[i], new TileMaterialProperty { Tile = materialTile } );
+					EntityManager.SetComponentData( entities[i], new TileMaterialProperty { Tile = materialTile } );
+					EntityManager.SetComponentData( entities[i], new AnimationSpeedMaterialProperty { Speed = 0.5f } );
+					EntityManager.SetComponentData( entities[i], new RowsColumns_Tex_AnimMaterialProperty { Value = new float4( 8, 12, 0, 3 ) } );
 				}
 
 				entities.Dispose();
 				freePositionsSet.Dispose();
 				freePositions.Dispose();
-				PostUpdateCommands.DestroyEntity( e );
-			} );
+				EntityManager.DestroyEntity( e );
+			} ).Run();
 		}
 	}
 }
