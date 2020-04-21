@@ -10,7 +10,7 @@ using UnityEngine;
 
 namespace Resources.Authoring
 {
-	[CreateAssetMenu( menuName = "ScriptbleObjects/Resources/ResourceType" )]
+	[CreateAssetMenu( menuName = "ScriptableObjects/Resources/ResourceType" )]
 	public class ResourceTypeSO : ScriptableObject, IBlobableSO<ResourceTypeBlob>
 	{
 		public float MovementCost;

@@ -10,7 +10,7 @@ using UnityEngine;
 
 namespace Maps.Authoring
 {
-	[CreateAssetMenu( menuName = "ScriptbleObjects/Map/TileType" )]
+	[CreateAssetMenu( menuName = "ScriptableObjects/Map/TileType" )]
 	public class TileTypeSO : ScriptableObject, IBlobableSO<GroundTypeBlob>
 	{
 		public Color Color;

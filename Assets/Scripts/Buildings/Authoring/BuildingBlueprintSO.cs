@@ -12,7 +12,7 @@ using UnityEngine;
 
 namespace Buildings.Authoring
 {
-	[CreateAssetMenu( menuName = "ScriptbleObjects/Buildings/Blueprint" )]
+	[CreateAssetMenu( menuName = "ScriptableObjects/Buildings/Blueprint" )]
 	public class BuildingBlueprintSO : ScriptableObject, IBlobableSO<BuildingBlueprintBlob>
 	{
 		#region Data
@@ -38,6 +38,7 @@ namespace Buildings.Authoring
 			Dispose();
 			BlobReference = BuildingBlueprintBlob.FromSO( this );
 		}
+
 		#endregion IBlobableSO
 
 		[System.Serializable]
