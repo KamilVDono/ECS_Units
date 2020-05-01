@@ -4,6 +4,7 @@ using System.Linq;
 
 using UnityEditor;
 using UnityEditor.Experimental.GraphView;
+using UnityEditor.IMGUI.Controls;
 
 using UnityEngine;
 using UnityEngine.UIElements;
@@ -159,6 +160,8 @@ namespace FSM.Editor.Nodes
 
 		private class CustomMenuWindow : EditorWindow
 		{
+			private SearchField _searchField = new SearchField();
+
 			public static void Show(
 				Vector2 displayPosition )
 			{
@@ -167,6 +170,8 @@ namespace FSM.Editor.Nodes
 				window.ShowPopup();
 				window.Focus();
 			}
+
+			private void OnGUI() => _searchField.OnGUI( new Rect( 0, 0, 100, 25 ), "Search" );
 
 			private void OnLostFocus() => Close();
 		}

@@ -12,15 +12,11 @@ namespace Resources.Systems
 {
 	public struct HasResourceOreRenderer : MeshCreatorSystemVisualComponent
 	{
-		#region Fields
 		public Entity VisualEntity;
 		public Boolean Valid;
-		#endregion Fields
 
-		#region MeshCreatorSystemVisualComponent
 		public Entity ValueEntity => VisualEntity;
 		public bool IsValid => Valid;
-		#endregion MeshCreatorSystemVisualComponent
 	}
 
 	[UpdateInGroup( typeof( PresentationSystemGroup ) )]
@@ -49,7 +45,7 @@ namespace Resources.Systems
 						}
 					}
 
-					EntityManager.DestroyEntity( changeProvider );
+					PostUpdateCommands.DestroyEntity( changeProvider );
 				} );
 
 			// create new renderer for ore without renderer

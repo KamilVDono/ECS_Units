@@ -67,8 +67,6 @@ namespace Input.Authoring
 			unitInfoComponents.Dispose();
 		}
 
-		private void OnDestroy() => _tileUnderMouseQuery.Dispose();
-
 		private string ExtractTileDescription( TileUnderMouse tileUnderMouse )
 		{
 			var groundType = _entityManager.GetComponentData<GroundType>( tileUnderMouse.Tile );

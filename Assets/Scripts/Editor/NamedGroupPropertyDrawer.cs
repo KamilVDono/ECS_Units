@@ -2,6 +2,7 @@
 using Blobs.Interfaces;
 
 using UnityEditor;
+using UnityEditor.IMGUI.Controls;
 
 using UnityEngine;
 
@@ -48,7 +49,8 @@ public class NamedGroupPropertyDrawer : PropertyDrawer
 		plusPos.width = 15;
 		if ( GUI.Button( plusPos, "+" ) )
 		{
-			blobableProperty.arraySize++;
+			//blobableProperty.arraySize++;
+			CustomMenuWindow.Show( Event.current.mousePosition );
 		}
 
 		position.y += EditorGUIUtility.singleLineHeight;
@@ -103,7 +105,7 @@ public class NamedGroupPropertyDrawer : PropertyDrawer
 		totalHeight += nameHeight;
 
 		var blobableProperty = property.FindPropertyRelative( nameof(NamedGroup.BlobableSOs) );
-		float blobableHeight = EditorGUIUtility.singleLineHeight; //Label
+		float blobableHeight = 0;
 		if ( blobableProperty.isExpanded )
 		{
 			blobableHeight += EditorGUIUtility.singleLineHeight * blobableProperty.arraySize;
@@ -111,5 +113,30 @@ public class NamedGroupPropertyDrawer : PropertyDrawer
 		totalHeight += blobableHeight;
 
 		return totalHeight;
+	}
+
+	private class CustomMenuWindow : EditorWindow
+	{
+		private SearchField _searchField;
+
+		public static void Show(
+			Vector2 displayPosition )
+		{
+			var window = CreateInstance<CustomMenuWindow>();
+			window.position = new Rect( displayPosition, new Vector2( 100, 200 ) );
+			window.ShowPopup();
+			window.Focus();
+		}
+
+		private void OnGUI()
+		{
+			if ( _searchField == null )
+			{
+				_searchField = new SearchField();
+			}
+			_searchField.OnGUI( new Rect( 0, 0, 100, 25 ), "" );
+		}
+
+		private void OnLostFocus() => Close();
 	}
 }

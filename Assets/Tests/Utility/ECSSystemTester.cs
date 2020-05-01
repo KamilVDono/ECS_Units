@@ -40,15 +40,11 @@ namespace Tests.Utility
 		[TearDown]
 		public virtual void TearDown()
 		{
-			if ( _entityManager != null )
-			{
-				_currentWorld.Dispose();
-				_currentWorld = null;
+			_currentWorld.Dispose();
+			_currentWorld = null;
 
-				World.DefaultGameObjectInjectionWorld = _previousWorld;
-				_previousWorld = null;
-				_entityManager = null;
-			}
+			World.DefaultGameObjectInjectionWorld = _previousWorld;
+			_previousWorld = null;
 		}
 
 		protected virtual void Update()

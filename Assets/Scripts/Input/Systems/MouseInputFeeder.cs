@@ -94,7 +94,7 @@ namespace Input.Systems
 			}
 			if ( count < 1 )
 			{
-				throw new System.Exception( $"There is more than no {typeof( CameraData )} component" );
+				throw new System.Exception( $"There is no {typeof( CameraData )} component" );
 			}
 		}
 	}
