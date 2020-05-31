@@ -1,16 +1,17 @@
 {
     "name": "Performance",
+    "rootNamespace": "",
     "references": [
         "GUID:734d92eba21c94caba915361bd5ac177",
         "GUID:e0cd26848372d4e5c891c569017e11f1",
         "GUID:cab3d02aa5ff6584ebce3d9b50fcc56f",
-        "GUID:91836b14885b8a34196f4aa8303d7793",
         "GUID:42dff4a3d9f413c4e9f7b8b2f19f395b",
         "GUID:0acc523941302664db1f4e527237feb3",
         "GUID:27619889b8ba8c24980f49ee34dbb44a",
         "GUID:d8b63aba1907145bea998dd612889d6b",
         "GUID:c638d123d16e9f74fb4b5ce49ebefd99",
-        "GUID:7d9cd663f0e82ab4987bb8c612044250"
+        "GUID:7d9cd663f0e82ab4987bb8c612044250",
+        "GUID:c0dd0d10738d4ad4a9de57c559d0ca1b"
     ],
     "includePlatforms": [
         "Editor"

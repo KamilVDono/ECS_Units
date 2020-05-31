@@ -883,7 +883,6 @@ GameObject:
   m_Component:
   - component: {fileID: 1140780736}
   - component: {fileID: 1140780735}
-  - component: {fileID: 1140780734}
   m_Layer: 5
   m_Name: TMP SubMeshUI [RobotoCondensed-Light SDF_Small Material + LiberationSans
     SDF Atlas]
@@ -892,34 +891,6 @@ GameObject:
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
   m_IsActive: 1
---- !u!114 &1140780734
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 1140780733}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 058cba836c1846c3aa1c5fd2e28aea77, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  m_Material: {fileID: 0}
-  m_Color: {r: 1, g: 1, b: 1, a: 1}
-  m_RaycastTarget: 1
-  m_RaycastPadding: {x: 0, y: 0, z: 0, w: 0}
-  m_Maskable: 1
-  m_OnCullStateChanged:
-    m_PersistentCalls:
-      m_Calls: []
-  m_fontAsset: {fileID: 11400000, guid: 8f586378b4e144a9851e7b34d9b748ee, type: 2}
-  m_spriteAsset: {fileID: 0}
-  m_material: {fileID: 0}
-  m_sharedMaterial: {fileID: 0}
-  m_isDefaultMaterial: 0
-  m_padding: 0
-  m_TextComponent: {fileID: 1195531130}
-  m_materialReferenceIndex: 1
 --- !u!222 &1140780735
 CanvasRenderer:
   m_ObjectHideFlags: 0
@@ -1575,7 +1546,6 @@ GameObject:
   m_Component:
   - component: {fileID: 1849851925}
   - component: {fileID: 1849851927}
-  - component: {fileID: 1849851926}
   m_Layer: 5
   m_Name: TMP SubMeshUI [RobotoCondensed-Light SDF_Small Material + LiberationSans
     SDF Atlas]
@@ -1603,34 +1573,6 @@ RectTransform:
   m_AnchoredPosition: {x: 0, y: 0}
   m_SizeDelta: {x: 0, y: 0}
   m_Pivot: {x: 0.5, y: 0.5}
---- !u!114 &1849851926
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 1849851924}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 058cba836c1846c3aa1c5fd2e28aea77, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  m_Material: {fileID: 0}
-  m_Color: {r: 1, g: 1, b: 1, a: 1}
-  m_RaycastTarget: 1
-  m_RaycastPadding: {x: 0, y: 0, z: 0, w: 0}
-  m_Maskable: 1
-  m_OnCullStateChanged:
-    m_PersistentCalls:
-      m_Calls: []
-  m_fontAsset: {fileID: 11400000, guid: 8f586378b4e144a9851e7b34d9b748ee, type: 2}
-  m_spriteAsset: {fileID: 0}
-  m_material: {fileID: 0}
-  m_sharedMaterial: {fileID: 0}
-  m_isDefaultMaterial: 0
-  m_padding: 0
-  m_TextComponent: {fileID: 102851036}
-  m_materialReferenceIndex: 1
 --- !u!222 &1849851927
 CanvasRenderer:
   m_ObjectHideFlags: 0
@@ -1676,7 +1618,7 @@ MonoBehaviour:
   _offset:
     x: 2
     y: 2
-  _mapEdgeSize: 200
+  _mapEdgeSize: 250
 --- !u!4 &2038225693
 Transform:
   m_ObjectHideFlags: 0
@@ -1734,7 +1676,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 0d6cb45114234f842b6586a56f6f6a3f, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  _unitsCount: 500
+  _unitsCount: 1000
   _texturesRowsColumns:
     x: 4
     y: 8
