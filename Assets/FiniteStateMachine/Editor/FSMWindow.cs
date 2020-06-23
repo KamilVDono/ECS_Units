@@ -1,9 +1,6 @@
 ﻿using FSM.Editor.Nodes;
 using FSM.Runtime;
-using FSM.Runtime.Edges;
-using FSM.Runtime.Nodes;
 
-using System;
 using System.IO;
 using System.Linq;
 
@@ -46,10 +43,6 @@ namespace FSM.Editor
 				name = StateMachineGraph.name
 			};
 			_graphView.LoadGraph( StateMachineGraph );
-			_graphView.NewNodeRequest += CreateNewNode;
-			_graphView.DeleteNodeRequest += DeleteNode;
-			_graphView.NewTransitionRequest += CreateNewTransition;
-			_graphView.DeleteTransitionRequest += DeteleTransition;
 
 			_graphView.StretchToParentSize();
 			rootVisualElement.Add( _graphView );
@@ -78,64 +71,6 @@ namespace FSM.Editor
 		}
 
 		#endregion Initialization
-
-		#region Node operations
-
-		private FSMNode CreateNewNode( Type nodeType, Vector2 mousePosition )
-		{
-			FSMNode node = null;
-			if ( typeof( FSMNode ).IsAssignableFrom( nodeType ) )
-			{
-				node = ScriptableObject.CreateInstance( nodeType ) as FSMNode;
-				node.name = nodeType.Name;
-
-				node.Position = new Rect( mousePosition, FSMGraphView.DEFAULT_NODE_SIZE );
-			}
-
-			if ( node != null )
-			{
-				StateMachineGraph.AddNode( node );
-				AssetDatabase.AddObjectToAsset( node, StateMachineGraph );
-				AssetDatabase.SaveAssets();
-				AssetDatabase.Refresh();
-			}
-
-			return node;
-		}
-
-		private void DeleteNode( FSMNode nodeToDelete )
-		{
-			StateMachineGraph.RemoveNode( nodeToDelete );
-			AssetDatabase.RemoveObjectFromAsset( nodeToDelete );
-			AssetDatabase.SaveAssets();
-			AssetDatabase.Refresh();
-		}
-
-		#endregion Node operations
-
-		#region Transition operations
-
-		private FSMTransition CreateNewTransition( FSMNode from, FSMNode to )
-		{
-			FSMTransition transition = ScriptableObject.CreateInstance<FSMTransition>();
-			transition.Init( from, to );
-			StateMachineGraph.AddTransition( transition );
-			AssetDatabase.AddObjectToAsset( transition, StateMachineGraph );
-			AssetDatabase.SaveAssets();
-			AssetDatabase.Refresh();
-
-			return transition;
-		}
-
-		private void DeteleTransition( FSMTransition transition )
-		{
-			StateMachineGraph.RemoveTransition( transition );
-			AssetDatabase.RemoveObjectFromAsset( transition );
-			AssetDatabase.SaveAssets();
-			AssetDatabase.Refresh();
-		}
-
-		#endregion Transition operations
 
 		#region Toolbar
 
@@ -238,20 +173,5 @@ namespace FSM.Editor
 		}
 
 		#endregion Opening
-
-		#region Cleanup
-
-		private void OnDisable()
-		{
-			if ( _graphView != null )
-			{
-				_graphView.NewNodeRequest -= CreateNewNode;
-				_graphView.DeleteNodeRequest -= DeleteNode;
-				_graphView.NewTransitionRequest -= CreateNewTransition;
-				_graphView.DeleteTransitionRequest -= DeteleTransition;
-			}
-		}
-
-		#endregion Cleanup
 	}
 }

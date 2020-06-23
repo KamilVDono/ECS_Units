@@ -4,10 +4,10 @@ using FSM.Runtime;
 using FSM.Runtime.Edges;
 using FSM.Runtime.Nodes;
 
-using System;
 using System.Collections.Generic;
 using System.Linq;
 
+using UnityEditor;
 using UnityEditor.Experimental.GraphView;
 
 using UnityEngine;
@@ -18,6 +18,7 @@ namespace FSM.Editor
 	public class FSMGraphView : GraphView
 	{
 		public static readonly Vector2 DEFAULT_NODE_SIZE = new Vector2(200, 100);
+		private FSMGraph _stateMachineGraph;
 
 		public FSMGraphView()
 		{
@@ -41,14 +42,14 @@ namespace FSM.Editor
 		public override List<Port> GetCompatiblePorts( Port startAnchor, NodeAdapter nodeAdapter )
 		{
 			var compatibleAnchors = new List<Port>();
-			List<FSMNode> connections = null;
+			List<FSStateNode> connections = null;
 			if ( startAnchor.direction == Direction.Input )
 			{
-				connections = startAnchor.connections.OfType<FSMEdgeView>().Select( e => e.Transition.To as FSMNode ).ToList();
+				connections = startAnchor.connections.OfType<FSMEdgeView>().Select( e => e.Transition.ToNode as FSStateNode ).ToList();
 			}
 			else
 			{
-				connections = startAnchor.connections.OfType<FSMEdgeView>().Select( e => e.Transition.From as FSMNode ).ToList();
+				connections = startAnchor.connections.OfType<FSMEdgeView>().Select( e => e.Transition.FromNode as FSStateNode ).ToList();
 			}
 
 			foreach ( var candidateAnchor in ports.ToList() )
@@ -77,7 +78,7 @@ namespace FSM.Editor
 		{
 			if ( evt.target is GraphView )
 			{
-				evt.menu.AppendAction( "Add state", AddNewNode );
+				evt.menu.AppendAction( "Add state", CreateNode );
 			}
 			else if ( evt.target is FSMNodeView node )
 			{
@@ -100,6 +101,8 @@ namespace FSM.Editor
 			edges.ToList().ForEach( e => RemoveElement( e ) );
 			nodes.ToList().ForEach( n => RemoveElement( n ) );
 
+			_stateMachineGraph = stateMachineGraph;
+
 			// Load nodes
 			foreach ( var node in stateMachineGraph.Nodes )
 			{
@@ -113,17 +116,17 @@ namespace FSM.Editor
 				var viewFrom = ViewFor( transition.From );
 				var viewTo = ViewFor( transition.To );
 
-				Port fromPort = viewFrom.inputContainer.Query<Port>().First();
-				Port toPort = viewTo.outputContainer.Query<Port>().First();
+				Port outputPort = viewFrom.outputContainer.Query<Port>().First();
+				Port inputPort = viewTo.inputContainer.Query<Port>().First();
 
 				var edge = new FSMEdgeView(transition)
 				{
-					input = fromPort,
-					output = toPort,
+					input = inputPort,
+					output = outputPort,
 				};
 
-				fromPort.Connect( edge );
-				toPort.Connect( edge );
+				outputPort.Connect( edge );
+				inputPort.Connect( edge );
 
 				AddElement( edge );
 			}
@@ -143,11 +146,12 @@ namespace FSM.Editor
 
 		#region Edge operations
 
-		public event Func<FSMNode, FSMNode, FSMTransition> NewTransitionRequest;
-
-		public event Action<FSMTransition> DeleteTransitionRequest;
-
-		public FSMTransition CreateTransition( FSMNode from, FSMNode to ) => NewTransitionRequest?.Invoke( from, to );
+		public FSMTransition CreateTransition( FSStateNode from, FSStateNode to )
+		{
+			var transition = _stateMachineGraph.CreateTransition( from, to );
+			EditorUtility.SetDirty( _stateMachineGraph );
+			return transition;
+		}
 
 		private void DeleteEdge( FSMEdgeView edge )
 		{
@@ -158,32 +162,33 @@ namespace FSM.Editor
 			edge.input = null;
 
 			RemoveElement( edge );
-			DeleteTransitionRequest?.Invoke( edge.Transition );
+			_stateMachineGraph.RemoveTransition( edge.Transition );
 		}
 
 		#endregion Edge operations
 
 		#region Node operations
 
-		public event Func<Type, Vector2, FSMNode> NewNodeRequest;
-
-		public event Action<FSMNode> DeleteNodeRequest;
+		private void CreateNode( DropdownMenuAction dropdownMenuAction )
+		{
+			var newNode = _stateMachineGraph.CreateNode( MousePositionFromEvent(dropdownMenuAction.eventInfo), DEFAULT_NODE_SIZE );
+			AddElement( new FSMNodeView( newNode ) );
+			EditorUtility.SetDirty( _stateMachineGraph );
+		}
 
 		private void DeleteNode( FSMNodeView node )
 		{
-			RemoveElement( node );
-			DeleteNodeRequest?.Invoke( node.StateNode );
-		}
+			var transitionViews = ports.ToList().SelectMany( p => p.connections ).OfType<FSMEdgeView>().Distinct();
 
-		private void AddNewNode( DropdownMenuAction dropdownMenuAction )
-		{
-			if ( NewNodeRequest == null )
+			var transitionsToDelete = _stateMachineGraph.Connections( node.StateNode );
+
+			foreach ( var toDelete in transitionViews.Where( tv => transitionsToDelete.Contains( tv.Transition ) ).ToArray() )
 			{
-				return;
+				DeleteEdge( toDelete );
 			}
 
-			var newNode = NewNodeRequest(typeof(StateNode), MousePositionFromEvent(dropdownMenuAction.eventInfo) );
-			AddElement( new FSMNodeView( newNode ) );
+			RemoveElement( node );
+			_stateMachineGraph.RemoveNode( node.StateNode );
 		}
 
 		#endregion Node operations
@@ -197,7 +202,7 @@ namespace FSM.Editor
 			return graphMousePosition;
 		}
 
-		private FSMNodeView ViewFor( FSMNode node ) => nodes.ToList().OfType<FSMNodeView>().FirstOrDefault( v => v.StateNode == node );
+		private FSMNodeView ViewFor( int guid ) => nodes.ToList().OfType<FSMNodeView>().FirstOrDefault( v => v.StateNode.GUID == guid );
 
 		#endregion Utils
 	}

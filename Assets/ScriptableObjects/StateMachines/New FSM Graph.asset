@@ -12,4 +12,27 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: bea04ae8dbaa3174490f041764e32cd8, type: 3}
   m_Name: New FSM Graph
   m_EditorClassIdentifier: 
-  _nodes: []
+  _nodes:
+  - _name: Idle
+    _GUID: 627232021
+    _position:
+      serializedVersion: 2
+      x: 275
+      y: 197
+      width: 208
+      height: 234
+    _parent: {fileID: 11400000}
+  - _name: FSStateNode_1
+    _GUID: 90073844
+    _position:
+      serializedVersion: 2
+      x: 772
+      y: 197
+      width: 208
+      height: 234
+    _parent: {fileID: 11400000}
+  _transitions:
+  - _editorName: Idle=>FSStateNode_1
+    _parent: {fileID: 11400000}
+    _from: 627232021
+    _to: 90073844

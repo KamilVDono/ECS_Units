@@ -1,6 +1,10 @@
 ﻿using FSM.Runtime.Nodes;
 
+using System;
 using System.Linq;
+using System.Text.RegularExpressions;
+
+using Unity.Entities;
 
 using UnityEditor;
 using UnityEditor.Experimental.GraphView;
@@ -13,10 +17,12 @@ namespace FSM.Editor.Nodes
 {
 	public class FSMNodeView : Node
 	{
-		private readonly Label _titleLable;
-		public FSMNode StateNode { get; private set; }
+		private static readonly Regex _namespaceRegex = new Regex(@"(namespace) (.+)");
 
-		public FSMNodeView( FSMNode stateNode )
+		private readonly Label _titleLable;
+		public FSStateNode StateNode { get; private set; }
+
+		public FSMNodeView( FSStateNode stateNode )
 		{
 			capabilities &= ~Capabilities.Deletable;
 			capabilities |= Capabilities.Renamable;
@@ -45,7 +51,7 @@ namespace FSM.Editor.Nodes
 			textField.RegisterValueChangedCallback( ( change ) =>
 			{
 				title = change.newValue;
-				EditorUtility.SetDirty( StateNode );
+				EditorUtility.SetDirty( StateNode.Parent );
 				titleContainer.Remove( textField );
 				_titleLable.visible = true;
 			} );
@@ -53,18 +59,18 @@ namespace FSM.Editor.Nodes
 			_titleLable.visible = false;
 			textField.Focus();
 			textField.SelectAll();
+			Dump();
 		}
 
 		public void Dump()
 		{
 			StateNode.Position = GetPosition();
-			StateNode.name = title;
-			EditorUtility.SetDirty( StateNode );
+			StateNode.Name = title;
 		}
 
 		private void Load()
 		{
-			title = StateNode.name;
+			title = StateNode.Name;
 			SetPosition( StateNode.Position );
 		}
 
@@ -78,28 +84,21 @@ namespace FSM.Editor.Nodes
 			var addRow = RowContainer();
 
 			addRow.Add( new Label( "Required data:" ) );
-			addRow.Add( new Button() { text = "+" } );
+			var button = new Button() { text = "+" };
+			button.style.flexGrow = 1f;
+			addRow.Add( button );
 			container.Add( addRow );
-			container.Add( Divider() );
-			container.Add( new Label( "Idle tag" ) );
-			container.Add( new Label( "Idle tag 2" ) );
 
-			var label = new Label("Click me");
-			label.style.width = 200;
-			label.style.height = 100;
-
-			label.RegisterCallback<MouseUpEvent>( HandleRightClick );
-			label.RegisterCallback<DragUpdatedEvent>( OnDragUpdatedEvent );
-			label.RegisterCallback<DragPerformEvent>( OnDragPerformEvent );
-
-			container.Add( label );
+			addRow.RegisterCallback<MouseUpEvent>( HandleRightClick );
+			addRow.RegisterCallback<DragUpdatedEvent>( OnDragUpdatedEvent );
+			addRow.RegisterCallback<DragPerformEvent>( OnDragPerformEvent );
 
 			extensionContainer.Add( container );
 		}
 
 		private void OnDragUpdatedEvent( DragUpdatedEvent e )
 		{
-			if ( DragAndDrop.objectReferences.Any( o => o is ScriptableObject ) )
+			if ( DragAndDrop.objectReferences.Any( o => o is ScriptableObject || o is MonoScript ) )
 			{
 				DragAndDrop.visualMode = DragAndDropVisualMode.Link;
 			}
@@ -111,14 +110,32 @@ namespace FSM.Editor.Nodes
 
 		private void OnDragPerformEvent( DragPerformEvent e )
 		{
-			if ( DragAndDrop.objectReferences.Any( o => o is ScriptableObject ) )
+			var scripts = DragAndDrop.objectReferences.OfType<MonoScript>();
+			foreach ( var script in scripts )
 			{
-				DragAndDrop.AcceptDrag();
+				var scriptClass = script.GetClass();
+
+				var match = _namespaceRegex.Match( script.text );
+
+				var namespaceName = (match.Success ? match.Groups[2].Value : "").Trim();
+
+				var type = typeof(IComponentData);
+				var types = AppDomain.CurrentDomain.GetAssemblies()
+						.SelectMany(s => s.GetTypes())
+						.Where(p => type.IsAssignableFrom(p)).ToList();
+
+				var dropedType = types.FirstOrDefault( t => t.Name == script.name && t.Namespace == namespaceName );
+
+				if ( dropedType != null )
+				{
+					Debug.Log( dropedType.FullName );
+				}
+				else
+				{
+					Debug.Log( "Can not find" );
+				}
 			}
-			else
-			{
-				Debug.Log( "None so" );
-			}
+			DragAndDrop.AcceptDrag();
 		}
 
 		private void HandleRightClick( MouseUpEvent evt )
@@ -160,7 +177,7 @@ namespace FSM.Editor.Nodes
 
 		private class CustomMenuWindow : EditorWindow
 		{
-			private SearchField _searchField = new SearchField();
+			private SearchField _searchField;
 
 			public static void Show(
 				Vector2 displayPosition )
@@ -170,6 +187,8 @@ namespace FSM.Editor.Nodes
 				window.ShowPopup();
 				window.Focus();
 			}
+
+			private void OnEnable() => _searchField = new SearchField();
 
 			private void OnGUI() => _searchField.OnGUI( new Rect( 0, 0, 100, 25 ), "Search" );
 

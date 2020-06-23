@@ -31,8 +31,8 @@ namespace FSM.Editor.Nodes
 				if ( edge is FSMEdgeView fsmEdge )
 				{
 					FSMTransition tansition = fsmGrphView.CreateTransition(
-							( edge.input.node as FSMNodeView ).StateNode,
-							( edge.output.node as FSMNodeView ).StateNode
+							( edge.output.node as FSMNodeView ).StateNode,
+							( edge.input.node as FSMNodeView ).StateNode
 							);
 					fsmEdge.Initialize( tansition );
 				}

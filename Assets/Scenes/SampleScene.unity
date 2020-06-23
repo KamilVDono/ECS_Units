@@ -605,6 +605,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   m_Navigation:
     m_Mode: 3
+    m_WrapAround: 0
     m_SelectOnUp: {fileID: 0}
     m_SelectOnDown: {fileID: 0}
     m_SelectOnLeft: {fileID: 0}
@@ -1618,7 +1619,7 @@ MonoBehaviour:
   _offset:
     x: 2
     y: 2
-  _mapEdgeSize: 250
+  _mapEdgeSize: 20
 --- !u!4 &2038225693
 Transform:
   m_ObjectHideFlags: 0
@@ -1676,7 +1677,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 0d6cb45114234f842b6586a56f6f6a3f, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  _unitsCount: 1000
+  _unitsCount: 2
   _texturesRowsColumns:
     x: 4
     y: 8
