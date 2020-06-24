@@ -22,6 +22,9 @@ MonoBehaviour:
       width: 208
       height: 234
     _parent: {fileID: 11400000}
+    _requires:
+    - classRef: StateMachine.Components.IdleTag, Scripts
+    - classRef: StateMachine.Components.IdleTag, Scripts
   - _name: FSStateNode_1
     _GUID: 90073844
     _position:
@@ -31,6 +34,7 @@ MonoBehaviour:
       width: 208
       height: 234
     _parent: {fileID: 11400000}
+    _requires: []
   _transitions:
   - _editorName: Idle=>FSStateNode_1
     _parent: {fileID: 11400000}

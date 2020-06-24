@@ -2,7 +2,8 @@
     "name": "FSM",
     "rootNamespace": "",
     "references": [
-        "GUID:734d92eba21c94caba915361bd5ac177"
+        "GUID:734d92eba21c94caba915361bd5ac177",
+        "GUID:defade650d4200943bb41a087ec43f59"
     ],
     "includePlatforms": [],
     "excludePlatforms": [],

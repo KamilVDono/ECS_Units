@@ -1,4 +1,8 @@
-﻿using System;
+﻿using Rotorz.Games.Reflection;
+
+using System;
+
+using Unity.Entities;
 
 using UnityEngine;
 
@@ -12,6 +16,9 @@ namespace FSM.Runtime.Nodes
 		[SerializeField] private int _GUID;
 		[SerializeField] private Rect _position;
 		[SerializeField] private FSMGraph _parent;
+		[SerializeField]
+		[ClassImplements(typeof(IComponentData))]
+		private ClassTypeReference[] _requires = new ClassTypeReference[0];
 		#endregion Serialization data
 
 		#region Properties
